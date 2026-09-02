@@ -1164,7 +1164,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <span class="brand-name">힐마루케어</span>
       <span class="brand-sub">시니어케어, 건강관리케어</span>
     </div>
-    <span id="app-version-badge" style="font-size:.55rem;font-weight:700;background:rgba(14,143,163,.25);color:#5CC8B8;padding:2px 7px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;">v5.43</span>
+    <span id="app-version-badge" style="font-size:.55rem;font-weight:700;background:rgba(14,143,163,.25);color:#5CC8B8;padding:2px 7px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;">v5.46</span>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem">
     <div id="gs-sync-badge" class="gs-sync-badge idle">
@@ -1172,7 +1172,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <span id="gs-sync-text">☁ Google Sheets</span>
     </div>
     <div style="display:flex;gap:.35rem;align-items:center">
-      <button onclick="openGuide()" title="고객가이드 보기" style="background: rgba(255, 200, 50, 0.18); border: 1px solid rgba(255, 200, 50, 0.3); color: rgba(255, 220, 100, 0.95); border-radius: 8px; padding: 5px 11px; font-size: 0.72rem; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; transition: 0.15s;" onmouseover="this.style.background='rgba(255,200,50,.28)'" onmouseout="this.style.background='rgba(255,200,50,.18)'">
+      <button onclick="openGuide()" title="고객가이드 보기" style="background:rgba(255,200,50,.18);border:1px solid rgba(255,200,50,.3);color:rgba(255,220,100,.95);border-radius:8px;padding:5px 11px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s" onmouseover="this.style.background='rgba(255,200,50,.28)'" onmouseout="this.style.background='rgba(255,200,50,.18)'">
         📖 고객가이드
       </button>
     </div>
@@ -1206,7 +1206,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
             <!-- Status Bar -->
             <div class="phone-statusbar">
-              <span id="sb-time" style="min-width:28px">18:31</span>
+              <span id="sb-time" style="min-width:28px">18:42</span>
               <div class="sb-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
             </div>
 
@@ -1308,7 +1308,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
             <!-- Status Bar -->
             <div class="phone-statusbar">
-              <span style="min-width:28px" id="sb-time2">18:31</span>
+              <span style="min-width:28px" id="sb-time2">18:42</span>
               <div class="sb-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
             </div>
 
@@ -1370,7 +1370,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
             </div>
             <div class="form-field">
               <label>그룹 / 폴더</label>
-              <select id="f-group" style="font-size:.78rem"><option value="">미지정</option><option value="삼성화재pilot1">삼성화재pilot1</option><option value="삼성화재pilot2">삼성화재pilot2</option></select>
+              <select id="f-group" style="font-size:.78rem"><option value="">미지정</option><option value="삼성화재pilot1">삼성화재pilot1</option><option value="삼성화재pilot2">삼성화재pilot2</option><option value="test">test</option></select>
             </div>
 
             <div class="form-section-head">기기 일정</div>
@@ -1745,15 +1745,15 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
         <div class="panel-head-row" style="margin-bottom:0">
           <div class="panel-head-left">
             <div class="panel-head-title">건강 데이터 기록</div>
-            <span class="record-badge" id="record-count-badge">0건</span>
-            <div class="save-status empty" id="save-status">
+            <span class="record-badge" id="record-count-badge">5건</span>
+            <div class="save-status" id="save-status">
               <div class="save-status-dot"></div>
-              <span id="save-status-text">저장 없음</span>
+              <span id="save-status-text">자동저장됨 · 2026.09.02 18:42:28</span>
             </div>
           </div>
           <div class="panel-head-right">
             <div id="sleep-tools" style="display:flex;align-items:center;gap:4px;position:relative">
-              <select id="group-filter" onchange="setFilterGroup(this.value)" style="font-size:.72rem;font-weight:600;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 8px;cursor:pointer;font-family:inherit;max-width:140px"><option value="전체">📂 전체</option><option value="삼성화재pilot1">📁 삼성화재pilot1</option><option value="삼성화재pilot2">📁 삼성화재pilot2</option></select>
+              <select id="group-filter" onchange="setFilterGroup(this.value)" style="font-size:.72rem;font-weight:600;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 8px;cursor:pointer;font-family:inherit;max-width:140px"><option value="전체">📂 전체</option><option value="삼성화재pilot1">📁 삼성화재pilot1</option><option value="삼성화재pilot2">📁 삼성화재pilot2</option><option value="test">📁 test</option></select>
               <button onclick="toggleGroupInput()" id="btn-add-group" title="새 폴더 추가" style="background:var(--teal-light);border:none;color:var(--teal);border-radius:8px;padding:5px 9px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;line-height:1">+</button>
               <div id="group-input-popup" style="display:none;position:absolute;top:38px;right:0;background:var(--surface);border:1.5px solid var(--teal);border-radius:10px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,.13);z-index:200;flex-direction:column;gap:6px;min-width:190px">
                 <input id="group-input-val" type="text" placeholder="폴더 이름 입력" style="border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:.75rem;font-family:inherit;color:var(--text-1);outline:none;width:100%;box-sizing:border-box" oninput="this.style.borderColor='';var e=document.getElementById('group-input-err');if(e)e.textContent='';" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmGroupInput();}if(event.key==='Escape')closeGroupInput();">
@@ -1765,12 +1765,12 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
               </div>
             </div>
             <!-- 통합 내보내기 버튼 (모든 탭 공통) -->
-            <div id="unified-export-tools" style="display:flex;gap:4px">
-              <button class="btn-export" id="btn-export" onclick="exportCurrentExcel()" disabled="" style="background: rgb(92, 107, 192);">
+            <div id="unified-export-tools" style="display: flex; gap: 4px;">
+              <button class="btn-export" id="btn-export" onclick="exportCurrentExcel()" style="background: rgb(92, 107, 192);">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M2 10h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                 엑셀
               </button>
-              <button class="btn-export" id="btn-export-word" onclick="exportCurrentDocx()" disabled="" style="background:#1F4E79">
+              <button class="btn-export" id="btn-export-word" onclick="exportCurrentDocx()" style="background:#1F4E79">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M2 10h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                 워드
               </button>
@@ -1794,7 +1794,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <!-- ── 전체 테이블 ── -->
       <div id="data-panel-all" style="">
         <div class="table-scroll-top" id="tst-all">
-          <div class="table-scroll-top-inner" id="tst-all-inner" style="width: 1820px;"></div>
+          <div class="table-scroll-top-inner" id="tst-all-inner" style="width: 2011px;"></div>
         </div>
         <div class="table-scroll" id="tsc-all">
           <table class="data-table" id="all-table">
@@ -1830,7 +1830,172 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>스트레스</th><th>활력점수</th>
               </tr>
             </thead>
-            <tbody id="all-tbody"><tr id="empty-all-row"><td colspan="32"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">저장된 건강 기록이 없습니다</div><div class="empty-hint">각 탭에서 데이터를 입력하면 여기에 통합 표시됩니다</div></div></td></tr></tbody>
+            <tbody id="all-tbody"><tr style="cursor:pointer" onclick="openAllReport('2026-08-31','김달빛','45','여')" title="클릭하면 통합 건강 보고서가 열립니다">
+      <td>1</td>
+      <td>2026-08-31</td>
+      <td><strong>김달빛</strong></td>
+      <td>45</td>
+      <td>여</td>
+      <td style="font-size:.72rem">유방암</td>
+      <td style="font-size:.72rem">서지은</td>
+      <td style="font-size:.72rem">2기</td>
+      <td style="font-size:.72rem">2026-08-11</td>
+      <td style="font-size:.72rem">2026-08-18</td>
+      <td>34%</td>
+      <td>4</td>
+      <td>34%</td>
+      <td>4</td>
+      <td>34%</td>
+      <td>2</td>
+      <td>2분</td>
+      <td>32.6%</td>
+      <td>3</td>
+      <td>2분</td>
+      <td>-</td>
+      <td>- / -</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td style="font-weight:700">-</td>
+      <td>-</td>
+      <td style="font-size:.72rem">-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr><tr style="cursor:pointer" onclick="openAllReport('2026-08-31','김삼사','34','여')" title="클릭하면 통합 건강 보고서가 열립니다">
+      <td>2</td>
+      <td>2026-08-31</td>
+      <td><strong>김삼사</strong></td>
+      <td>34</td>
+      <td>여</td>
+      <td style="font-size:.72rem">유방암</td>
+      <td style="font-size:.72rem">서지은</td>
+      <td style="font-size:.72rem">1기</td>
+      <td style="font-size:.72rem">2026-09-15</td>
+      <td style="font-size:.72rem">2026-09-22</td>
+      <td>45%</td>
+      <td>2</td>
+      <td>45%</td>
+      <td>2</td>
+      <td>10%</td>
+      <td>1</td>
+      <td>7분</td>
+      <td>60%</td>
+      <td>5</td>
+      <td>20분</td>
+      <td>-</td>
+      <td>- / -</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td style="font-weight:700">-</td>
+      <td>-</td>
+      <td style="font-size:.72rem">-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr><tr style="cursor:pointer" onclick="openAllReport('2026-08-31','dd','43','여')" title="클릭하면 통합 건강 보고서가 열립니다">
+      <td>3</td>
+      <td>2026-08-31</td>
+      <td><strong>dd</strong></td>
+      <td>43</td>
+      <td>여</td>
+      <td style="font-size:.72rem">dd</td>
+      <td style="font-size:.72rem">dd</td>
+      <td style="font-size:.72rem">2기</td>
+      <td style="font-size:.72rem">-</td>
+      <td style="font-size:.72rem">-</td>
+      <td>11%</td>
+      <td>1</td>
+      <td>1%</td>
+      <td>1</td>
+      <td>0%</td>
+      <td>1</td>
+      <td>1분</td>
+      <td>0%</td>
+      <td>-</td>
+      <td>1분</td>
+      <td>-</td>
+      <td>- / -</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td style="font-weight:700">-</td>
+      <td>-</td>
+      <td style="font-size:.72rem">-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr><tr style="cursor:pointer" onclick="openAllReport('2026-09-01','김팔팔','85','여')" title="클릭하면 통합 건강 보고서가 열립니다">
+      <td>4</td>
+      <td>2026-09-01</td>
+      <td><strong>김팔팔</strong></td>
+      <td>85</td>
+      <td>여</td>
+      <td style="font-size:.72rem">유방암</td>
+      <td style="font-size:.72rem">서지은</td>
+      <td style="font-size:.72rem">1기</td>
+      <td style="font-size:.72rem">2026-08-26</td>
+      <td style="font-size:.72rem">2026-09-02</td>
+      <td>50%</td>
+      <td>2</td>
+      <td>50%</td>
+      <td>2</td>
+      <td>5%</td>
+      <td>0.5</td>
+      <td>5분</td>
+      <td>50%</td>
+      <td>4.5</td>
+      <td>5분</td>
+      <td>-</td>
+      <td>- / -</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td style="font-weight:700">-</td>
+      <td>-</td>
+      <td style="font-size:.72rem">-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr><tr style="cursor:pointer" onclick="openAllReport('2026-09-02','김삼십','30','여')" title="클릭하면 통합 건강 보고서가 열립니다">
+      <td>5</td>
+      <td>2026-09-02</td>
+      <td><strong>김삼십</strong></td>
+      <td>30</td>
+      <td>여</td>
+      <td style="font-size:.72rem">유방암</td>
+      <td style="font-size:.72rem">서지은</td>
+      <td style="font-size:.72rem">1기</td>
+      <td style="font-size:.72rem">2026-09-01</td>
+      <td style="font-size:.72rem">2026-09-08</td>
+      <td>30%</td>
+      <td>3</td>
+      <td>50%</td>
+      <td>5</td>
+      <td>20%</td>
+      <td>1:30</td>
+      <td>10분</td>
+      <td>70%</td>
+      <td>9:30</td>
+      <td>10분</td>
+      <td>70 BPM</td>
+      <td>130 / 90</td>
+      <td><span style="display:inline-block;padding:2px 7px;border-radius:20px;font-size:.65rem;font-weight:700;background:#1E9E5A;color:#fff">🟢 정상</span></td>
+      <td>95%</td>
+      <td><span style="display:inline-block;padding:2px 7px;border-radius:20px;font-size:.65rem;font-weight:700;background:#1E9E5A;color:#fff">🟢 정상</span></td>
+      <td>150 cm</td>
+      <td>70 kg</td>
+      <td style="font-weight:700">31.1</td>
+      <td><span style="font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:20px;background:rgba(248,113,113,.15);color:#f87171">고도비만</span></td>
+      <td style="font-size:.72rem">5일 / 28일주기</td>
+      <td><span style="font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(30,158,90,.12);color:#1E9E5A">🟢 휴식구간</span></td>
+      <td><span style="font-weight:800;color:#0E8FA3">70</span></td>
+    </tr></tbody>
           </table>
         </div>
       </div>
@@ -1868,18 +2033,153 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th></th>
               </tr>
             </thead>
-            <tbody id="records-tbody"><tr id="empty-record-row"><td colspan="20">
-      <div class="empty-state">
-        <div class="empty-icon">🌙</div>
-        <div class="empty-msg">저장된 수면 기록이 없습니다</div>
-        <div class="empty-hint">왼쪽 폰 화면에서 첫 번째 기록을 입력해 보세요</div>
-      </div></td></tr></tbody>
+            <tbody id="records-tbody">
+    <tr style="cursor:pointer" onclick="openSleepChart(0);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+      <td style="color:var(--text-3)">1</td>
+      <td>2026-09-02</td>
+      <td><strong>김삼십</strong></td>
+      <td>30</td>
+      <td>여</td>
+      <td>유방암</td>
+      <td>서지은</td>
+      <td>1기</td>
+      <td>2026-09-01</td>
+      <td>2026-09-08</td>
+      <td style="color:var(--teal)">30%</td>
+      <td>3</td>
+      <td>50%</td>
+      <td>5</td>
+      <td>20%</td>
+      <td>1:30</td>
+      <td>10</td>
+      <td style="color:var(--teal)">70%</td>
+      <td>9:30</td>
+      <td>10</td>
+      <td>-</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditRecord(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(0);event.stopPropagation()">×</button>
+      </td>
+    </tr>
+  
+    <tr style="cursor:pointer" onclick="openSleepChart(1);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+      <td style="color:var(--text-3)">2</td>
+      <td>2026-09-01</td>
+      <td><strong>김팔팔</strong></td>
+      <td>85</td>
+      <td>여</td>
+      <td>유방암</td>
+      <td>서지은</td>
+      <td>1기</td>
+      <td>2026-08-26</td>
+      <td>2026-09-02</td>
+      <td style="color:var(--teal)">50%</td>
+      <td>2</td>
+      <td>50%</td>
+      <td>2</td>
+      <td>5%</td>
+      <td>0.5</td>
+      <td>5</td>
+      <td style="color:var(--teal)">50%</td>
+      <td>4.5</td>
+      <td>5</td>
+      <td>-</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditRecord(1);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(1);event.stopPropagation()">×</button>
+      </td>
+    </tr>
+  
+    <tr style="cursor:pointer" onclick="openSleepChart(2);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+      <td style="color:var(--text-3)">3</td>
+      <td>2026-08-31</td>
+      <td><strong>김삼사</strong></td>
+      <td>34</td>
+      <td>여</td>
+      <td>유방암</td>
+      <td>서지은</td>
+      <td>1기</td>
+      <td>2026-09-15</td>
+      <td>2026-09-22</td>
+      <td style="color:var(--teal)">45%</td>
+      <td>2</td>
+      <td>45%</td>
+      <td>2</td>
+      <td>10%</td>
+      <td>1</td>
+      <td>7</td>
+      <td style="color:var(--teal)">60%</td>
+      <td>5</td>
+      <td>20</td>
+      <td>-</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditRecord(2);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(2);event.stopPropagation()">×</button>
+      </td>
+    </tr>
+  
+    <tr style="cursor:pointer" onclick="openSleepChart(3);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+      <td style="color:var(--text-3)">4</td>
+      <td>2026-08-31</td>
+      <td><strong>dd</strong></td>
+      <td>43</td>
+      <td>여</td>
+      <td>dd</td>
+      <td>dd</td>
+      <td>2기</td>
+      <td>-</td>
+      <td>-</td>
+      <td style="color:var(--teal)">11%</td>
+      <td>1</td>
+      <td>1%</td>
+      <td>1</td>
+      <td>0%</td>
+      <td>1</td>
+      <td>1</td>
+      <td style="color:var(--teal)">0%</td>
+      <td>-</td>
+      <td>1</td>
+      <td>-</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditRecord(3);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(3);event.stopPropagation()">×</button>
+      </td>
+    </tr>
+  
+    <tr style="cursor:pointer" onclick="openSleepChart(4);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+      <td style="color:var(--text-3)">5</td>
+      <td>2026-08-31</td>
+      <td><strong>김달빛</strong></td>
+      <td>45</td>
+      <td>여</td>
+      <td>유방암</td>
+      <td>서지은</td>
+      <td>2기</td>
+      <td>2026-08-11</td>
+      <td>2026-08-18</td>
+      <td style="color:var(--teal)">34%</td>
+      <td>4</td>
+      <td>34%</td>
+      <td>4</td>
+      <td>34%</td>
+      <td>2</td>
+      <td>2</td>
+      <td style="color:var(--teal)">32.6%</td>
+      <td>3</td>
+      <td>2</td>
+      <td>-</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditRecord(4);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(4);event.stopPropagation()">×</button>
+      </td>
+    </tr>
+  </tbody>
           </table>
         </div>
       </div>
 
       <!-- ── 심박수 테이블 ── -->
-      <div id="data-panel-heart" style="display:none">
+      <div id="data-panel-heart" style="display: none;">
         <div class="table-scroll">
           <table class="data-table" id="hr-table">
             <thead>
@@ -1896,13 +2196,28 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th></th>
               </tr>
             </thead>
-            <tbody id="hr-tbody"><tr id="empty-hr-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">❤️</div><div class="empty-msg">저장된 심박수 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 심박수를 선택 후 입력해 보세요</div></div></td></tr></tbody>
+            <tbody id="hr-tbody">
+    <tr>
+      <td>1</td>
+      <td>2026-09-02</td>
+      <td>김삼십</td>
+      <td>30</td>
+      <td>여</td>
+      <td>60-100</td>
+      <td>75 BPM</td>
+      <td>65 BPM</td>
+      <td>70 BPM</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditHR(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" onclick="deleteHeartRate(0)" title="삭제">×</button>
+      </td>
+    </tr></tbody>
           </table>
         </div>
       </div>
 
       <!-- ── 혈압 테이블 ── -->
-      <div id="data-panel-bp" style="display:none">
+      <div id="data-panel-bp" style="display: none;">
         <div class="table-scroll">
           <table class="data-table" id="bp-table">
             <thead>
@@ -1918,13 +2233,26 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th></th>
               </tr>
             </thead>
-            <tbody id="bp-tbody"><tr id="empty-bp-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🩸</div><div class="empty-msg">저장된 혈압 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈압을 선택 후 입력해 보세요</div></div></td></tr></tbody>
+            <tbody id="bp-tbody"><tr>
+      <td>1</td>
+      <td>2026-09-02</td>
+      <td>김삼십</td>
+      <td>30</td>
+      <td>여</td>
+      <td>130 mmHg</td>
+      <td>90 mmHg</td>
+      <td><span style="display:inline-block;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700;background:#1E9E5A;color:#fff">🟢 정상</span></td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditBP(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" onclick="deleteBloodPressure(0)" title="삭제">×</button>
+      </td>
+    </tr></tbody>
           </table>
         </div>
       </div>
 
       <!-- ── 혈중산소포화도 테이블 ── -->
-      <div id="data-panel-o2" style="display:none">
+      <div id="data-panel-o2" style="display: none;">
         <div class="table-scroll">
           <table class="data-table" id="o2-table">
             <thead>
@@ -1935,13 +2263,27 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>주간경고</th><th></th>
               </tr>
             </thead>
-            <tbody id="o2-tbody"><tr id="empty-o2-row"><td colspan="16"><div class="empty-state"><div class="empty-icon" style="font-size:1.4rem;font-weight:900">O₂</div><div class="empty-msg">저장된 혈중산소 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈중산소포화도를 선택 후 입력해 보세요</div></div></td></tr></tbody>
+            <tbody id="o2-tbody"><tr>
+      <td>1</td>
+      <td>2026-09-02</td>
+      <td>김삼십</td>
+      <td>30</td>
+      <td>여</td>
+      <td>95%</td>
+      <td><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.66rem;font-weight:700;background:#1E9E5A;color:#fff">🟢 정상</span></td>
+      <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+      <td><span style="color:var(--text-3);font-size:.68rem">—</span></td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditO2(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" onclick="deleteOxygen(0)" title="삭제">×</button>
+      </td>
+    </tr></tbody>
           </table>
         </div>
       </div>
 
       <!-- ── 체중 테이블 ── -->
-      <div id="data-panel-weight" style="display:none">
+      <div id="data-panel-weight" style="display: none;">
         <div class="table-scroll">
           <table class="data-table" id="weight-table">
             <thead>
@@ -1949,13 +2291,27 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th><th>키 (cm)</th><th>체중 (kg)</th><th>BMI</th><th>비만도</th><th></th>
               </tr>
             </thead>
-            <tbody id="weight-tbody"><tr id="empty-weight-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-msg">저장된 체중 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 체중을 선택 후 입력해 보세요</div></div></td></tr></tbody>
+            <tbody id="weight-tbody"><tr>
+      <td>1</td>
+      <td>2026-09-02</td>
+      <td>김삼십</td>
+      <td>30</td>
+      <td>여</td>
+      <td>150 cm</td>
+      <td>70 kg</td>
+      <td style="font-weight:700;color:#f87171">31.1</td>
+      <td><span style="font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(248,113,113,.15);color:#f87171">고도비만</span></td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditWeight(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" onclick="deleteWeight(0)" title="삭제">×</button>
+      </td>
+    </tr></tbody>
           </table>
         </div>
       </div>
 
       <!-- ── 여성건강 테이블 ── -->
-      <div id="data-panel-womens" style="display:none">
+      <div id="data-panel-womens" style="display: none;">
         <div class="table-scroll">
           <table class="data-table" id="womens-table">
             <thead>
@@ -1964,21 +2320,26 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>생리기간(일)</th><th>주기길이(일)</th><th>마지막 생리일</th><th>예측 다음 생리일</th><th></th>
               </tr>
             </thead>
-            <tbody id="womens-tbody">
-              <tr id="empty-womens-row">
-                <td colspan="10"><div class="empty-state">
-                  <div class="empty-icon">🌸</div>
-                  <div class="empty-msg">저장된 여성건강 기록이 없습니다</div>
-                  <div class="empty-hint">왼쪽 폰 화면에서 여성건강을 선택 후 입력해 보세요</div>
-                </div></td>
-              </tr>
-            </tbody>
+            <tbody id="womens-tbody"><tr>
+    <td>1</td>
+    <td>2026-09-02</td>
+    <td>김삼십</td>
+    <td>30</td>
+    <td>여</td>
+    <td>5일</td>
+    <td>28일</td>
+    <td>2026-09-01</td>
+    <td style="font-weight:700;color:var(--teal)">2026-09-29</td>
+    <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+      <button class="del-btn" onclick="deleteWomensHealth(0)" title="삭제">×</button>
+    </td>
+  </tr></tbody>
           </table>
         </div>
       </div>
 
       <!-- ── 스트레스·활력점수 테이블 ── -->
-      <div id="data-panel-stress" style="display:none">
+      <div id="data-panel-stress" style="display: none;">
         <div class="table-scroll">
           <table class="data-table" id="stress-table">
             <thead>
@@ -1987,15 +2348,18 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>스트레스 상태</th><th>활력점수</th><th></th>
               </tr>
             </thead>
-            <tbody id="stress-tbody">
-              <tr id="empty-stress-row">
-                <td colspan="8"><div class="empty-state">
-                  <div class="empty-icon">🧠⚡</div>
-                  <div class="empty-msg">저장된 스트레스·활력 기록이 없습니다</div>
-                  <div class="empty-hint">왼쪽 폰 화면에서 스트레스·활력을 선택 후 입력해 보세요</div>
-                </div></td>
-              </tr>
-            </tbody>
+            <tbody id="stress-tbody"><tr>
+      <td>1</td>
+      <td>2026-09-02</td>
+      <td>김삼십</td>
+      <td>30</td>
+      <td>여</td>
+      <td><span style="display:inline-flex;align-items:center;gap:4px;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:20px;background:rgba(30,158,90,.12);color:#1E9E5A">🟢 휴식구간</span></td>
+      <td><span style="font-size:.95rem;font-weight:800;color:#0E8FA3">70</span></td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" onclick="deleteStressVital(0)" title="삭제">×</button>
+      </td>
+    </tr></tbody>
           </table>
         </div>
       </div>
@@ -2120,7 +2484,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <td style="color:var(--text-2)">2026-08-26</td>
       <td style="color:var(--text-2)">2026-09-02</td>
       <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">참여자_19</td>
     </tr><tr>
       <td><strong>DEV-05</strong></td>
       <td>샤오미밴드-05</td>
@@ -2128,7 +2492,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <td style="color:var(--text-2)">2026-08-28</td>
       <td style="color:var(--text-2)">2026-09-04</td>
       <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">참여자_20</td>
     </tr><tr>
       <td><strong>DEV-06</strong></td>
       <td>샤오미밴드-06</td>
@@ -2494,131 +2858,131 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <td><span class="badge badge-neutral">대기 중</span></td>
       <td><input class="edit-input" value="일정미정" placeholder="-" onchange="updateP(17,'note',this.value)" style="max-width:100px"></td>
     </tr><tr>
-      <td><span class="log-tag">P-021</span></td>
-      <td><input class="edit-input" value="이양상" placeholder="이름" onchange="updateP(18,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td><span class="log-tag">P-019</span></td>
+      <td><input class="edit-input" value="참여자_19" placeholder="이름" onchange="updateP(18,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
       <td>
         <select class="edit-select" onchange="updateP(18,'device',this.value)">
+          <option value="">-</option>
+          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04" selected="">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
+        </select>
+      </td>
+      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(18,'start',this.value)"></td>
+      <td style="color:var(--text-2)">2026-09-16</td>
+      <td><input class="edit-input" type="date" value="" onchange="updateP(18,'done',this.value)"></td>
+      <td><span class="badge badge-neutral">대기 중</span></td>
+      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(18,'note',this.value)" style="max-width:100px"></td>
+    </tr><tr>
+      <td><span class="log-tag">P-020</span></td>
+      <td><input class="edit-input" value="참여자_20" placeholder="이름" onchange="updateP(19,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td>
+        <select class="edit-select" onchange="updateP(19,'device',this.value)">
+          <option value="">-</option>
+          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05" selected="">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
+        </select>
+      </td>
+      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(19,'start',this.value)"></td>
+      <td style="color:var(--text-2)">2026-09-16</td>
+      <td><input class="edit-input" type="date" value="" onchange="updateP(19,'done',this.value)"></td>
+      <td><span class="badge badge-neutral">대기 중</span></td>
+      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(19,'note',this.value)" style="max-width:100px"></td>
+    </tr><tr>
+      <td><span class="log-tag">P-021</span></td>
+      <td><input class="edit-input" value="이양상" placeholder="이름" onchange="updateP(20,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td>
+        <select class="edit-select" onchange="updateP(20,'device',this.value)">
           <option value="">-</option>
           <option value="DEV-01">DEV-01</option><option value="DEV-02" selected="">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
         </select>
       </td>
-      <td><input class="edit-input" type="date" value="2026-08-27" onchange="updateP(18,'start',this.value)"></td>
+      <td><input class="edit-input" type="date" value="2026-08-27" onchange="updateP(20,'start',this.value)"></td>
       <td style="color:var(--text-2)">2026-09-03</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(18,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(18,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-022</span></td>
-      <td><input class="edit-input" value="김창일" placeholder="이름" onchange="updateP(19,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(19,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03" selected="">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(19,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(19,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(19,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-023</span></td>
-      <td><input class="edit-input" value="안인섭" placeholder="이름" onchange="updateP(20,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(20,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01" selected="">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(20,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-08</td>
       <td><input class="edit-input" type="date" value="" onchange="updateP(20,'done',this.value)"></td>
       <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
       <td><input class="edit-input" value="" placeholder="-" onchange="updateP(20,'note',this.value)" style="max-width:100px"></td>
     </tr><tr>
-      <td><span class="log-tag">P-024</span></td>
-      <td><input class="edit-input" value="고재수" placeholder="이름" onchange="updateP(21,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td><span class="log-tag">P-022</span></td>
+      <td><input class="edit-input" value="김창일" placeholder="이름" onchange="updateP(21,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
       <td>
         <select class="edit-select" onchange="updateP(21,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02" selected="">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-08" onchange="updateP(21,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-15</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(21,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(21,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-025</span></td>
-      <td><input class="edit-input" value="어운용" placeholder="이름" onchange="updateP(22,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(22,'device',this.value)">
           <option value="">-</option>
           <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03" selected="">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
         </select>
       </td>
-      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(22,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-16</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(22,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(22,'note',this.value)" style="max-width:100px"></td>
+      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(21,'start',this.value)"></td>
+      <td style="color:var(--text-2)">2026-09-08</td>
+      <td><input class="edit-input" type="date" value="" onchange="updateP(21,'done',this.value)"></td>
+      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
+      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(21,'note',this.value)" style="max-width:100px"></td>
     </tr><tr>
-      <td><span class="log-tag">P-026</span></td>
-      <td><input class="edit-input" value="한기덕" placeholder="이름" onchange="updateP(23,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td><span class="log-tag">P-023</span></td>
+      <td><input class="edit-input" value="안인섭" placeholder="이름" onchange="updateP(22,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
       <td>
-        <select class="edit-select" onchange="updateP(23,'device',this.value)">
+        <select class="edit-select" onchange="updateP(22,'device',this.value)">
           <option value="">-</option>
           <option value="DEV-01" selected="">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
         </select>
       </td>
-      <td><input class="edit-input" type="date" value="2026-09-11" onchange="updateP(23,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-18</td>
+      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(22,'start',this.value)"></td>
+      <td style="color:var(--text-2)">2026-09-08</td>
+      <td><input class="edit-input" type="date" value="" onchange="updateP(22,'done',this.value)"></td>
+      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
+      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(22,'note',this.value)" style="max-width:100px"></td>
+    </tr><tr>
+      <td><span class="log-tag">P-024</span></td>
+      <td><input class="edit-input" value="고재수" placeholder="이름" onchange="updateP(23,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td>
+        <select class="edit-select" onchange="updateP(23,'device',this.value)">
+          <option value="">-</option>
+          <option value="DEV-01">DEV-01</option><option value="DEV-02" selected="">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
+        </select>
+      </td>
+      <td><input class="edit-input" type="date" value="2026-09-08" onchange="updateP(23,'start',this.value)"></td>
+      <td style="color:var(--text-2)">2026-09-15</td>
       <td><input class="edit-input" type="date" value="" onchange="updateP(23,'done',this.value)"></td>
       <td><span class="badge badge-neutral">대기 중</span></td>
       <td><input class="edit-input" value="" placeholder="-" onchange="updateP(23,'note',this.value)" style="max-width:100px"></td>
     </tr><tr>
-      <td><span class="log-tag">P-027</span></td>
-      <td><input class="edit-input" value="전계찬" placeholder="이름" onchange="updateP(24,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td><span class="log-tag">P-025</span></td>
+      <td><input class="edit-input" value="어운용" placeholder="이름" onchange="updateP(24,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
       <td>
         <select class="edit-select" onchange="updateP(24,'device',this.value)">
           <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12" selected="">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
+          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03" selected="">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
         </select>
       </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(24,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
+      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(24,'start',this.value)"></td>
+      <td style="color:var(--text-2)">2026-09-16</td>
       <td><input class="edit-input" type="date" value="" onchange="updateP(24,'done',this.value)"></td>
       <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="일정미정" placeholder="-" onchange="updateP(24,'note',this.value)" style="max-width:100px"></td>
+      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(24,'note',this.value)" style="max-width:100px"></td>
     </tr><tr>
-      <td><span class="log-tag">P-019</span></td>
-      <td><input class="edit-input" value="추가참여자_19" placeholder="이름" onchange="updateP(25,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td><span class="log-tag">P-026</span></td>
+      <td><input class="edit-input" value="한기덕" placeholder="이름" onchange="updateP(25,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
       <td>
         <select class="edit-select" onchange="updateP(25,'device',this.value)">
           <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
+          <option value="DEV-01" selected="">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
         </select>
       </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(25,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
+      <td><input class="edit-input" type="date" value="2026-09-11" onchange="updateP(25,'start',this.value)"></td>
+      <td style="color:var(--text-2)">2026-09-18</td>
       <td><input class="edit-input" type="date" value="" onchange="updateP(25,'done',this.value)"></td>
       <td><span class="badge badge-neutral">대기 중</span></td>
       <td><input class="edit-input" value="" placeholder="-" onchange="updateP(25,'note',this.value)" style="max-width:100px"></td>
     </tr><tr>
-      <td><span class="log-tag">P-020</span></td>
-      <td><input class="edit-input" value="추가참여자_20" placeholder="이름" onchange="updateP(26,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
+      <td><span class="log-tag">P-027</span></td>
+      <td><input class="edit-input" value="전계찬" placeholder="이름" onchange="updateP(26,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
       <td>
         <select class="edit-select" onchange="updateP(26,'device',this.value)">
           <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
+          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12" selected="">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
         </select>
       </td>
       <td><input class="edit-input" type="date" value="" onchange="updateP(26,'start',this.value)"></td>
       <td style="color:var(--text-2)">-</td>
       <td><input class="edit-input" type="date" value="" onchange="updateP(26,'done',this.value)"></td>
       <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(26,'note',this.value)" style="max-width:100px"></td>
+      <td><input class="edit-input" value="일정미정" placeholder="-" onchange="updateP(26,'note',this.value)" style="max-width:100px"></td>
     </tr><tr>
       <td><span class="log-tag">P-028</span></td>
       <td><input class="edit-input" value="추가참여자_28" placeholder="이름" onchange="updateP(27,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
@@ -3245,6 +3609,306 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
           </tr>
         </thead>
         <tbody id="_hm_log_tbody"><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">394</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:34</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">393</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:33</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">스트레스·활력 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">392</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:33</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">여성건강 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">391</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:33</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">체중 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">390</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:32</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈중산소 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">389</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:31</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈압 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">388</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:31</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">심박수 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">387</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:30</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">수면 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">386</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:27</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">385</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:42:25</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">384</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:30</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">383</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:29</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">스트레스·활력 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">382</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:29</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">여성건강 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">381</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:29</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">체중 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">380</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:28</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈중산소 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">379</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:28</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈압 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">378</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:28</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">심박수 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">377</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:27</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">수면 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">376</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:22</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">375</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:20</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">374</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:02</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">373</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:02</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">심박수 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">372</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:40:02</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">수면 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">371</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:39:57</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">불러오기</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">JSON 복원 · 파일:힐마루케어_전체백업_20260902.json</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">370</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:39:31</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">369</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:38:03</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">368</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:38:02</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">스트레스·활력 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">367</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:38:02</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">여성건강 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">366</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:38:01</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">체중 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">365</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:38:01</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈중산소 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">364</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:38:00</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈압 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">363</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:38:00</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">심박수 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">362</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:37:52</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">361</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:37:49</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">360</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:37:14</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">359</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:37:09</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">수면 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">358</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:36:07</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">357</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:36:02</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">356</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:33:14</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">103.196.9.11</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">355</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:50</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">354</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:49</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">스트레스·활력 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">353</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:49</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">여성건강 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">352</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:48</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">체중 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">351</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:48</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈중산소 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">350</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:48</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">혈압 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">349</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:47</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">심박수 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">348</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:46</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">수면 탭</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">347</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:45</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">346</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:32:41</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">345</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:31:56</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">앱저장</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">힐마루케어수면관리 앱 다운로드</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
         <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">344</td>
         <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:30:57</span></td>
         <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
@@ -5540,7 +6204,7 @@ function _getRecordGroup(r){
 /* ═══════════════════════════════════════
    DEV LOG SYSTEM (hidden)
 ═══════════════════════════════════════ */
-const APP_VER     = '5.43';
+const APP_VER     = '5.46';
 const _HM_LOG_KEY = '_hm_ev';
 const _HM_PW      = 'rudckf@8899';
 let   _hmCachedIp = '확인 중…';
@@ -5742,30 +6406,21 @@ async function syncToSheet(){
       if(payload.length > 45000){
         console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
       }
-      // no-cors POST (GAS는 simple request preflight 불필요, 응답은 못 읽음)
-      await fetch(GS_URL, {
+      // POST — GAS simple request(urlencoded)는 CORS preflight 불필요, 응답 직접 확인
+      const postRes = await fetch(GS_URL, {
         method : 'POST',
-        mode   : 'no-cors',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body   : 'data=' + encodeURIComponent(payload)
       });
-      // POST 후 GET으로 실제 저장 여부 확인
-      await new Promise(r => setTimeout(r, 1500));
-      const verifyRes = await fetch(GS_URL, { redirect: 'follow' });
-      const verifyData = await verifyRes.json();
-      const sheetCount = (verifyData.sleepRecords || []).length + (verifyData.heartRateRecords || []).length;
-      const localCount = sleepNoImg.length + heartRateRecords.length;
-      if(sheetCount >= localCount){
+      const postData = await postRes.json();
+      if(postData.status === 'ok'){
         const now = new Date();
         const hh=String(now.getHours()).padStart(2,'0');
         const mi=String(now.getMinutes()).padStart(2,'0');
         setGsStatus('ok', `☁ 저장됨 ${hh}:${mi}`);
         setTimeout(()=>setGsStatus('idle','☁ Google Sheets'), 4000);
       } else {
-        console.warn('syncToSheet: 저장 확인 실패 — 시트 수:', sheetCount, '/ 로컬 수:', localCount);
-        setGsStatus('fail', '⚠ 동기화 실패 — 재시도 중');
-        // 3초 후 재시도 1회
-        setTimeout(()=> syncToSheet(), 3000);
+        throw new Error('GAS 응답 오류: ' + JSON.stringify(postData));
       }
     }catch(err){
       console.warn('구글 시트 저장 실패:', err.message);
@@ -6117,13 +6772,15 @@ function renderAllRecords(){
   if(_allBadge) _allBadge.textContent = map.size + '건';
 
   if(map.size === 0){
-    tbody.innerHTML = `<tr id="empty-all-row"><td colspan="32"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">저장된 건강 기록이 없습니다</div><div class="empty-hint">각 탭에서 데이터를 입력하면 여기에 통합 표시됩니다</div></div></td></tr>`;
+    const tscAll = document.getElementById('tsc-all');
+    const cw = tscAll ? tscAll.clientWidth : 600;
+    tbody.innerHTML = `<tr id="empty-all-row"><td colspan="32" style="padding:0;border:none"><div class="empty-state" style="position:sticky;left:0;width:${cw}px"><div class="empty-icon">📋</div><div class="empty-msg">저장된 건강 기록이 없습니다</div><div class="empty-hint">각 탭에서 데이터를 입력하면 여기에 통합 표시됩니다</div></div></td></tr>`;
     return;
   }
 
-  // 날짜 내림차순 → 같은 날짜면 이름순
+  // 날짜 오름차순 → 같은 날짜면 이름순
   const rows = [...map.values()].sort((a,b)=>{
-    if(b.date !== a.date) return b.date > a.date ? 1 : -1;
+    if(a.date !== b.date) return a.date > b.date ? 1 : -1;
     return a.name.localeCompare(b.name, 'ko');
   });
 

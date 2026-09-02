@@ -1164,12 +1164,12 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <span class="brand-name">힐마루케어</span>
       <span class="brand-sub">시니어케어, 건강관리케어</span>
     </div>
-    <span id="app-version-badge" style="font-size:.55rem;font-weight:700;background:rgba(14,143,163,.25);color:#5CC8B8;padding:2px 7px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;">v5.38</span>
+    <span id="app-version-badge" style="font-size:.55rem;font-weight:700;background:rgba(14,143,163,.25);color:#5CC8B8;padding:2px 7px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;">v5.41</span>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem">
-    <div id="gs-sync-badge" class="gs-sync-badge idle">
+    <div id="gs-sync-badge" class="gs-sync-badge ok">
       <div class="gs-sync-dot"></div>
-      <span id="gs-sync-text">☁ Google Sheets</span>
+      <span id="gs-sync-text">☁ 저장됨 18:24</span>
     </div>
     <div style="display:flex;gap:.35rem;align-items:center">
       <button onclick="openGuide()" title="고객가이드 보기" style="background:rgba(255,200,50,.18);border:1px solid rgba(255,200,50,.3);color:rgba(255,220,100,.95);border-radius:8px;padding:5px 11px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s" onmouseover="this.style.background='rgba(255,200,50,.28)'" onmouseout="this.style.background='rgba(255,200,50,.18)'">
@@ -1206,7 +1206,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
             <!-- Status Bar -->
             <div class="phone-statusbar">
-              <span id="sb-time" style="min-width:28px">18:20</span>
+              <span id="sb-time" style="min-width:28px">18:24</span>
               <div class="sb-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
             </div>
 
@@ -1308,7 +1308,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
             <!-- Status Bar -->
             <div class="phone-statusbar">
-              <span style="min-width:28px" id="sb-time2">18:20</span>
+              <span style="min-width:28px" id="sb-time2">18:24</span>
               <div class="sb-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
             </div>
 
@@ -1748,7 +1748,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
             <span class="record-badge" id="record-count-badge">5건</span>
             <div class="save-status" id="save-status">
               <div class="save-status-dot"></div>
-              <span id="save-status-text">자동저장됨 · 2026.09.02 18:20:13</span>
+              <span id="save-status-text">자동저장됨 · 2026.09.02 18:24:45</span>
             </div>
           </div>
           <div class="panel-head-right">
@@ -1879,59 +1879,59 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
               </tr>
             </thead>
             <tbody id="records-tbody">
-    <tr style="cursor:pointer" onclick="openSleepChart(4);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+    <tr style="cursor:pointer" onclick="openSleepChart(0);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
       <td style="color:var(--text-3)">1</td>
-      <td>2026-08-31</td>
-      <td><strong>김달빛</strong></td>
-      <td>45</td>
+      <td>2026-09-02</td>
+      <td><strong>김삼십</strong></td>
+      <td>30</td>
       <td>여</td>
       <td>유방암</td>
       <td>서지은</td>
-      <td>2기</td>
-      <td>2026-08-11</td>
-      <td>2026-08-18</td>
-      <td style="color:var(--teal)">34%</td>
-      <td>4</td>
-      <td>34%</td>
-      <td>4</td>
-      <td>34%</td>
-      <td>2</td>
-      <td>2</td>
-      <td style="color:var(--teal)">32.6%</td>
+      <td>1기</td>
+      <td>2026-09-01</td>
+      <td>2026-09-08</td>
+      <td style="color:var(--teal)">30%</td>
       <td>3</td>
-      <td>2</td>
+      <td>50%</td>
+      <td>5</td>
+      <td>20%</td>
+      <td>1:30</td>
+      <td>10</td>
+      <td style="color:var(--teal)">70%</td>
+      <td>9:30</td>
+      <td>10</td>
       <td>-</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditRecord(4);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" title="삭제" onclick="deleteRecord(4);event.stopPropagation()">×</button>
+        <button class="del-btn" title="수정" onclick="openEditRecord(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(0);event.stopPropagation()">×</button>
       </td>
     </tr>
   
-    <tr style="cursor:pointer" onclick="openSleepChart(3);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+    <tr style="cursor:pointer" onclick="openSleepChart(1);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
       <td style="color:var(--text-3)">2</td>
-      <td>2026-08-31</td>
-      <td><strong>dd</strong></td>
-      <td>43</td>
+      <td>2026-09-01</td>
+      <td><strong>김팔팔</strong></td>
+      <td>85</td>
       <td>여</td>
-      <td>dd</td>
-      <td>dd</td>
-      <td>2기</td>
-      <td>-</td>
-      <td>-</td>
-      <td style="color:var(--teal)">11%</td>
-      <td>1</td>
-      <td>1%</td>
-      <td>1</td>
-      <td>0%</td>
-      <td>1</td>
-      <td>1</td>
-      <td style="color:var(--teal)">0%</td>
-      <td>-</td>
-      <td>1</td>
+      <td>유방암</td>
+      <td>서지은</td>
+      <td>1기</td>
+      <td>2026-08-26</td>
+      <td>2026-09-02</td>
+      <td style="color:var(--teal)">50%</td>
+      <td>2</td>
+      <td>50%</td>
+      <td>2</td>
+      <td>5%</td>
+      <td>0.5</td>
+      <td>5</td>
+      <td style="color:var(--teal)">50%</td>
+      <td>4.5</td>
+      <td>5</td>
       <td>-</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditRecord(3);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" title="삭제" onclick="deleteRecord(3);event.stopPropagation()">×</button>
+        <button class="del-btn" title="수정" onclick="openEditRecord(1);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(1);event.stopPropagation()">×</button>
       </td>
     </tr>
   
@@ -1963,59 +1963,59 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       </td>
     </tr>
   
-    <tr style="cursor:pointer" onclick="openSleepChart(1);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+    <tr style="cursor:pointer" onclick="openSleepChart(3);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
       <td style="color:var(--text-3)">4</td>
-      <td>2026-09-01</td>
-      <td><strong>김팔팔</strong></td>
-      <td>85</td>
+      <td>2026-08-31</td>
+      <td><strong>dd</strong></td>
+      <td>43</td>
       <td>여</td>
-      <td>유방암</td>
-      <td>서지은</td>
-      <td>1기</td>
-      <td>2026-08-26</td>
-      <td>2026-09-02</td>
-      <td style="color:var(--teal)">50%</td>
-      <td>2</td>
-      <td>50%</td>
-      <td>2</td>
-      <td>5%</td>
-      <td>0.5</td>
-      <td>5</td>
-      <td style="color:var(--teal)">50%</td>
-      <td>4.5</td>
-      <td>5</td>
+      <td>dd</td>
+      <td>dd</td>
+      <td>2기</td>
+      <td>-</td>
+      <td>-</td>
+      <td style="color:var(--teal)">11%</td>
+      <td>1</td>
+      <td>1%</td>
+      <td>1</td>
+      <td>0%</td>
+      <td>1</td>
+      <td>1</td>
+      <td style="color:var(--teal)">0%</td>
+      <td>-</td>
+      <td>1</td>
       <td>-</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditRecord(1);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" title="삭제" onclick="deleteRecord(1);event.stopPropagation()">×</button>
+        <button class="del-btn" title="수정" onclick="openEditRecord(3);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(3);event.stopPropagation()">×</button>
       </td>
     </tr>
   
-    <tr style="cursor:pointer" onclick="openSleepChart(0);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
+    <tr style="cursor:pointer" onclick="openSleepChart(4);event.stopPropagation&amp;&amp;event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
       <td style="color:var(--text-3)">5</td>
-      <td>2026-09-02</td>
-      <td><strong>김삼십</strong></td>
-      <td>30</td>
+      <td>2026-08-31</td>
+      <td><strong>김달빛</strong></td>
+      <td>45</td>
       <td>여</td>
       <td>유방암</td>
       <td>서지은</td>
-      <td>1기</td>
-      <td>2026-09-01</td>
-      <td>2026-09-08</td>
-      <td style="color:var(--teal)">30%</td>
+      <td>2기</td>
+      <td>2026-08-11</td>
+      <td>2026-08-18</td>
+      <td style="color:var(--teal)">34%</td>
+      <td>4</td>
+      <td>34%</td>
+      <td>4</td>
+      <td>34%</td>
+      <td>2</td>
+      <td>2</td>
+      <td style="color:var(--teal)">32.6%</td>
       <td>3</td>
-      <td>50%</td>
-      <td>5</td>
-      <td>20%</td>
-      <td>1:30</td>
-      <td>10</td>
-      <td style="color:var(--teal)">70%</td>
-      <td>9:30</td>
-      <td>10</td>
+      <td>2</td>
       <td>-</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditRecord(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" title="삭제" onclick="deleteRecord(0);event.stopPropagation()">×</button>
+        <button class="del-btn" title="수정" onclick="openEditRecord(4);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        <button class="del-btn" title="삭제" onclick="deleteRecord(4);event.stopPropagation()">×</button>
       </td>
     </tr>
   </tbody>
@@ -3403,7 +3403,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
      ALL HEALTH REPORT MODAL (통합 보고서)
 ═══════════════════════════════════════ -->
 <!-- ═══ DEV AUTH MODAL (hidden) ═══ -->
-<div id="_hm_auth_modal" style="display: none; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.55); z-index: 99999; align-items: center; justify-content: center;" onclick="if(event.target===this)_hmCloseAuth()">
+<div id="_hm_auth_modal" style="display: none; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.55); z-index: 99999; align-items: center; justify-content: center;" onclick="if(event.target===this)_hmCloseAuth()" hidden="">
   <div style="background:#0f2035;border:1px solid rgba(14,143,163,.3);border-radius:14px;padding:28px 32px;min-width:280px;max-width:340px;box-shadow:0 8px 40px rgba(0,0,0,.6)">
     <div style="color:rgba(255,255,255,.35);font-size:.65rem;letter-spacing:.08em;margin-bottom:14px;text-align:center;text-transform:uppercase">시스템 접근</div>
     <input id="_hm_pw_input" type="password" placeholder="••••••••••" autocomplete="off" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:9px 12px;color:#fff;font-size:.85rem;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')_hmSubmitAuth()" oninput="document.getElementById('_hm_pw_err').style.display='none'">
@@ -3446,6 +3446,30 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
           </tr>
         </thead>
         <tbody id="_hm_log_tbody"><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">334</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:24:43</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">333</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:21:09</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">탭전환</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">전체 탭</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">332</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:21:07</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">331</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:20:25</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">앱저장</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">힐마루케어수면관리 앱 다운로드</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
         <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">330</td>
         <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 06:20:10</span></td>
         <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
@@ -5657,7 +5681,7 @@ function _getRecordGroup(r){
 /* ═══════════════════════════════════════
    DEV LOG SYSTEM (hidden)
 ═══════════════════════════════════════ */
-const APP_VER     = '5.38';
+const APP_VER     = '5.41';
 const _HM_LOG_KEY = '_hm_ev';
 const _HM_PW      = 'rudckf@8899';
 let   _hmCachedIp = '확인 중…';
@@ -5696,13 +5720,17 @@ function _hmDevClick() {
     clearTimeout(_hmDevClickTimer);
     document.getElementById('_hm_pw_input').value = '';
     document.getElementById('_hm_pw_err').style.display = 'none';
-    document.getElementById('_hm_auth_modal').style.display = 'flex';
+    const am = document.getElementById('_hm_auth_modal');
+    am.removeAttribute('hidden');
+    am.style.display = 'flex';
     setTimeout(() => document.getElementById('_hm_pw_input').focus(), 80);
   }
 }
 
 function _hmCloseAuth() {
-  document.getElementById('_hm_auth_modal').style.display = 'none';
+  const am = document.getElementById('_hm_auth_modal');
+  am.style.display = 'none';
+  am.setAttribute('hidden', '');
 }
 
 function _hmSubmitAuth() {
@@ -8640,7 +8668,7 @@ function renderRecords(){
       </div></td></tr>`;
     return;
   }
-  const displayList = filtered.slice().reverse();
+  const displayList = filtered;
   tbody.innerHTML = displayList.map(({r,i},j)=>`
     <tr style="cursor:pointer" onclick="openSleepChart(${i});event.stopPropagation&&event.stopPropagation()" title="클릭하면 수면 그래프가 열립니다">
       <td style="color:var(--text-3)">${j+1}</td>

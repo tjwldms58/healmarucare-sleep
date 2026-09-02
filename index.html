@@ -1161,7 +1161,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <span class="brand-name">힐마루케어</span>
       <span class="brand-sub">시니어케어, 건강관리케어</span>
     </div>
-    <span id="app-version-badge" style="font-size:.55rem;font-weight:700;background:rgba(14,143,163,.25);color:#5CC8B8;padding:2px 7px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;">v5.31</span>
+    <span id="app-version-badge" style="font-size:.55rem;font-weight:700;background:rgba(14,143,163,.25);color:#5CC8B8;padding:2px 7px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;">v5.32</span>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem">
     <div id="gs-sync-badge" class="gs-sync-badge idle">
@@ -1203,7 +1203,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
             <!-- Status Bar -->
             <div class="phone-statusbar">
-              <span id="sb-time" style="min-width:28px">17:11</span>
+              <span id="sb-time" style="min-width:28px">17:26</span>
               <div class="sb-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
             </div>
 
@@ -1305,7 +1305,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
             <!-- Status Bar -->
             <div class="phone-statusbar">
-              <span style="min-width:28px" id="sb-time2">17:11</span>
+              <span style="min-width:28px" id="sb-time2">17:26</span>
               <div class="sb-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
             </div>
 
@@ -1745,7 +1745,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
             <span class="record-badge" id="record-count-badge">4건</span>
             <div class="save-status" id="save-status">
               <div class="save-status-dot"></div>
-              <span id="save-status-text">자동저장됨 · 2026.09.02 17:11:41</span>
+              <span id="save-status-text">자동저장됨 · 2026.09.02 17:26:43</span>
             </div>
           </div>
           <div class="panel-head-right">
@@ -2010,22 +2010,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th></th>
               </tr>
             </thead>
-            <tbody id="hr-tbody">
-    <tr>
-      <td>1</td>
-      <td>2026-08-31</td>
-      <td>김달빛</td>
-      <td>45</td>
-      <td>여</td>
-      <td>60-110</td>
-      <td>78 BPM</td>
-      <td>60 BPM</td>
-      <td>75 BPM</td>
-      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditHR(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteHeartRate(0)" title="삭제">×</button>
-      </td>
-    </tr></tbody>
+            <tbody id="hr-tbody"><tr id="empty-hr-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">❤️</div><div class="empty-msg">저장된 심박수 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 심박수를 선택 후 입력해 보세요</div></div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -2047,20 +2032,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th></th>
               </tr>
             </thead>
-            <tbody id="bp-tbody"><tr>
-      <td>1</td>
-      <td>2026-08-31</td>
-      <td>김달빛</td>
-      <td>45</td>
-      <td>여</td>
-      <td>140 mmHg</td>
-      <td>90 mmHg</td>
-      <td><span style="display:inline-block;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700;background:#C83535;color:#fff">🔴 고혈압</span></td>
-      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditBP(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteBloodPressure(0)" title="삭제">×</button>
-      </td>
-    </tr></tbody>
+            <tbody id="bp-tbody"><tr id="empty-bp-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🩸</div><div class="empty-msg">저장된 혈압 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈압을 선택 후 입력해 보세요</div></div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -2077,21 +2049,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>주간경고</th><th></th>
               </tr>
             </thead>
-            <tbody id="o2-tbody"><tr>
-      <td>1</td>
-      <td>2026-08-31</td>
-      <td>김달빛</td>
-      <td>45</td>
-      <td>여</td>
-      <td>95%</td>
-      <td><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.66rem;font-weight:700;background:#1E9E5A;color:#fff">🟢 정상</span></td>
-      <td style="color:#F0A930;font-weight:700">90%</td><td style="color:#F0A930;font-weight:700">90%</td><td style="color:#1E9E5A;font-weight:700">95%</td><td style="color:#1E9E5A;font-weight:700">100%</td><td style="color:#1E9E5A;font-weight:700">100%</td><td style="color:#1E9E5A;font-weight:700">97%</td><td style="color:#F0A930;font-weight:700">90%</td>
-      <td><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.64rem;font-weight:700;background:#C83535;color:#fff">🏥 병원 방문 권고</span></td>
-      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditO2(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteOxygen(0)" title="삭제">×</button>
-      </td>
-    </tr></tbody>
+            <tbody id="o2-tbody"><tr id="empty-o2-row"><td colspan="16"><div class="empty-state"><div class="empty-icon" style="font-size:1.4rem;font-weight:900">O₂</div><div class="empty-msg">저장된 혈중산소 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈중산소포화도를 선택 후 입력해 보세요</div></div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -2105,21 +2063,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th><th>키 (cm)</th><th>체중 (kg)</th><th>BMI</th><th>비만도</th><th></th>
               </tr>
             </thead>
-            <tbody id="weight-tbody"><tr>
-      <td>1</td>
-      <td>2026-08-31</td>
-      <td>김달빛</td>
-      <td>45</td>
-      <td>여</td>
-      <td>165 cm</td>
-      <td>60 kg</td>
-      <td style="font-weight:700;color:#34d399">22</td>
-      <td><span style="font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(52,211,153,.15);color:#34d399">정상</span></td>
-      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
-        <button class="del-btn" title="수정" onclick="openEditWeight(0);event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteWeight(0)" title="삭제">×</button>
-      </td>
-    </tr></tbody>
+            <tbody id="weight-tbody"><tr id="empty-weight-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-msg">저장된 체중 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 체중을 선택 후 입력해 보세요</div></div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -2198,12 +2142,12 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       </div>
       <div class="stat-card s-ok">
         <div class="stat-label">현재 모니터링 중</div>
-        <div class="stat-value" id="stat-monitoring">10</div>
+        <div class="stat-value" id="stat-monitoring">0</div>
         <div class="stat-sub">착용 활성 인원</div>
       </div>
       <div class="stat-card s-warn">
         <div class="stat-label">오늘 수거 대상</div>
-        <div class="stat-value" id="stat-collect-today">1</div>
+        <div class="stat-value" id="stat-collect-today">0</div>
         <div class="stat-sub">수거 예정일 기준</div>
       </div>
       <div class="stat-card s-err">
@@ -2262,51 +2206,51 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
             <tbody id="device-tbody"><tr>
       <td><strong>DEV-01</strong></td>
       <td>샤오미밴드-01</td>
-      <td><span class="badge badge-ok">안인섭</span></td>
-      <td style="color:var(--text-2)">2026-09-01</td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">한기덕</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-02</strong></td>
       <td>샤오미밴드-02</td>
-      <td><span class="badge badge-ok">이양상</span></td>
-      <td style="color:var(--text-2)">2026-08-27</td>
-      <td style="color:var(--text-2)">2026-09-03</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">박영희</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-03</strong></td>
       <td>샤오미밴드-03</td>
-      <td><span class="badge badge-ok">김창일</span></td>
-      <td style="color:var(--text-2)">2026-09-01</td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">강용주</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-04</strong></td>
       <td>샤오미밴드-04</td>
-      <td><span class="badge badge-ok">신미종</span></td>
-      <td style="color:var(--text-2)">2026-08-26</td>
-      <td style="color:var(--text-2)">2026-09-02</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">참여자_19</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-05</strong></td>
       <td>샤오미밴드-05</td>
-      <td><span class="badge badge-ok">박연희</span></td>
-      <td style="color:var(--text-2)">2026-08-28</td>
-      <td style="color:var(--text-2)">2026-09-04</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">참여자_20</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-06</strong></td>
       <td>샤오미밴드-06</td>
-      <td><span class="badge badge-ok">강세나</span></td>
-      <td style="color:var(--text-2)">2026-08-27</td>
-      <td style="color:var(--text-2)">2026-09-03</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">나보경</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-07</strong></td>
       <td>샤오미밴드-07</td>
@@ -2314,15 +2258,15 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <td style="color:var(--text-2)">-</td>
       <td style="color:var(--text-2)">-</td>
       <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
-      <td style="color:var(--text-2)">고경희</td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-08</strong></td>
       <td>샤오미밴드-08</td>
-      <td><span class="badge badge-ok">정정화</span></td>
-      <td style="color:var(--text-2)">2026-09-01</td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">김유경</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-09</strong></td>
       <td>샤오미밴드-09</td>
@@ -2330,23 +2274,23 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       <td style="color:var(--text-2)">-</td>
       <td style="color:var(--text-2)">-</td>
       <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
-      <td style="color:var(--text-2)">안경숙</td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-10</strong></td>
       <td>샤오미밴드-10</td>
-      <td><span class="badge badge-ok">이선희</span></td>
-      <td style="color:var(--text-2)">2026-08-31</td>
-      <td style="color:var(--text-2)">2026-09-07</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">이정효</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-11</strong></td>
       <td>샤오미밴드-11</td>
-      <td><span class="badge badge-ok">최정선</span></td>
-      <td style="color:var(--text-2)">2026-08-31</td>
-      <td style="color:var(--text-2)">2026-09-07</td>
-      <td><span class="badge badge-ok"><span class="dev-dot dot-busy"></span>🔵 착용 중</span></td>
-      <td style="color:var(--text-2)">임채린</td>
+      <td><span style="color:var(--text-3)">보관 중</span></td>
+      <td style="color:var(--text-2)">-</td>
+      <td style="color:var(--text-2)">-</td>
+      <td><span class="badge badge-neutral"><span class="dev-dot dot-off"></span>⚪ 투입 가능</span></td>
+      <td style="color:var(--text-2)">-</td>
     </tr><tr>
       <td><strong>DEV-12</strong></td>
       <td>샤오미밴드-12</td>
@@ -2411,567 +2355,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>비고</th>
               </tr>
             </thead>
-            <tbody id="participant-tbody"><tr>
-      <td><span class="log-tag">P-001</span></td>
-      <td><input class="edit-input" value="신미종" placeholder="이름" onchange="updateP(0,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(0,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04" selected="">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-08-26" onchange="updateP(0,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-02</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(0,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(0,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-002</span></td>
-      <td><input class="edit-input" value="강세나" placeholder="이름" onchange="updateP(1,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(1,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06" selected="">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-08-27" onchange="updateP(1,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-03</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(1,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(1,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-003</span></td>
-      <td><input class="edit-input" value="박연희" placeholder="이름" onchange="updateP(2,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(2,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05" selected="">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-08-28" onchange="updateP(2,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-04</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(2,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(2,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-004</span></td>
-      <td><input class="edit-input" value="최정선" placeholder="이름" onchange="updateP(3,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(3,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11" selected="">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-08-31" onchange="updateP(3,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-07</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(3,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(3,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-005</span></td>
-      <td><input class="edit-input" value="유경아" placeholder="이름" onchange="updateP(4,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(4,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05" selected="">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(4,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(4,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(4,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-006</span></td>
-      <td><input class="edit-input" value="나보경" placeholder="이름" onchange="updateP(5,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(5,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06" selected="">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-04" onchange="updateP(5,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-11</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(5,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(5,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-007</span></td>
-      <td><input class="edit-input" value="고경희" placeholder="이름" onchange="updateP(6,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(6,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07" selected="">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-03" onchange="updateP(6,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-10</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(6,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(6,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-008</span></td>
-      <td><input class="edit-input" value="김유경" placeholder="이름" onchange="updateP(7,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(7,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08" selected="">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-04" onchange="updateP(7,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-11</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(7,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(7,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-009</span></td>
-      <td><input class="edit-input" value="안경숙" placeholder="이름" onchange="updateP(8,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(8,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09" selected="">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-05" onchange="updateP(8,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-12</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(8,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(8,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-010</span></td>
-      <td><input class="edit-input" value="이선희" placeholder="이름" onchange="updateP(9,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(9,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10" selected="">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-08-31" onchange="updateP(9,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-07</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(9,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(9,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-011</span></td>
-      <td><input class="edit-input" value="임채린" placeholder="이름" onchange="updateP(10,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(10,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11" selected="">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-11" onchange="updateP(10,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-18</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(10,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(10,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-012</span></td>
-      <td><input class="edit-input" value="백미숙" placeholder="이름" onchange="updateP(11,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(11,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08" selected="">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-08" onchange="updateP(11,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-15</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(11,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(11,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-013</span></td>
-      <td><input class="edit-input" value="정정화" placeholder="이름" onchange="updateP(12,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(12,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08" selected="">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(12,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(12,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(12,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-014</span></td>
-      <td><input class="edit-input" value="이정효" placeholder="이름" onchange="updateP(13,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(13,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10" selected="">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-24" onchange="updateP(13,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-10-01</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(13,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(13,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-015</span></td>
-      <td><input class="edit-input" value="김영자" placeholder="이름" onchange="updateP(14,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(14,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09" selected="">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-07" onchange="updateP(14,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-14</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(14,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(14,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-016</span></td>
-      <td><input class="edit-input" value="전윤지" placeholder="이름" onchange="updateP(15,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(15,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10" selected="">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(15,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-16</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(15,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(15,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-017</span></td>
-      <td><input class="edit-input" value="박영희" placeholder="이름" onchange="updateP(16,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(16,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02" selected="">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(16,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-16</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(16,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(16,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-018</span></td>
-      <td><input class="edit-input" value="강용주" placeholder="이름" onchange="updateP(17,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(17,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03" selected="">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(17,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-16</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(17,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="일정미정" placeholder="-" onchange="updateP(17,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-019</span></td>
-      <td><input class="edit-input" value="참여자_19" placeholder="이름" onchange="updateP(18,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(18,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04" selected="">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(18,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-16</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(18,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(18,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-020</span></td>
-      <td><input class="edit-input" value="참여자_20" placeholder="이름" onchange="updateP(19,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(19,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05" selected="">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(19,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-16</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(19,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(19,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-021</span></td>
-      <td><input class="edit-input" value="이양상" placeholder="이름" onchange="updateP(20,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(20,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02" selected="">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-08-27" onchange="updateP(20,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-03</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(20,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(20,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-022</span></td>
-      <td><input class="edit-input" value="김창일" placeholder="이름" onchange="updateP(21,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(21,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03" selected="">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(21,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(21,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(21,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-023</span></td>
-      <td><input class="edit-input" value="안인섭" placeholder="이름" onchange="updateP(22,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(22,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01" selected="">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-01" onchange="updateP(22,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-08</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(22,'done',this.value)"></td>
-      <td><span class="badge badge-ok">🟢 모니터링 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(22,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-024</span></td>
-      <td><input class="edit-input" value="고재수" placeholder="이름" onchange="updateP(23,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(23,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02" selected="">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-08" onchange="updateP(23,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-15</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(23,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(23,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-025</span></td>
-      <td><input class="edit-input" value="어운용" placeholder="이름" onchange="updateP(24,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(24,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03" selected="">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-09" onchange="updateP(24,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-16</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(24,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(24,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-026</span></td>
-      <td><input class="edit-input" value="한기덕" placeholder="이름" onchange="updateP(25,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(25,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01" selected="">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="2026-09-11" onchange="updateP(25,'start',this.value)"></td>
-      <td style="color:var(--text-2)">2026-09-18</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(25,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(25,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-027</span></td>
-      <td><input class="edit-input" value="전계찬" placeholder="이름" onchange="updateP(26,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(26,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12" selected="">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(26,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(26,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="일정미정" placeholder="-" onchange="updateP(26,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-028</span></td>
-      <td><input class="edit-input" value="추가참여자_28" placeholder="이름" onchange="updateP(27,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(27,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(27,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(27,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(27,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-029</span></td>
-      <td><input class="edit-input" value="추가참여자_29" placeholder="이름" onchange="updateP(28,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(28,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(28,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(28,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(28,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-030</span></td>
-      <td><input class="edit-input" value="추가참여자_30" placeholder="이름" onchange="updateP(29,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(29,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(29,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(29,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(29,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-031</span></td>
-      <td><input class="edit-input" value="추가참여자_31" placeholder="이름" onchange="updateP(30,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(30,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(30,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(30,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(30,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-032</span></td>
-      <td><input class="edit-input" value="추가참여자_32" placeholder="이름" onchange="updateP(31,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(31,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(31,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(31,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(31,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-033</span></td>
-      <td><input class="edit-input" value="추가참여자_33" placeholder="이름" onchange="updateP(32,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(32,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(32,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(32,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(32,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-034</span></td>
-      <td><input class="edit-input" value="추가참여자_34" placeholder="이름" onchange="updateP(33,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(33,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(33,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(33,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(33,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-035</span></td>
-      <td><input class="edit-input" value="추가참여자_35" placeholder="이름" onchange="updateP(34,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(34,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(34,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(34,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(34,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-036</span></td>
-      <td><input class="edit-input" value="추가참여자_36" placeholder="이름" onchange="updateP(35,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(35,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(35,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(35,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(35,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-037</span></td>
-      <td><input class="edit-input" value="추가참여자_37" placeholder="이름" onchange="updateP(36,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(36,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(36,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(36,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(36,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-038</span></td>
-      <td><input class="edit-input" value="추가참여자_38" placeholder="이름" onchange="updateP(37,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(37,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(37,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(37,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(37,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-039</span></td>
-      <td><input class="edit-input" value="추가참여자_39" placeholder="이름" onchange="updateP(38,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(38,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(38,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(38,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(38,'note',this.value)" style="max-width:100px"></td>
-    </tr><tr>
-      <td><span class="log-tag">P-040</span></td>
-      <td><input class="edit-input" value="추가참여자_40" placeholder="이름" onchange="updateP(39,'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
-      <td>
-        <select class="edit-select" onchange="updateP(39,'device',this.value)">
-          <option value="">-</option>
-          <option value="DEV-01">DEV-01</option><option value="DEV-02">DEV-02</option><option value="DEV-03">DEV-03</option><option value="DEV-04">DEV-04</option><option value="DEV-05">DEV-05</option><option value="DEV-06">DEV-06</option><option value="DEV-07">DEV-07</option><option value="DEV-08">DEV-08</option><option value="DEV-09">DEV-09</option><option value="DEV-10">DEV-10</option><option value="DEV-11">DEV-11</option><option value="DEV-12">DEV-12</option><option value="DEV-13">DEV-13</option><option value="DEV-14">DEV-14</option><option value="DEV-15">DEV-15</option>
-        </select>
-      </td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(39,'start',this.value)"></td>
-      <td style="color:var(--text-2)">-</td>
-      <td><input class="edit-input" type="date" value="" onchange="updateP(39,'done',this.value)"></td>
-      <td><span class="badge badge-neutral">대기 중</span></td>
-      <td><input class="edit-input" value="" placeholder="-" onchange="updateP(39,'note',this.value)" style="max-width:100px"></td>
-    </tr></tbody>
+            <tbody id="participant-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -3415,6 +2799,18 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
           </tr>
         </thead>
         <tbody id="_hm_log_tbody"><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">216</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 05:26:41</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">접속</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">페이지 로드</td>
+      </tr><tr style="background:transparent;border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">215</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 05:11:51</span></td>
+        <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
+        <td style="padding:7px 8px;color:#fbbf24;white-space:nowrap">앱저장</td>
+        <td style="padding:7px 8px;color:rgba(255,255,255,.65)">힐마루케어수면관리 앱 다운로드</td>
+      </tr><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.04)">
         <td style="padding:7px 8px;color:rgba(255,255,255,.25);white-space:nowrap">214</td>
         <td style="padding:7px 8px;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums">2026. 09. 02.<br><span style="color:rgba(255,255,255,.35);font-size:.65rem">오후 05:11:40</span></td>
         <td style="padding:7px 8px;color:#5CC8B8;white-space:nowrap;font-family:monospace;font-size:.72rem">211.196.197.220</td>
@@ -4930,7 +4326,7 @@ function _getRecordGroup(r){
 /* ═══════════════════════════════════════
    DEV LOG SYSTEM (hidden)
 ═══════════════════════════════════════ */
-const APP_VER     = '5.31';
+const APP_VER     = '5.32';
 const _HM_LOG_KEY = '_hm_ev';
 const _HM_PW      = 'rudckf@8899';
 let   _hmCachedIp = '확인 중…';
@@ -5126,8 +4522,15 @@ async function syncToSheet(){
     setGsStatus('syncing', '저장 중…');
     try{
       const devLogs = (() => { try { return JSON.parse(localStorage.getItem(_HM_LOG_KEY) || '[]'); } catch(e) { return []; } })();
-      const payload = JSON.stringify({ sleepRecords, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, participants, groups, devLogs });
+      // 이미지(base64)는 구글 시트 셀 크기 제한(~50000자)을 초과하므로 제외 후 동기화
+      // 이미지는 로컬 스토리지에만 보관됨
+      const sleepNoImg = sleepRecords.map(r => { const {img, ...rest} = r; return rest; });
+      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, participants, groups, devLogs });
       // no-cors fire-and-forget: GAS doPost는 실행됨, 응답만 읽기 불가
+      // 페이로드 크기 체크 (50000자 초과 시 경고)
+      if(payload.length > 45000){
+        console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
+      }
       fetch(GS_URL, {
         method : 'POST',
         mode   : 'no-cors',
@@ -7929,14 +7332,21 @@ function renderRecords(){
 async function exportJSON(){
   _devLog('내보내기', 'JSON 백업 · 수면' + sleepRecords.length + '건');
   const payload = {
-    version: '1.3',
+    version: '2.0',
     exportedAt: new Date().toISOString(),
     sleepRecords,
+    heartRateRecords,
+    bloodPressureRecords,
+    oxygenRecords,
+    weightRecords,
+    womensHealthRecords,
+    stressRecords,
     participants,
+    groups,
   };
   const json = JSON.stringify(payload, null, 2);
   const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const filename = `힐마루케어_백업_${stamp}.json`;
+  const filename = `힐마루케어_전체백업_${stamp}.json`;
 
   if(downloadsApi){
     try {
@@ -7961,11 +7371,11 @@ function importJSON(input){
   reader.onload = function(e){
     try {
       const data = JSON.parse(e.target.result);
-      if(!data.sleepRecords && !data.participants){
+      if(!data.sleepRecords && !data.participants && !data.heartRateRecords){
         showToast('유효하지 않은 백업 파일입니다.', true);
         return;
       }
-      // confirm() 대신 바로 병합 진행
+      // 수면 기록 병합 (날짜+이름 중복 제외)
       if(data.sleepRecords && Array.isArray(data.sleepRecords)){
         const existing = new Set(sleepRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.sleepRecords.filter(r=>!existing.has(r.date+'|'+r.name));
@@ -7973,6 +7383,52 @@ function importJSON(input){
         saveRecords();
         renderRecords();
       }
+      // 심박수 기록 병합
+      if(data.heartRateRecords && Array.isArray(data.heartRateRecords)){
+        const ex = new Set(heartRateRecords.map(r=>r.date+'|'+r.name));
+        const toAdd = data.heartRateRecords.filter(r=>!ex.has(r.date+'|'+r.name));
+        heartRateRecords = [...toAdd, ...heartRateRecords];
+        try{ localStorage.setItem('hilmaru_hr', JSON.stringify(heartRateRecords)); }catch(e){}
+        renderHeartRates();
+      }
+      // 혈압 기록 병합
+      if(data.bloodPressureRecords && Array.isArray(data.bloodPressureRecords)){
+        const ex = new Set(bloodPressureRecords.map(r=>r.date+'|'+r.name));
+        const toAdd = data.bloodPressureRecords.filter(r=>!ex.has(r.date+'|'+r.name));
+        bloodPressureRecords = [...toAdd, ...bloodPressureRecords];
+        try{ localStorage.setItem('hilmaru_bp', JSON.stringify(bloodPressureRecords)); }catch(e){}
+        renderBloodPressures();
+      }
+      // 산소포화도 기록 병합
+      if(data.oxygenRecords && Array.isArray(data.oxygenRecords)){
+        const ex = new Set(oxygenRecords.map(r=>r.date+'|'+r.name));
+        const toAdd = data.oxygenRecords.filter(r=>!ex.has(r.date+'|'+r.name));
+        oxygenRecords = [...toAdd, ...oxygenRecords];
+        try{ localStorage.setItem('hilmaru_o2', JSON.stringify(oxygenRecords)); }catch(e){}
+      }
+      // 체중 기록 병합
+      if(data.weightRecords && Array.isArray(data.weightRecords)){
+        const ex = new Set(weightRecords.map(r=>r.date+'|'+r.name));
+        const toAdd = data.weightRecords.filter(r=>!ex.has(r.date+'|'+r.name));
+        weightRecords = [...toAdd, ...weightRecords];
+        try{ localStorage.setItem('hilmaru_weight', JSON.stringify(weightRecords)); }catch(e){}
+        renderWeights();
+      }
+      // 여성건강 기록 병합
+      if(data.womensHealthRecords && Array.isArray(data.womensHealthRecords)){
+        const ex = new Set(womensHealthRecords.map(r=>r.date+'|'+r.name));
+        const toAdd = data.womensHealthRecords.filter(r=>!ex.has(r.date+'|'+r.name));
+        womensHealthRecords = [...toAdd, ...womensHealthRecords];
+        try{ localStorage.setItem('hilmaru_wh', JSON.stringify(womensHealthRecords)); }catch(e){}
+      }
+      // 스트레스 기록 병합
+      if(data.stressRecords && Array.isArray(data.stressRecords)){
+        const ex = new Set(stressRecords.map(r=>r.date+'|'+r.name));
+        const toAdd = data.stressRecords.filter(r=>!ex.has(r.date+'|'+r.name));
+        stressRecords = [...toAdd, ...stressRecords];
+        try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
+      }
+      // 참여자 복원
       if(data.participants && Array.isArray(data.participants)){
         participants = data.participants;
         saveParticipants();
@@ -7980,7 +7436,17 @@ function importJSON(input){
         buildParticipantTable();
         refreshStats();
       }
-      showToast(`✅ 불러오기 완료 · 수면기록 ${(data.sleepRecords||[]).length}건 병합 · 참여자 ${(data.participants||[]).length}명 복원`);
+      // 그룹 복원
+      if(data.groups && Array.isArray(data.groups) && data.groups.length > 0){
+        groups = data.groups;
+        saveGroups();
+        rebuildGroupSelects();
+      }
+      // 복원 후 구글 시트에도 동기화
+      syncToSheet();
+      const total = (data.sleepRecords||[]).length + (data.heartRateRecords||[]).length
+        + (data.bloodPressureRecords||[]).length + (data.weightRecords||[]).length;
+      showToast(`✅ 불러오기 완료 · 총 ${total}건 데이터 복원됨`);
     } catch(err) {
       showToast('파일을 읽는 중 오류: ' + err.message, true);
     } finally {

@@ -865,6 +865,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .ic-female { background: #E91E8C; }
 .ic-stress { background: #FF9500; }
 .ic-vital  { background: #3498DB; }
+.ic-device { background: #6B5CE7; }
 .hs-card-name {
   font-size: .78rem; font-weight: 700; color: var(--text-1); line-height: 1.25;
 }
@@ -1940,6 +1941,16 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <span class="hs-card-arrow">›</span>
               </div>
 
+              <!-- 기기 제공·수거 -->
+              <div class="hs-card" onclick="openPhoneScreen('device')" style="grid-column:span 2;flex-direction:row;align-items:center;gap:12px;min-height:70px;background:rgba(107,92,231,.07);border:1.5px solid rgba(107,92,231,.25)">
+                <div class="hs-card-icon-wrap ic-device" style="margin-bottom:0;flex-shrink:0">📦</div>
+                <div style="flex:1;min-width:0">
+                  <div class="hs-card-name" style="color:#6B5CE7">기기 제공 · 수거</div>
+                  <div class="hs-card-sub">수면 기기 입출고 기록</div>
+                </div>
+                <span class="hs-card-arrow" style="color:#6B5CE7">›</span>
+              </div>
+
             </div><!-- /hs-card-grid -->
 
             <!-- Bottom Dock -->
@@ -2570,6 +2581,65 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
             <div style="height:8px"></div>
           </div>
 
+          <!-- 기기 제공·수거 입력 폼 -->
+          <div class="phone-body" id="phone-device-body" style="display:none">
+            <div class="form-section-head" style="color:#6B5CE7;border-bottom-color:rgba(107,92,231,.25)">담당자 정보</div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>담당간호사</label>
+                <input type="text" id="dv-nurse" placeholder="이름 입력">
+              </div>
+              <div class="form-field">
+                <label>날짜</label>
+                <input type="date" id="dv-date">
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>소요시간</label>
+                <input type="text" id="dv-duration" placeholder="예) 30분">
+              </div>
+              <div class="form-field">
+                <label>방문장소</label>
+                <input type="text" id="dv-place" placeholder="예) 자택">
+              </div>
+            </div>
+            <div class="form-section-head" style="color:#6B5CE7;border-bottom-color:rgba(107,92,231,.25)">대상자 정보</div>
+            <div class="form-field">
+              <label>고객명</label>
+              <input type="text" id="dv-name" placeholder="이름 입력">
+            </div>
+            <div class="form-field">
+              <label>연락처</label>
+              <input type="tel" id="dv-phone" placeholder="010-0000-0000">
+            </div>
+            <div class="form-section-head" style="color:#6B5CE7;border-bottom-color:rgba(107,92,231,.25)">기기 정보</div>
+            <div class="form-field">
+              <label>업무구분</label>
+              <select id="dv-task">
+                <option value="">선택</option>
+                <option value="기기제공">📤 기기제공</option>
+                <option value="기기수거">📥 기기수거</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>기기명</label>
+                <input type="text" id="dv-device" placeholder="예) 미밴드 10">
+              </div>
+              <div class="form-field">
+                <label>S/N</label>
+                <input type="text" id="dv-sn" placeholder="예) A24-0082">
+              </div>
+            </div>
+            <div class="form-field">
+              <label>특이사항</label>
+              <textarea id="dv-note" placeholder="예) 충전기 미지급, 상태 양호…" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div style="height:8px"></div>
+          </div>
+
           <!-- Footer Buttons -->
           <div class="phone-footer">
             <button class="btn-submit" id="phone-submit-btn" onclick="phoneSubmit()">7일치 저장</button>
@@ -2622,6 +2692,10 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M2 10h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 엑셀
               </button>
+              <button class="btn-export" id="btn-device-docx" onclick="exportDeviceDocx()" disabled style="background:#6B5CE7;display:none">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M2 10h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                수거일지
+              </button>
               <button class="btn-export" id="btn-export-word" onclick="exportCurrentDocx()" disabled style="background:#1F4E79">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M2 10h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 워드
@@ -2641,6 +2715,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
         <button class="dt-tab" onclick="switchDataTab('weight',this)">⚖️ 체중</button>
         <button class="dt-tab" onclick="switchDataTab('womens',this)">🌸 여성건강</button>
         <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
+        <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
       </div>
 
       <!-- ── 전체 테이블 ── -->
@@ -2903,6 +2978,29 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                   <div class="empty-icon">🧠⚡</div>
                   <div class="empty-msg">저장된 스트레스·활력 기록이 없습니다</div>
                   <div class="empty-hint">왼쪽 폰 화면에서 스트레스·활력을 선택 후 입력해 보세요</div>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── 기기관리 패널 ── -->
+      <div id="data-panel-device" style="display:none">
+        <div class="table-scroll">
+          <table class="data-table" id="device-table">
+            <thead>
+              <tr>
+                <th>#</th><th>날짜</th><th>담당간호사</th><th>고객명</th><th>연락처</th>
+                <th>업무구분</th><th>기기명</th><th>S/N</th><th>방문장소</th><th>소요시간</th><th>특이사항</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="dvrec-tbody">
+              <tr id="empty-dvrec-row">
+                <td colspan="12"><div class="empty-state">
+                  <div class="empty-icon">📦</div>
+                  <div class="empty-msg">저장된 기기관리 기록이 없습니다</div>
+                  <div class="empty-hint">왼쪽 폰 화면에서 기기 제공·수거를 선택 후 입력해 보세요</div>
                 </div></td>
               </tr>
             </tbody>
@@ -3530,8 +3628,9 @@ function openPhoneScreen(type){
   const weightBody  = document.getElementById('phone-weight-body');
   const womensBody  = document.getElementById('phone-womens-body');
   const stressBody  = document.getElementById('phone-stress-body');
+  const deviceBody  = document.getElementById('phone-device-body');
   const titleEl     = document.getElementById('phone-form-title');
-  [sleepBody, hrBody, bpBody, o2Body, weightBody, womensBody, stressBody].forEach(el=>{ if(el) el.style.display='none'; });
+  [sleepBody, hrBody, bpBody, o2Body, weightBody, womensBody, stressBody, deviceBody].forEach(el=>{ if(el) el.style.display='none'; });
   const today = new Date().toISOString().slice(0,10);
   if(type === 'sleep'){
     sleepBody.style.display = '';
@@ -3557,6 +3656,19 @@ function openPhoneScreen(type){
     stressBody.style.display = '';
     titleEl.childNodes[titleEl.childNodes.length-1].textContent = ' 스트레스·활력 입력';
     _loadSvItemsFromBuf(_dayIdx.sv);
+  } else if(type === 'device'){
+    deviceBody.style.display = '';
+    titleEl.childNodes[titleEl.childNodes.length-1].textContent = ' 기기 제공·수거 입력';
+    const dvDate = document.getElementById('dv-date');
+    if(dvDate && !dvDate.value) dvDate.value = today;
+    const submitBtn = document.getElementById('phone-submit-btn');
+    if(submitBtn) submitBtn.textContent = '저장';
+    const clearBtn = document.getElementById('phone-clear-btn');
+    if(clearBtn) clearBtn.textContent = '초기화';
+  }
+  if(type !== 'device'){
+    const submitBtn = document.getElementById('phone-submit-btn');
+    if(submitBtn && submitBtn.textContent === '저장') submitBtn.textContent = '7일치 저장';
   }
   home.classList.add('hidden');
   form.classList.add('active');
@@ -3852,6 +3964,7 @@ function _submitAllDays(bufType){
 // 폼 저장/초기화 통합 핸들러
 const _PHONE_TO_BUF={sleep:'sleep',heart:'hr',bp:'bp',o2:'o2',weight:'wt',womens:'wh',stress:'sv'};
 function phoneSubmit(){
+  if(_currentPhoneType === 'device'){ saveDeviceRecord(); return; }
   const bufType=_PHONE_TO_BUF[_currentPhoneType];
   if(bufType) _submitAllDays(bufType);
 }
@@ -3865,6 +3978,7 @@ function phoneClear(){
   else if(_currentPhoneType==='weight') clearWeightForm();
   else if(_currentPhoneType==='womens') clearWomensForm();
   else if(_currentPhoneType==='stress') clearStressForm();
+  else if(_currentPhoneType==='device') clearDeviceForm();
 }
 
 /* ═══════════════════════════════════════
@@ -3953,7 +4067,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.18';
+const APP_VER = '6.19';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4225,6 +4339,7 @@ let oxygenRecords = [];
 let weightRecords = [];
 let womensHealthRecords = [];
 let stressRecords = [];
+let deviceRecords = [];
 
 /* ── Group / Folder state ── */
 let groups = ['삼성화재pilot1','삼성화재pilot2'];
@@ -4252,6 +4367,7 @@ async function initStorage(){
   try{ const w=localStorage.getItem('hilmaru_weight'); if(w) weightRecords=JSON.parse(w); }catch(e){}
   try{ const wh=localStorage.getItem('hilmaru_wh'); if(wh) womensHealthRecords=JSON.parse(wh); }catch(e){}
   try{ const sv=localStorage.getItem('hilmaru_sv'); if(sv) stressRecords=JSON.parse(sv); }catch(e){}
+  try{ const dv=localStorage.getItem('hilmaru_dv'); if(dv) deviceRecords=JSON.parse(dv); }catch(e){}
   try{ const p=localStorage.getItem('hilmaru_participants'); if(p) participants=JSON.parse(p); }catch(e){}
   try{
     const g=localStorage.getItem('hilmaru_groups');
@@ -4303,6 +4419,7 @@ async function initStorage(){
     if(data.weightRecords && Array.isArray(data.weightRecords)) weightRecords = data.weightRecords;
     if(data.womensHealthRecords && Array.isArray(data.womensHealthRecords)) womensHealthRecords = data.womensHealthRecords;
     if(data.stressRecords && Array.isArray(data.stressRecords)) stressRecords = data.stressRecords;
+    if(data.deviceRecords && Array.isArray(data.deviceRecords)) deviceRecords = data.deviceRecords;
     if(data.participants && Array.isArray(data.participants)) participants = data.participants;
     if(data.groups && Array.isArray(data.groups) && data.groups.length > 0) groups = data.groups;
 
@@ -4314,6 +4431,7 @@ async function initStorage(){
     try{ localStorage.setItem('hilmaru_weight', JSON.stringify(weightRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_wh', JSON.stringify(womensHealthRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
+    try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_participants', JSON.stringify(participants)); }catch(e){}
     try{ localStorage.setItem('hilmaru_groups', JSON.stringify(groups)); }catch(e){}
     setGsStatus('ok', '시트 연결됨');
@@ -4340,7 +4458,7 @@ async function syncToSheet(){
     try{
       // base64 이미지 제외, Drive URL(imgUrl/imgUrls)만 저장
       const sleepNoImg = sleepRecords.map(r => { const {img, imgW, imgH, imgs, ...rest} = r; return rest; });
-      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, participants, groups });
+      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, deviceRecords, participants, groups });
       if(payload.length > 45000){
         console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
       }
@@ -4571,7 +4689,7 @@ function renderHeartRates(){
 let _currentDataTab = 'sleep';
 function switchDataTab(type, btn){
   _currentDataTab = type;
-  const _tabNames = {all:'전체',sleep:'수면',heart:'심박수',bp:'혈압',o2:'혈중산소',weight:'체중',womens:'여성건강',stress:'스트레스·활력'};
+  const _tabNames = {all:'전체',sleep:'수면',heart:'심박수',bp:'혈압',o2:'혈중산소',weight:'체중',womens:'여성건강',stress:'스트레스·활력',device:'기기관리'};
   // 탭 active
   document.querySelectorAll('.dt-tab:not(.dt-tab-soon)').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
@@ -4586,7 +4704,8 @@ function switchDataTab(type, btn){
   const wtPanel      = document.getElementById('data-panel-weight');
   const whPanel      = document.getElementById('data-panel-womens');
   const svPanel      = document.getElementById('data-panel-stress');
-  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
+  const dvPanel      = document.getElementById('data-panel-device');
+  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,dvPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
   // 그룹 필터 / 폴더 컨트롤: 항상 표시
   if(sleepTools) sleepTools.style.display='flex';
   const badge = document.getElementById('record-count-badge');
@@ -4595,7 +4714,7 @@ function switchDataTab(type, btn){
   const exportTools = document.getElementById('unified-export-tools');
   const tabExcel = document.getElementById('btn-export');
   const tabWord  = document.getElementById('btn-export-word');
-  if(exportTools) exportTools.style.display = (type === 'all') ? 'flex' : 'none';
+  if(exportTools) exportTools.style.display = (type === 'all' || type === 'device') ? 'flex' : 'none';
 
   if(type==='all'){
     if(allPanel) allPanel.style.display='';
@@ -4630,8 +4749,22 @@ function switchDataTab(type, btn){
     if(svPanel) svPanel.style.display='';
     if(badge) badge.textContent = stressRecords.length + '건';
     renderStressVital();
+  } else if(type==='device'){
+    if(dvPanel) dvPanel.style.display='';
+    if(badge) badge.textContent = deviceRecords.length + '건';
+    renderDeviceRecords();
+    if(tabExcel){ tabExcel.disabled=!deviceRecords.length; tabExcel.onclick=exportDeviceExcel; tabExcel.style.background='#1E7A3E'; }
+    if(tabWord){ tabWord.disabled=true; tabWord.style.display='none'; }
+    const dvWordBtn = document.getElementById('btn-device-docx');
+    if(dvWordBtn){ dvWordBtn.style.display=''; dvWordBtn.disabled=!deviceRecords.length; }
   } else {
     soonPanel.style.display='';
+  }
+  // 기기관리 탭이 아닐 때 수거일지 버튼 숨김, 워드 버튼 원복
+  if(type !== 'device'){
+    const dvWordBtn = document.getElementById('btn-device-docx');
+    if(dvWordBtn) dvWordBtn.style.display='none';
+    if(tabWord) tabWord.style.display='';
   }
 }
 
@@ -5648,6 +5781,184 @@ function renderStressVital(){
       </td>
     </tr>`;
   }).join('');
+}
+
+/* ═══════════════════════════════════════
+   기기 제공·수거 — SAVE / RENDER / EXPORT
+═══════════════════════════════════════ */
+function saveDeviceRecord(){
+  const nurse  = (document.getElementById('dv-nurse')||{}).value||'';
+  const date   = (document.getElementById('dv-date')||{}).value||'';
+  const dur    = (document.getElementById('dv-duration')||{}).value||'';
+  const place  = (document.getElementById('dv-place')||{}).value||'';
+  const name   = (document.getElementById('dv-name')||{}).value||'';
+  const phone  = (document.getElementById('dv-phone')||{}).value||'';
+  const task   = (document.getElementById('dv-task')||{}).value||'';
+  const device = (document.getElementById('dv-device')||{}).value||'';
+  const sn     = (document.getElementById('dv-sn')||{}).value||'';
+  const note   = (document.getElementById('dv-note')||{}).value||'';
+  if(!date && !name){ alert('날짜 또는 고객명을 입력해 주세요.'); return; }
+  deviceRecords.unshift({nurse,date,duration:dur,place,name,phone,task,device,sn,note});
+  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  syncToSheet();
+  renderDeviceRecords();
+  clearDeviceForm();
+  closePhoneScreen();
+  const dvTab = document.querySelector('.dt-tab[onclick*="device"]');
+  if(dvTab) switchDataTab('device', dvTab);
+}
+
+function clearDeviceForm(){
+  ['dv-nurse','dv-date','dv-duration','dv-place','dv-name','dv-phone','dv-device','dv-sn','dv-note'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const sel=document.getElementById('dv-task'); if(sel) sel.value='';
+}
+
+function deleteDeviceRecord(idx){
+  if(!confirm('이 기록을 삭제할까요?')) return;
+  deviceRecords.splice(idx,1);
+  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  syncToSheet();
+  renderDeviceRecords();
+}
+
+function renderDeviceRecords(){
+  const tbody = document.getElementById('dvrec-tbody');
+  if(!tbody) return;
+  if(deviceRecords.length===0){
+    tbody.innerHTML=`<tr id="empty-dvrec-row"><td colspan="12"><div class="empty-state"><div class="empty-icon">📦</div><div class="empty-msg">저장된 기기관리 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 기기 제공·수거를 선택 후 입력해 보세요</div></div></td></tr>`;
+    return;
+  }
+  const _taskBadge = t => {
+    if(t==='기기제공') return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700;background:rgba(30,158,90,.12);color:#1E9E5A">📤 제공</span>`;
+    if(t==='기기수거') return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700;background:rgba(107,92,231,.12);color:#6B5CE7">📥 수거</span>`;
+    return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700;background:var(--neutral-bg);color:var(--neutral)">${t||'-'}</span>`;
+  };
+  tbody.innerHTML = deviceRecords.map((r,i)=>`<tr>
+    <td>${deviceRecords.length-i}</td>
+    <td>${r.date||'-'}</td>
+    <td>${r.nurse||'-'}</td>
+    <td>${r.name||'-'}</td>
+    <td>${r.phone||'-'}</td>
+    <td>${_taskBadge(r.task)}</td>
+    <td>${r.device||'-'}</td>
+    <td>${r.sn||'-'}</td>
+    <td>${r.place||'-'}</td>
+    <td>${r.duration||'-'}</td>
+    <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${(r.note||'').replace(/"/g,'&quot;')}">${r.note||'-'}</td>
+    <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+      <button class="del-btn" onclick="deleteDeviceRecord(${i})" title="삭제">×</button>
+    </td>
+  </tr>`).join('');
+  const badge = document.getElementById('record-count-badge');
+  if(badge) badge.textContent = deviceRecords.length + '건';
+}
+
+function exportDeviceExcel(){
+  if(!deviceRecords.length){ alert('기기관리 기록이 없습니다.'); return; }
+  const headers=['#','날짜','담당간호사','고객명','연락처','업무구분','기기명','S/N','방문장소','소요시간','특이사항'];
+  const rows = deviceRecords.map((r,i)=>[
+    deviceRecords.length-i, r.date||'', r.nurse||'', r.name||'', r.phone||'',
+    r.task||'', r.device||'', r.sn||'', r.place||'', r.duration||'', r.note||''
+  ]);
+  const ws = XLSX.utils.aoa_to_sheet([headers,...rows]);
+  ws['!cols']=[8,12,12,12,16,10,14,12,10,8,24].map(w=>({wch:w}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,'기기관리',ws);
+  XLSX.writeFile(wb,`힐마루케어_기기관리_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+function exportDeviceDocx(){
+  if(!deviceRecords.length){ alert('기기관리 기록이 없습니다.'); return; }
+  // 업무 일지 형식 OOXML 생성 (첨부 파일 양식 참고)
+  const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function bold(text){ return `<w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">${esc(text)}</w:t></w:r>`; }
+  function cell(text,w,bold_=false,shade=''){
+    const shadeXml=shade?`<w:shd w:val="clear" w:color="auto" w:fill="${shade}"/>`:'';
+    const rPr=bold_?'<w:rPr><w:b/></w:rPr>':'';
+    return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${shadeXml}</w:tcPr><w:p><w:r>${rPr}<w:t xml:space="preserve">${esc(text)}</w:t></w:r></w:p></w:tc>`;
+  }
+  function row(...cells){ return `<w:tr>${cells.join('')}</w:tr>`; }
+  function tbl(...rows){ return `<w:tbl><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="4" w:color="888888"/><w:left w:val="single" w:sz="4" w:color="888888"/><w:bottom w:val="single" w:sz="4" w:color="888888"/><w:right w:val="single" w:sz="4" w:color="888888"/><w:insideH w:val="single" w:sz="4" w:color="888888"/><w:insideV w:val="single" w:sz="4" w:color="888888"/></w:tblBorders><w:tblW w:w="9072" w:type="dxa"/></w:tblPr>${rows.join('')}</w:tbl>`; }
+  function heading(text){ return `<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="28"/></w:rPr><w:t>${esc(text)}</w:t></w:r></w:p>`; }
+  function sub(text){ return `<w:p><w:pPr><w:spacing w:before="120" w:after="60"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="333333"/></w:rPr><w:t>${esc(text)}</w:t></w:r></w:p>`; }
+  function pageBreak(){ return `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`; }
+  const shade='EEF4FF';
+  const pages = deviceRecords.map((r,i)=>{
+    const taskLabel = r.task==='기기제공'?'☑ 기기제공 (전달)  ☐ 기기수거  ☐ 기타'
+                     :r.task==='기기수거'?'☐ 기기제공 (전달)  ☑ 기기수거  ☐ 기타'
+                     :'☐ 기기제공 (전달)  ☐ 기기수거  ☑ 기타';
+    return [
+      heading('삼성화재 대상자 기기 제공 업무 일지'),
+      `<w:p><w:pPr><w:spacing w:after="120"/></w:pPr></w:p>`,
+      sub('1. 기본 정보'),
+      tbl(
+        row(cell('담당간호사',2268,true,shade),cell(r.nurse||'',2268),cell('날짜 및 시간',2268,true,shade),cell(r.date||'',2268)),
+        row(cell('소요시간',2268,true,shade),cell(r.duration||'',2268),cell('방문/만남 장소',2268,true,shade),cell(r.place||'',2268))
+      ),
+      `<w:p><w:pPr><w:spacing w:after="60"/></w:pPr></w:p>`,
+      sub('2. 대상자 정보'),
+      tbl(
+        row(cell('대상자 성명',2268,true,shade),cell(r.name||'',2268),cell('연락처',2268,true,shade),cell(r.phone||'',2268))
+      ),
+      `<w:p><w:pPr><w:spacing w:after="60"/></w:pPr></w:p>`,
+      sub('3. 업무 및 기기 세부 내용'),
+      tbl(
+        row(cell('업무구분',2268,true,shade),cell(taskLabel,6804)),
+        row(cell('기기명 / 모델명',2268,true,shade),cell(r.device||'',6804)),
+        row(cell('수량 / S/N',2268,true,shade),cell(`1개 / ${r.sn||''}`,6804)),
+        row(cell('업무 내용 및 특이사항',2268,true,shade),cell(r.note||'',6804))
+      ),
+      (i < deviceRecords.length-1) ? pageBreak() : ''
+    ].join('');
+  }).join('');
+
+  const xml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<w:body>
+${pages}
+<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1080" w:right="900" w:bottom="1080" w:left="900"/></w:sectPr>
+</w:body></w:document>`;
+
+  const rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
+  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="맑은 고딕" w:hAnsi="맑은 고딕"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults></w:styles>`;
+  const ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`;
+  const docRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`;
+
+  const enc=s=>new TextEncoder().encode(s);
+  function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++){c^=b[i];for(let j=0;j<8;j++)c=c&1?(c>>>1)^0xEDB88320:(c>>>1);}return(c^0xFFFFFFFF)>>>0;}
+  function u32le(n){return[n&0xFF,(n>>8)&0xFF,(n>>16)&0xFF,(n>>24)&0xFF];}
+  function u16le(n){return[n&0xFF,(n>>8)&0xFF];}
+  function deflateRaw(data){
+    const BSIZE=65535,chunks=[];
+    for(let i=0;i<data.length;i+=BSIZE){
+      const chunk=data.slice(i,i+BSIZE),last=i+BSIZE>=data.length;
+      chunks.push(last?1:0,...u16le(chunk.length),...u16le(~chunk.length&0xFFFF),...chunk);
+    }
+    let a1=1,a2=0;
+    for(const b of data){a1=(a1+b)%65521;a2=(a2+a1)%65521;}
+    const adler=[(a2>>8)&0xFF,a2&0xFF,(a1>>8)&0xFF,a1&0xFF];
+    return new Uint8Array([0x78,0x01,...chunks,adler[0],adler[1],adler[2],adler[3]]);
+  }
+  function zipEntry(name,data,offset){
+    const nb=enc(name),db=enc(data),comp=deflateRaw(db);
+    const crc=crc32(db),now=new Date(),dt=((now.getFullYear()-1980)<<9|(now.getMonth()+1)<<5|now.getDate()),tm=(now.getHours()<<11|now.getMinutes()<<5|(now.getSeconds()>>1));
+    const lh=[0x50,0x4B,0x03,0x04,0x14,0x00,0x00,0x00,0x08,0x00,...u16le(tm),...u16le(dt),...u32le(crc),...u32le(comp.length),...u32le(db.length),...u16le(nb.length),0x00,0x00,...nb,...comp];
+    const cd=[0x50,0x4B,0x01,0x02,0x14,0x00,0x14,0x00,0x00,0x00,0x08,0x00,...u16le(tm),...u16le(dt),...u32le(crc),...u32le(comp.length),...u32le(db.length),...u16le(nb.length),0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,...u32le(offset),...nb];
+    return{lh:new Uint8Array(lh),cd:new Uint8Array(cd)};
+  }
+  const files=[['[Content_Types].xml',ct],['_rels/.rels',docRels],['word/document.xml',xml],['word/styles.xml',styles],['word/_rels/document.xml.rels',rels]];
+  let offset=0;const lhs=[],cds=[];
+  files.forEach(([n,d])=>{const e=zipEntry(n,d,offset);lhs.push(e.lh);cds.push(e.cd);offset+=e.lh.length;});
+  const cdOffset=offset,cdSize=cds.reduce((s,c)=>s+c.length,0);
+  const eocd=[0x50,0x4B,0x05,0x06,0x00,0x00,0x00,0x00,...u16le(files.length),...u16le(files.length),...u32le(cdSize),...u32le(cdOffset),0x00,0x00];
+  const total=[...lhs.flatMap(a=>[...a]),...cds.flatMap(a=>[...a]),...eocd];
+  const blob=new Blob([new Uint8Array(total)],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`힐마루케어_수거일지_${new Date().toISOString().slice(0,10)}.docx`;
+  a.click();URL.revokeObjectURL(a.href);
 }
 
 /* ═══════════════════════════════════════

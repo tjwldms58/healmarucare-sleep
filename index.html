@@ -2210,7 +2210,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <input type="number" id="hr-rest" placeholder="예) 62" min="0" max="300">
               </div>
               <div class="form-field">
-                <label>평균심박수 (BPM)</label>
+                <label>평균 걷기 심박수 (BPM)</label>
                 <input type="number" id="hr-mean" placeholder="예) 72" min="0" max="300">
               </div>
             </div>
@@ -2767,7 +2767,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>범위 (BPM)</th>
                 <th>평균 (BPM)</th>
                 <th>휴식시 (BPM)</th>
-                <th>평균심박수 (BPM)</th>
+                <th>평균 걷기 심박수 (BPM)</th>
                 <th></th>
               </tr>
             </thead>
@@ -3366,7 +3366,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
         <div class="form-field"><label>범위 (BPM)</label><input type="text" id="ehr-range" placeholder="예) 55-120"></div>
         <div class="form-field"><label>평균 (BPM)</label><input type="number" id="ehr-avg" placeholder="예) 72"></div>
         <div class="form-field"><label>휴식시 (BPM)</label><input type="number" id="ehr-rest" placeholder="예) 58"></div>
-        <div class="form-field"><label>평균심박수 (BPM)</label><input type="number" id="ehr-mean" placeholder="예) 68"></div>
+        <div class="form-field"><label>평균 걷기 심박수 (BPM)</label><input type="number" id="ehr-mean" placeholder="예) 68"></div>
       </div>
     </div>
     <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface-2)">
@@ -3953,7 +3953,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.17';
+const APP_VER = '6.18';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4933,7 +4933,7 @@ async function exportAllExcel(){
     '날짜','고객명','나이','성별','암종','병기','제공일자','수거일자',
     'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
     '수면시 평균 심박수 (BPM)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','잠들기까지 걸린 시간 (분)',
-    '심박수범위','평균','휴식','평균심박수',
+    '심박수범위','평균','휴식','평균 걷기 심박수',
     '수축기혈압','이완기혈압','정상여부',
     '체중(KG)','키(CM)','추천체중','BMI',
     '생리기간','주기길이','마지막생리','예측일',
@@ -4976,7 +4976,7 @@ async function exportAllExcel(){
 async function exportHrExcel(){
   if(!heartRateRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
   const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const headers = ['#','날짜','고객명','나이','성별','심박수 범위(BPM)','평균(BPM)','휴식시(BPM)','평균심박수(BPM)'];
+  const headers = ['#','날짜','고객명','나이','성별','심박수 범위(BPM)','평균(BPM)','휴식시(BPM)','평균 걷기 심박수(BPM)'];
   const rows = heartRateRecords.map((r,i)=>[
     heartRateRecords.length-i, r.date||'', r.name||'', r.age||'', r.gender||'', r.range||'', r.avg||'', r.rest||'', r.mean||''
   ]);
@@ -6383,7 +6383,7 @@ async function exportExcel(){
       '날짜','고객명','나이','성별','암종','병기','제공일자','수거일자',
       'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
       '수면시 평균 심박수 (BPM)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','잠들기까지 걸린 시간 (분)',
-      '심박수범위','평균','휴식','평균심박수',
+      '심박수범위','평균','휴식','평균 걷기 심박수',
       '수축기혈압','이완기혈압','정상여부',
       '체중(KG)','키(CM)','추천체중','BMI',
       '생리기간','주기길이','마지막생리','예측일',
@@ -7039,7 +7039,7 @@ function _buildAllDocXml(allRows, imgEntries){
     const s2Grid = s2c.map(w=>`<w:gridCol w:w="${w}"/>`).join('');
     const s2hdr = `<w:tr>`+
       H('날짜',s2c[0])+ H('심박수범위',s2c[1])+ H('평균',s2c[2])+ H('휴식',s2c[3])+
-      H('평균심박수',s2c[4])+ H('수축기혈압(mmHg)',s2c[5])+ H('이완기혈압(mmHg)',s2c[6])+
+      H('평균 걷기 심박수',s2c[4])+ H('수축기혈압(mmHg)',s2c[5])+ H('이완기혈압(mmHg)',s2c[6])+
       H('정상여부',s2c[7])+ H('스트레스',s2c[8])+ H('활력점수',s2c[9])+
     `</w:tr>`;
     const s2data = dateRows.map(row=>{
@@ -8938,7 +8938,7 @@ function openAllReport(name, age, gender){
           ['범위 (BPM)', hr.range||'-', 'var(--text-1)'],
           ['평균 (BPM)', hr.avg?hr.avg+' BPM':'-', '#E74C3C'],
           ['휴식시 (BPM)', hr.rest?hr.rest+' BPM':'-', '#C0392B'],
-          ['평균심박수 (BPM)', hr.mean?hr.mean+' BPM':'-', '#E74C3C'],
+          ['평균 걷기 심박수 (BPM)', hr.mean?hr.mean+' BPM':'-', '#E74C3C'],
         ])}
         ${hr7.length>0 ? chartBox('ar-hr7-canvas') : ''}
       </div>`;

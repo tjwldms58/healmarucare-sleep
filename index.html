@@ -4062,7 +4062,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.50';
+const APP_VER = '6.51';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -9849,12 +9849,12 @@ function openAllReport(name, age, gender){
       const sC=sv.stress==='심각'?'#C83535':sv.stress==='보통'?'#C07820':sv.stress==='정상'?'#0E8FA3':'#1E9E5A';
       const fvN=parseInt(sv.finalVital)||0;
       const fvC=fvN>=80?'#1E9E5A':fvN>=50?'#0E8FA3':'#C07820';
-      svSection = statRow([
+      const svRows = [
         ['스트레스 점수', sv.score?sv.score+'점':'-', sv.score?(parseInt(sv.score)<=30?'#1E9E5A':parseInt(sv.score)<=60?'#C07820':'#C83535'):'var(--text-3)'],
-        ['스트레스 상태', sv.stress?sEmoji+' '+sv.stress:'-', sC],
         ['활력 점수', sv.vital?sv.vital+'점':'-', vC],
-        ['7일 최종 활력', sv.finalVital?sv.finalVital+'점':'-', sv.finalVital?fvC:'var(--text-3)'],
-      ]);
+      ];
+      if(dayNum===7) svRows.push(['7일 최종 활력', sv.finalVital?sv.finalVital+'점':'-', sv.finalVital?fvC:'var(--text-3)']);
+      svSection = statRow(svRows);
     } else svSection = noData('스트레스·활력');
 
     return `

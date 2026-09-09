@@ -3997,7 +3997,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.36';
+const APP_VER = '6.37';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -8737,110 +8737,123 @@ function drawDonut(canvasId, r){
   ctx.fill();
 }
 
-/* ── 수면 타임라인 그래프 (취침→잠든시간→자정→기상시간) ── */
+/* ── 수면 타임라인 그래프 v2 (끝과 끝을 전부 활용) ── */
 function drawSleepTimeline(canvasId, r){
-  // Samsung Health 스타일: 연보라 얇은 바(수면준비) + 굵은 보라 바(수면) + 아이콘 + 시간 레이블
   const canvas = document.getElementById(canvasId);
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
-
-  // 배경 흰색
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0,0,W,H);
 
-  const BASE_HOUR = 18;
-  const TOTAL_MINS = 18 * 60; // 18시~다음날 12시
-  const padL = 30, padR = 20, padT = 42, padB = 24;
-  const cW = W - padL - padR;
-  const barY = padT + (H - padT - padB) * 0.5; // 바 중심 Y
-  const THICK = 12; // 굵은 바 높이
-  const THIN  = 5;  // 얇은 바 높이
-
-  function timeStrToMins(str){
+  // 절대 분(분) 변환 — 18시 이전이면 다음날로
+  const BASE_H = 18;
+  function toAbsMin(str){
     if(!str) return null;
-    const parts = str.split(':');
-    if(parts.length < 2) return null;
-    const h = parseInt(parts[0]), m = parseInt(parts[1]);
+    const p = str.split(':');
+    if(p.length<2) return null;
+    const h=parseInt(p[0]), m=parseInt(p[1]);
     if(isNaN(h)||isNaN(m)) return null;
-    let mins = h*60 + m;
-    if(h < BASE_HOUR) mins += 24*60;
-    return mins - BASE_HOUR*60;
+    let v = h*60+m;
+    if(h < BASE_H) v += 1440;
+    return v;
   }
-  const px = mins => padL + Math.max(0, Math.min(1, mins / TOTAL_MINS)) * cW;
 
-  const sleepOnsetMins = parseInt(r.sleepOnset)||0;
-  const sleepTimeMins  = timeStrToMins(r.sleepTime);
-  const wakeTimeMins   = timeStrToMins(r.wakeTime);
-  const bedTimeMins    = (sleepTimeMins!==null && sleepOnsetMins>0) ? sleepTimeMins - sleepOnsetMins : sleepTimeMins;
+  const onsetMin  = parseInt(r.sleepOnset)||0;
+  const sleepAbs  = toAbsMin(r.sleepTime);   // 잠든시간
+  const wakeAbs   = toAbsMin(r.wakeTime);    // 기상시간
+  const bedAbs    = (sleepAbs!==null && onsetMin>0) ? sleepAbs - onsetMin : sleepAbs;
 
-  // 트랙 전체 배경 (연한 보라 라인)
-  const trackXStart = bedTimeMins!==null ? px(Math.max(0,bedTimeMins)) : padL;
-  const trackXEnd   = wakeTimeMins!==null ? px(wakeTimeMins) : W-padR;
-  ctx.fillStyle = '#EDE9F8';
-  const rr = v => { // roundRect 폴리필
+  if(sleepAbs===null && wakeAbs===null){
+    ctx.fillStyle='#bbb'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('데이터 없음', W/2, H/2+4); return;
+  }
+
+  // ── 전체 범위: 침대→기상 = 캔버스 끝과 끝 ──
+  const rangeStart = bedAbs  !== null ? bedAbs  : sleepAbs;
+  const rangeEnd   = wakeAbs !== null ? wakeAbs : (sleepAbs + 480);
+  const rangeDur   = rangeEnd - rangeStart;
+
+  const padL=14, padR=14, padT=34, padB=30;
+  const cW = W - padL - padR;
+  const barY = padT + (H-padT-padB)/2;
+  const THICK=16, THIN=7;
+
+  const px = absMin => padL + ((absMin - rangeStart)/rangeDur)*cW;
+
+  const rr=(x,y,w,h,r)=>{
     ctx.beginPath();
-    if(ctx.roundRect){ ctx.roundRect(...v); } else { ctx.rect(...v); }
+    if(ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
     ctx.fill();
   };
-  rr([trackXStart, barY - THIN/2, trackXEnd - trackXStart, THIN, 4]);
 
-  // 수면 구간 굵은 보라 바 (잠든시간~기상시간)
-  if(sleepTimeMins!==null && wakeTimeMins!==null && wakeTimeMins > sleepTimeMins){
-    const x1 = px(sleepTimeMins), x2 = px(wakeTimeMins);
-    ctx.fillStyle = '#7C5CFC';
+  // 1. 수면준비시간 바 (연보라보다 옅은 보라 — 얇은 바)
+  if(bedAbs!==null && sleepAbs!==null && sleepAbs>bedAbs){
+    const x1=px(bedAbs), x2=px(sleepAbs);
+    ctx.fillStyle='#EDE9FD';
+    rr(x1, barY-THIN/2, x2-x1, THIN, 4);
+  }
+
+  // 2. 수면 메인 바 (연보라 — 두꺼운 바, 잠든시간~기상시간)
+  if(sleepAbs!==null && wakeAbs!==null && wakeAbs>sleepAbs){
+    const x1=px(sleepAbs), x2=px(wakeAbs);
+    ctx.fillStyle='#C5B4F0';
+    rr(x1, barY-THICK/2, x2-x1, THICK, 8);
+  }
+
+  // 수직선 헬퍼
+  function vLine(absMin, color, dashArr, lineW){
+    const x=px(absMin);
+    if(x<padL-4||x>W-padR+4) return x;
+    ctx.save();
+    ctx.strokeStyle=color; ctx.lineWidth=lineW||2;
+    ctx.setLineDash(dashArr||[]);
     ctx.beginPath();
-    if(ctx.roundRect){ ctx.roundRect(x1, barY - THICK/2, x2-x1, THICK, 6); }
-    else { ctx.rect(x1, barY - THICK/2, x2-x1, THICK); }
-    ctx.fill();
+    ctx.moveTo(x, barY-THICK/2-5);
+    ctx.lineTo(x, barY+THICK/2+5);
+    ctx.stroke();
+    ctx.restore();
+    return x;
+  }
+  // 텍스트 레이블 헬퍼
+  function label(text, x, y, color, font, align){
+    ctx.fillStyle=color; ctx.font=font||'bold 9px sans-serif';
+    ctx.textAlign=align||'center';
+    ctx.fillText(text, x, y);
   }
 
-  // 아이콘 & 수직선 & 시간 레이블 그리기 함수
-  function drawMarker(xPos, emoji, timeStr, align){
-    const lineTop  = barY - THICK/2 - 2;
-    const lineBot  = barY + THICK/2 + 2;
-    const iconY    = lineTop - 14;
-    const labelY   = lineBot + 14;
-
-    // 수직선
-    ctx.strokeStyle = 'rgba(120,100,200,0.35)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([]);
-    ctx.beginPath(); ctx.moveTo(xPos, lineTop); ctx.lineTo(xPos, lineBot); ctx.stroke();
-
-    // 이모지 아이콘
-    ctx.font = '13px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(emoji, xPos, iconY);
-
-    // 시간 텍스트
-    ctx.font = 'bold 9px sans-serif';
-    ctx.fillStyle = '#6B5A9E';
-    ctx.textAlign = align || 'center';
-    ctx.fillText(timeStr||'', xPos, labelY);
+  // 3. | 잠든시간 마커 (진보라 선)
+  if(sleepAbs!==null && r.sleepTime){
+    const x=vLine(sleepAbs,'#7C5CFC',[],2);
+    const al = x<padL+cW*0.15?'left':x>padL+cW*0.85?'right':'center';
+    label(r.sleepTime,   x, barY-THICK/2-9, '#6B50B8','bold 9px sans-serif', al);
+    label('잠든시간',      x, barY+THICK/2+18,'#9B87D0','8px sans-serif', al);
   }
 
-  // 취침시각 마커 (🛏️)
-  if(bedTimeMins!==null && r.bedTime){
-    const bx = px(Math.max(0, bedTimeMins));
-    drawMarker(bx, '🛏️', r.bedTime, 'left');
+  // 4. | 자정(오전12시) 마커 (흰색 선)
+  const midnightAbs = 24*60; // 00:00 → 1440분
+  if(midnightAbs > rangeStart && midnightAbs < rangeEnd){
+    const x=vLine(midnightAbs,'rgba(255,255,255,0.9)',[3,3],2);
+    label('자정', x, barY+THICK/2+18, '#aaa','8px sans-serif','center');
   }
 
-  // 잠든시각 마커 (🌙)
-  if(sleepTimeMins!==null && r.sleepTime){
-    const sx = px(sleepTimeMins);
-    // 취침 마커와 너무 가까우면 생략
-    const bx = bedTimeMins!==null ? px(Math.max(0,bedTimeMins)) : null;
-    if(bx===null || Math.abs(sx-bx) > 20){
-      drawMarker(sx, '🌙', r.sleepTime, 'center');
-    }
+  // 5. | 기상시간 마커 (진보라 선)
+  if(wakeAbs!==null && r.wakeTime){
+    const x=vLine(wakeAbs,'#7C5CFC',[],2);
+    const al = x<padL+cW*0.15?'left':x>padL+cW*0.85?'right':'center';
+    label(r.wakeTime,  x, barY-THICK/2-9, '#6B50B8','bold 9px sans-serif', al);
+    label('기상시간',    x, barY+THICK/2+18,'#9B87D0','8px sans-serif', al);
   }
 
-  // 기상시각 마커 (⏰)
-  if(wakeTimeMins!==null && r.wakeTime){
-    const wx = px(wakeTimeMins);
-    drawMarker(wx, '⏰', r.wakeTime, 'right');
+  // 6. 취침시간(맨 왼쪽) 레이블 — 수면준비 바 시작점
+  if(bedAbs!==null && onsetMin>0){
+    const x=px(bedAbs);
+    // 취침 시각 문자열 역산
+    let bH=Math.floor(bedAbs/60)%24, bM=bedAbs%60;
+    const bStr=(bH<10?'0':'')+bH+':'+(bM<10?'0':'')+bM;
+    label(bStr, Math.max(padL+2,x), barY-THIN/2-9, '#B39DDB','8px sans-serif','left');
+    label('취침', Math.max(padL+2,x), barY+THICK/2+18,'#C9BBED','8px sans-serif','left');
   }
 }
 

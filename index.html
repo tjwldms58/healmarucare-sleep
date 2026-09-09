@@ -1896,35 +1896,11 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <span class="hs-card-arrow">›</span>
               </div>
 
-              <!-- 혈압 (활성) -->
-              <div class="hs-card" onclick="openPhoneScreen('bp')">
-                <div class="hs-card-icon-wrap ic-bp">🩸</div>
-                <div class="hs-card-name">혈압</div>
-                <div class="hs-card-sub">측정 데이터를<br>입력하십시오</div>
-                <span class="hs-card-arrow">›</span>
-              </div>
-
               <!-- 혈중 산소 포화도 (활성) -->
               <div class="hs-card" onclick="openPhoneScreen('o2')">
                 <div class="hs-card-icon-wrap ic-o2" style="font-size:.7rem;font-weight:800;color:#fff">O₂</div>
                 <div class="hs-card-name">혈중 산소<br>포화도</div>
                 <div class="hs-card-sub">측정 데이터를<br>입력하십시오</div>
-                <span class="hs-card-arrow">›</span>
-              </div>
-
-              <!-- 체중 (활성) -->
-              <div class="hs-card" onclick="openPhoneScreen('weight')">
-                <div class="hs-card-icon-wrap ic-weight">⚖️</div>
-                <div class="hs-card-name">체중</div>
-                <div class="hs-card-sub">측정 데이터를<br>입력하십시오</div>
-                <span class="hs-card-arrow">›</span>
-              </div>
-
-              <!-- 여성건강 -->
-              <div class="hs-card" onclick="openPhoneScreen('womens')">
-                <div class="hs-card-icon-wrap ic-female">🌸</div>
-                <div class="hs-card-name">여성건강</div>
-                <div class="hs-card-sub">주기 정보 입력</div>
                 <span class="hs-card-arrow">›</span>
               </div>
 
@@ -2718,10 +2694,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
         <button class="dt-tab" onclick="switchDataTab('all',this)">📋 전체</button>
         <button class="dt-tab active" onclick="switchDataTab('sleep',this)">🌙 수면</button>
         <button class="dt-tab" onclick="switchDataTab('heart',this)">❤️ 심박수</button>
-        <button class="dt-tab" onclick="switchDataTab('bp',this)">🩸 혈압</button>
         <button class="dt-tab" onclick="switchDataTab('o2',this)">O₂ 혈중산소</button>
-        <button class="dt-tab" onclick="switchDataTab('weight',this)">⚖️ 체중</button>
-        <button class="dt-tab" onclick="switchDataTab('womens',this)">🌸 여성건강</button>
         <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
       </div>
@@ -2762,12 +2735,8 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>잠든시간</th>
                 <th>기상시간</th>
                 <th>심박수(BPM)</th>
-                <th>혈압(수축/이완)</th>
-                <th>혈압상태</th>
                 <th>SpO₂(%)</th>
                 <th>SpO₂상태</th>
-                <th>키(cm)</th><th>체중(kg)</th><th>BMI</th><th>비만도</th>
-                <th>여성건강(생리기간/주기)</th>
                 <th>스트레스</th><th>활력점수</th>
               </tr>
             </thead>
@@ -2874,37 +2843,6 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       </div>
 
       <!-- ── 혈압 테이블 ── -->
-      <div id="data-panel-bp" style="display:none">
-        <div class="table-scroll">
-          <table class="data-table" id="bp-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>날짜</th>
-                <th>고객명</th>
-                <th>나이</th>
-                <th>성별</th>
-                <th>수축기 (mmHg)</th>
-                <th>이완기 (mmHg)</th>
-                <th>혈압 상태</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="bp-tbody">
-              <tr id="empty-bp-row">
-                <td colspan="9">
-                  <div class="empty-state">
-                    <div class="empty-icon">🩸</div>
-                    <div class="empty-msg">저장된 혈압 기록이 없습니다</div>
-                    <div class="empty-hint">왼쪽 폰 화면에서 혈압을 선택 후 입력해 보세요</div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
       <!-- ── 혈중산소포화도 테이블 ── -->
       <div id="data-panel-o2" style="display:none">
         <div class="table-scroll">
@@ -2922,51 +2860,6 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                   <div class="empty-icon">O₂</div>
                   <div class="empty-msg">저장된 혈중산소 기록이 없습니다</div>
                   <div class="empty-hint">왼쪽 폰 화면에서 혈중산소포화도를 선택 후 입력해 보세요</div>
-                </div></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ── 체중 테이블 ── -->
-      <div id="data-panel-weight" style="display:none">
-        <div class="table-scroll">
-          <table class="data-table" id="weight-table">
-            <thead>
-              <tr>
-                <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th><th>키 (cm)</th><th>체중 (kg)</th><th>BMI</th><th>비만도</th><th></th>
-              </tr>
-            </thead>
-            <tbody id="weight-tbody">
-              <tr id="empty-weight-row">
-                <td colspan="10"><div class="empty-state">
-                  <div class="empty-icon">⚖️</div>
-                  <div class="empty-msg">저장된 체중 기록이 없습니다</div>
-                  <div class="empty-hint">왼쪽 폰 화면에서 체중을 선택 후 입력해 보세요</div>
-                </div></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ── 여성건강 테이블 ── -->
-      <div id="data-panel-womens" style="display:none">
-        <div class="table-scroll">
-          <table class="data-table" id="womens-table">
-            <thead>
-              <tr>
-                <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th>
-                <th>생리기간(일)</th><th>주기길이(일)</th><th>마지막 생리일</th><th>예측 다음 생리일</th><th></th>
-              </tr>
-            </thead>
-            <tbody id="womens-tbody">
-              <tr id="empty-womens-row">
-                <td colspan="10"><div class="empty-state">
-                  <div class="empty-icon">🌸</div>
-                  <div class="empty-msg">저장된 여성건강 기록이 없습니다</div>
-                  <div class="empty-hint">왼쪽 폰 화면에서 여성건강을 선택 후 입력해 보세요</div>
                 </div></td>
               </tr>
             </tbody>
@@ -4082,7 +3975,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.21';
+const APP_VER = '6.22';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4785,11 +4678,11 @@ function switchDataTab(type, btn){
 
 // 현재 탭 엑셀/워드 내보내기 디스패처 (버튼 onclick 직접 할당 방식으로 대체됨 — fallback용)
 function exportCurrentExcel(){
-  const fn = {all:exportAllExcel, sleep:exportExcel, heart:exportHrExcel, bp:exportBpExcel, o2:exportO2Excel, weight:exportWeightExcel}[_currentDataTab];
+  const fn = {all:exportAllExcel, sleep:exportExcel, heart:exportHrExcel, o2:exportO2Excel}[_currentDataTab];
   if(fn) fn();
 }
 function exportCurrentDocx(){
-  const fn = {all:exportAllDocx, sleep:exportDocx, heart:exportHrDocx, bp:exportBpDocx, o2:exportO2Docx, weight:exportWeightDocx}[_currentDataTab];
+  const fn = {all:exportAllDocx, sleep:exportDocx, heart:exportHrDocx, o2:exportO2Docx}[_currentDataTab];
   if(fn) fn();
 }
 
@@ -5016,15 +4909,8 @@ function renderAllRecords(){
       <td>${sleepTimeCell}</td>
       <td>${wakeTimeCell}</td>
       <td>${hrCell}</td>
-      <td>${sysCell} / ${diaCell}</td>
-      <td>${bpStatusCell}</td>
       <td>${spo2Cell}</td>
       <td>${spo2StatusCell}</td>
-      <td>${htCell}</td>
-      <td>${wtCell}</td>
-      <td style="font-weight:700">${bmiCell}</td>
-      <td>${bmiStCell}</td>
-      <td style="font-size:.72rem">${whCell}</td>
       <td>${svStressCell}</td>
       <td>${svVitalCell}</td>
     </tr>`;
@@ -5086,14 +4972,11 @@ async function exportAllExcel(){
     'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
     '수면시 평균 심박수 (BPM)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)','잠든시간','기상시간',
     '심박수범위','평균','휴식','평균 걷기 심박수',
-    '수축기혈압','이완기혈압','정상여부',
-    '체중(KG)','키(CM)','추천체중','BMI',
-    '생리기간','주기길이','마지막생리','예측일',
     '스트레스','활력점수'
   ];
 
   const data = rows.map(row=>{
-    const s=row.sleep, h=row.heart, b=row.bp, wt=row.weight, wh=row.womens, sv=row.stress;
+    const s=row.sleep, h=row.heart, sv=row.stress;
     return [
       row.date, row.name, row.age, row.gender,
       row.cancer||'', row.stage||'', row.give||'', row.collect||'',
@@ -5101,10 +4984,6 @@ async function exportAllExcel(){
       s?s.deepPct||'':'', s?s.deepTime||'':'', s?s.awake||'':'', s?s.eff||'':'', s?s.total||'':'', s?s.nap||'':'',
       s?s.sleepHr||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
       h?h.range||'':'', h?h.avg||'':'', h?h.rest||'':'', h?h.mean||'':'',
-      b?b.sys||'':'', b?b.dia||'':'', b?_bpStatusTxt(b.sys,b.dia):'',
-      wt?wt.kg||'':'', wt?wt.height||'':'', '',
-      wt?wt.bmi||'':'',
-      wh?wh.periodDays||'':'', wh?wh.cycleLen||'':'', wh?wh.lastPeriod||'':'', wh?wh.predicted||'':'',
       sv?sv.stress||'':'', sv?sv.vital||'':''
     ];
   });
@@ -5274,31 +5153,6 @@ function renderBloodPressures(){
     </tr>`;
   }).join('');
 }
-async function exportBpExcel(){
-  if(!bloodPressureRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
-  const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const headers = ['#','날짜','고객명','나이','성별','수축기혈압(mmHg)','이완기혈압(mmHg)','혈압상태'];
-  const rows = bloodPressureRecords.map((r,i)=>[
-    bloodPressureRecords.length-i, r.date||'', r.name||'', r.age||'', r.gender||'', r.sys||'', r.dia||'', r.status||''
-  ]);
-  if(typeof XLSX !== 'undefined'){
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-    ws['!cols'] = headers.map(()=>({wch:18}));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, '혈압데이터');
-    const buf = XLSX.write(wb, {bookType:'xlsx', type:'array'});
-    const blob = new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-    const filename = `힐마루케어_혈압_${stamp}.xlsx`;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download=filename;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-    showToast('✅ 혈압 엑셀 다운로드 완료!');
-  } else {
-    showToast('SheetJS 라이브러리 로딩 중입니다. 잠시 후 다시 시도해 주세요.', true);
-  }
-}
-
 /* ═══════════════════════════════════════
    혈중산소포화도 CRUD + STATUS
 ═══════════════════════════════════════ */
@@ -5595,10 +5449,10 @@ function renderWeights(){
     </tr>`;
   }).join('');
 }
-async function exportWeightExcel(){
-  if(!weightRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
-  const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const headers = ['#','날짜','고객명','나이','성별','키(cm)','체중(kg)','BMI','비만도'];
+async function exportWeightExcel(){ showToast('체중 내보내기 기능이 제거되었습니다.', true); return; }
+/* 이하 구버전 코드 — 도달 불가 */
+async function _exportWeightExcelLegacy(){
+  const stamp = ''; const headers = [];
   const rows = weightRecords.map((r,i)=>[weightRecords.length-i, r.date||'', r.name||'', r.age||'', r.gender||'', r.height||'', r.kg||'', r.bmi||'', r.bmiStatus||'']);
   if(typeof XLSX !== 'undefined'){
     const ws = XLSX.utils.aoa_to_sheet([headers,...rows]);
@@ -6952,21 +6806,7 @@ async function exportHrDocx(){
   finally { if(btn){ btn.disabled=(heartRateRecords.length===0); btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
 }
 
-async function exportBpDocx(){
-  if(!bloodPressureRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
-  const btn = document.getElementById('btn-export-word');
-  if(btn){ btn.disabled=true; btn.textContent='생성 중…'; }
-  try {
-    const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
-    const subtitle = `총 ${bloodPressureRecords.length}건  ·  출력일: ${new Date().toLocaleDateString('ko-KR')}`;
-    const headers = ['날짜','이름','나이','성별','수축기(mmHg)','이완기(mmHg)','상태'];
-    const getBpLabel = (s,d) => { const sys=Number(s),dia=Number(d); if(!sys||!dia) return '-'; if(sys<120&&dia<80) return '정상'; if(sys<130&&dia<80) return '주의'; if(sys<140||dia<90) return '고혈압 전단계'; return '고혈압'; };
-    const rows = bloodPressureRecords.map(r=>[r.date||'',r.name||'',r.age||'',r.gender||'',r.sys||'',r.dia||'',getBpLabel(r.sys,r.dia)]);
-    const blob = await _buildSimpleDocx('힐마루케어 · 혈압 기록', subtitle, headers, rows);
-    await _saveDocxBlob(blob, `힐마루케어_혈압_${stamp}.docx`);
-  } catch(e){ if(e?.code!=='declined') showToast(`워드 내보내기 실패: ${e?.message||e}`, true); }
-  finally { if(btn){ btn.disabled=(bloodPressureRecords.length===0); btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
-}
+async function exportBpDocx(){ showToast('혈압 워드 내보내기 기능이 제거되었습니다.', true); }
 
 async function exportO2Docx(){
   if(!oxygenRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
@@ -6987,20 +6827,7 @@ async function exportO2Docx(){
   finally { if(btn){ btn.disabled=(oxygenRecords.length===0); btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
 }
 
-async function exportWeightDocx(){
-  if(!weightRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
-  const btn = document.getElementById('btn-export-word');
-  if(btn){ btn.disabled=true; btn.textContent='생성 중…'; }
-  try {
-    const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
-    const subtitle = `총 ${weightRecords.length}건  ·  출력일: ${new Date().toLocaleDateString('ko-KR')}`;
-    const headers = ['날짜','이름','나이','성별','키(cm)','체중(kg)','BMI','비만도'];
-    const rows = weightRecords.map(r=>[r.date||'',r.name||'',r.age||'',r.gender||'',r.height||'',r.kg||'',r.bmi||'',r.bmiStatus||'']);
-    const blob = await _buildSimpleDocx('힐마루케어 · 체중 기록', subtitle, headers, rows);
-    await _saveDocxBlob(blob, `힐마루케어_체중_${stamp}.docx`);
-  } catch(e){ if(e?.code!=='declined') showToast(`워드 내보내기 실패: ${e?.message||e}`, true); }
-  finally { if(btn){ btn.disabled=(weightRecords.length===0); btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
-}
+async function exportWeightDocx(){ showToast('체중 워드 내보내기 기능이 제거되었습니다.', true); }
 
 async function exportAllDocx(){
   const total = sleepRecords.length+heartRateRecords.length+bloodPressureRecords.length+weightRecords.length+womensHealthRecords.length+stressRecords.length;
@@ -8510,22 +8337,24 @@ function drawDonut(canvasId, r){
 
 /* ── 수면 타임라인 그래프 (취침→잠든시간→자정→기상시간) ── */
 function drawSleepTimeline(canvasId, r){
+  // Samsung Health 스타일: 연보라 얇은 바(수면준비) + 굵은 보라 바(수면) + 아이콘 + 시간 레이블
   const canvas = document.getElementById(canvasId);
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
 
-  // 배경
-  ctx.fillStyle = '#F8F4FF';
+  // 배경 흰색
+  ctx.fillStyle = '#ffffff';
   ctx.fillRect(0,0,W,H);
 
-  const BASE_HOUR = 18; // 오후 6시 기준
-  const TOTAL_MINS = 18 * 60; // 18시간 범위 (18시~다음날 12시)
-  const padL=40, padR=14, padT=18, padB=22;
+  const BASE_HOUR = 18;
+  const TOTAL_MINS = 18 * 60; // 18시~다음날 12시
+  const padL = 30, padR = 20, padT = 42, padB = 24;
   const cW = W - padL - padR;
-  const midY = padT + (H - padT - padB) * 0.5;
-  const trackH = 14;
+  const barY = padT + (H - padT - padB) * 0.5; // 바 중심 Y
+  const THICK = 12; // 굵은 바 높이
+  const THIN  = 5;  // 얇은 바 높이
 
   function timeStrToMins(str){
     if(!str) return null;
@@ -8534,101 +8363,83 @@ function drawSleepTimeline(canvasId, r){
     const h = parseInt(parts[0]), m = parseInt(parts[1]);
     if(isNaN(h)||isNaN(m)) return null;
     let mins = h*60 + m;
-    if(h < BASE_HOUR) mins += 24*60; // 자정 이후 → +24h
+    if(h < BASE_HOUR) mins += 24*60;
     return mins - BASE_HOUR*60;
   }
-
   const px = mins => padL + Math.max(0, Math.min(1, mins / TOTAL_MINS)) * cW;
-
-  // X축 시간 레이블 + 그리드
-  const labels = [
-    {h:18,l:'18시'},{h:21,l:'21시'},{h:0,l:'자정'},{h:3,l:'3시'},{h:6,l:'6시'},{h:9,l:'9시'},{h:12,l:'12시'}
-  ];
-  ctx.font = '8px sans-serif';
-  ctx.textAlign = 'center';
-  labels.forEach(({h,l})=>{
-    let mins = h*60 - BASE_HOUR*60;
-    if(mins < 0) mins += 24*60;
-    const x = px(mins);
-    if(x < padL-2 || x > W-padR+4) return;
-    ctx.fillStyle = 'rgba(80,70,120,0.45)';
-    ctx.fillText(l, x, H-3);
-    ctx.strokeStyle = h===0 ? 'rgba(14,143,163,0.4)' : 'rgba(120,110,160,0.12)';
-    ctx.setLineDash(h===0 ? [3,3] : [2,4]);
-    ctx.lineWidth = h===0 ? 1.5 : 0.8;
-    ctx.beginPath(); ctx.moveTo(x, padT-4); ctx.lineTo(x, H-padB); ctx.stroke();
-    ctx.setLineDash([]);
-  });
 
   const sleepOnsetMins = parseInt(r.sleepOnset)||0;
   const sleepTimeMins  = timeStrToMins(r.sleepTime);
   const wakeTimeMins   = timeStrToMins(r.wakeTime);
+  const bedTimeMins    = (sleepTimeMins!==null && sleepOnsetMins>0) ? sleepTimeMins - sleepOnsetMins : sleepTimeMins;
 
-  // 수면 구간 파란 배경 (잠든시간~기상시간)
-  if(sleepTimeMins!==null && wakeTimeMins!==null && wakeTimeMins>sleepTimeMins){
-    const x1=px(sleepTimeMins), x2=px(wakeTimeMins);
-    const g=ctx.createLinearGradient(x1,0,x2,0);
-    g.addColorStop(0,'rgba(74,120,224,0.35)');
-    g.addColorStop(1,'rgba(92,200,184,0.25)');
-    ctx.fillStyle=g;
+  // 트랙 전체 배경 (연한 보라 라인)
+  const trackXStart = bedTimeMins!==null ? px(Math.max(0,bedTimeMins)) : padL;
+  const trackXEnd   = wakeTimeMins!==null ? px(wakeTimeMins) : W-padR;
+  ctx.fillStyle = '#EDE9F8';
+  const rr = v => { // roundRect 폴리필
     ctx.beginPath();
-    ctx.roundRect ? ctx.roundRect(x1, midY-trackH/2, x2-x1, trackH, 3) : ctx.fillRect(x1, midY-trackH/2, x2-x1, trackH);
+    if(ctx.roundRect){ ctx.roundRect(...v); } else { ctx.rect(...v); }
+    ctx.fill();
+  };
+  rr([trackXStart, barY - THIN/2, trackXEnd - trackXStart, THIN, 4]);
+
+  // 수면 구간 굵은 보라 바 (잠든시간~기상시간)
+  if(sleepTimeMins!==null && wakeTimeMins!==null && wakeTimeMins > sleepTimeMins){
+    const x1 = px(sleepTimeMins), x2 = px(wakeTimeMins);
+    ctx.fillStyle = '#7C5CFC';
+    ctx.beginPath();
+    if(ctx.roundRect){ ctx.roundRect(x1, barY - THICK/2, x2-x1, THICK, 6); }
+    else { ctx.rect(x1, barY - THICK/2, x2-x1, THICK); }
     ctx.fill();
   }
 
-  // 수면준비 구간 (취침시간~잠든시간, 회색 점선)
-  if(sleepTimeMins!==null && sleepOnsetMins>0){
-    const prepStart = sleepTimeMins - sleepOnsetMins;
-    const x1=px(Math.max(0,prepStart)), x2=px(sleepTimeMins);
-    ctx.fillStyle='rgba(160,150,200,0.22)';
-    ctx.fillRect(x1, midY-trackH/2, x2-x1, trackH);
-    ctx.strokeStyle='rgba(160,150,200,0.5)';
-    ctx.setLineDash([2,2]); ctx.lineWidth=0.8;
-    ctx.strokeRect(x1, midY-trackH/2, x2-x1, trackH);
+  // 아이콘 & 수직선 & 시간 레이블 그리기 함수
+  function drawMarker(xPos, emoji, timeStr, align){
+    const lineTop  = barY - THICK/2 - 2;
+    const lineBot  = barY + THICK/2 + 2;
+    const iconY    = lineTop - 14;
+    const labelY   = lineBot + 14;
+
+    // 수직선
+    ctx.strokeStyle = 'rgba(120,100,200,0.35)';
+    ctx.lineWidth = 1;
     ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(xPos, lineTop); ctx.lineTo(xPos, lineBot); ctx.stroke();
+
+    // 이모지 아이콘
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(emoji, xPos, iconY);
+
+    // 시간 텍스트
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillStyle = '#6B5A9E';
+    ctx.textAlign = align || 'center';
+    ctx.fillText(timeStr||'', xPos, labelY);
   }
 
-  // 중심선
-  ctx.strokeStyle='rgba(120,110,160,0.18)';
-  ctx.lineWidth=0.5; ctx.setLineDash([]);
-  ctx.beginPath(); ctx.moveTo(padL, midY); ctx.lineTo(W-padR, midY); ctx.stroke();
-
-  // 잠든시간 마커 (파란 원)
-  if(sleepTimeMins!==null){
-    const x=px(sleepTimeMins);
-    ctx.fillStyle='#4878E0';
-    ctx.beginPath(); ctx.arc(x,midY,6,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#fff';
-    ctx.beginPath(); ctx.arc(x,midY,3,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#4878E0';
-    ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
-    ctx.fillText(r.sleepTime||'', x, midY-10);
+  // 취침시각 마커 (🛏️)
+  if(bedTimeMins!==null && r.bedTime){
+    const bx = px(Math.max(0, bedTimeMins));
+    drawMarker(bx, '🛏️', r.bedTime, 'left');
   }
 
-  // 기상시간 마커 (녹색 원)
-  if(wakeTimeMins!==null){
-    const x=px(wakeTimeMins);
-    ctx.fillStyle='#1E9E5A';
-    ctx.beginPath(); ctx.arc(x,midY,6,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#fff';
-    ctx.beginPath(); ctx.arc(x,midY,3,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#1E9E5A';
-    ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
-    ctx.fillText(r.wakeTime||'', x, midY-10);
+  // 잠든시각 마커 (🌙)
+  if(sleepTimeMins!==null && r.sleepTime){
+    const sx = px(sleepTimeMins);
+    // 취침 마커와 너무 가까우면 생략
+    const bx = bedTimeMins!==null ? px(Math.max(0,bedTimeMins)) : null;
+    if(bx===null || Math.abs(sx-bx) > 20){
+      drawMarker(sx, '🌙', r.sleepTime, 'center');
+    }
   }
 
-  // 범례 (좌상단)
-  const legY = padT - 2;
-  ctx.font='7.5px sans-serif'; ctx.textAlign='left';
-  // 파란점
-  ctx.fillStyle='#4878E0'; ctx.beginPath(); ctx.arc(padL+5,legY,3,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='rgba(80,70,120,0.65)'; ctx.fillText('잠든시간', padL+10, legY+3);
-  // 녹색점
-  ctx.fillStyle='#1E9E5A'; ctx.beginPath(); ctx.arc(padL+72,legY,3,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='rgba(80,70,120,0.65)'; ctx.fillText('기상시간', padL+77, legY+3);
-  // 회색박스
-  ctx.fillStyle='rgba(160,150,200,0.45)'; ctx.fillRect(padL+140,legY-3,8,6);
-  ctx.fillStyle='rgba(80,70,120,0.65)'; ctx.fillText('수면준비', padL+151, legY+3);
+  // 기상시각 마커 (⏰)
+  if(wakeTimeMins!==null && r.wakeTime){
+    const wx = px(wakeTimeMins);
+    drawMarker(wx, '⏰', r.wakeTime, 'right');
+  }
 }
 
 /* 수면 그래프 팝업 열기 */
@@ -9325,7 +9136,7 @@ function openAllReport(name, age, gender){
       sleepSection = `
         <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">🕐 수면 타임라인</div>
         <div style="background:var(--surface);border-radius:8px;padding:6px 8px;overflow:hidden">
-          <canvas id="${tlId}" width="680" height="68" style="width:100%;height:auto"></canvas>
+          <canvas id="${tlId}" width="680" height="90" style="width:100%;height:auto"></canvas>
         </div>
         <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin:8px 0 4px">📊 수면 단계 그래프</div>
         <div style="background:var(--surface);border-radius:8px;padding:8px;overflow:hidden">

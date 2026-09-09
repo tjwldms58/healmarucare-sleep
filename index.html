@@ -3997,7 +3997,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.37';
+const APP_VER = '6.39';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -8747,23 +8747,27 @@ function drawSleepTimeline(canvasId, r){
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0,0,W,H);
 
-  // 절대 분(분) 변환 — 18시 이전이면 다음날로
-  const BASE_H = 18;
-  function toAbsMin(str){
+  // 분 변환 (raw: 0~1439)
+  function toRawMin(str){
     if(!str) return null;
     const p = str.split(':');
     if(p.length<2) return null;
     const h=parseInt(p[0]), m=parseInt(p[1]);
     if(isNaN(h)||isNaN(m)) return null;
-    let v = h*60+m;
-    if(h < BASE_H) v += 1440;
-    return v;
+    return h*60+m;
   }
 
   const onsetMin  = parseInt(r.sleepOnset)||0;
-  const sleepAbs  = toAbsMin(r.sleepTime);   // 잠든시간
-  const wakeAbs   = toAbsMin(r.wakeTime);    // 기상시간
-  const bedAbs    = (sleepAbs!==null && onsetMin>0) ? sleepAbs - onsetMin : sleepAbs;
+  const sleepRaw  = toRawMin(r.sleepTime);
+  const wakeRaw   = toRawMin(r.wakeTime);
+
+  // wakeAbs: 기상이 잠든시간보다 raw 기준 이전이면 다음날(+1440)
+  // → 오후 낮잠(14:01→18:10), 새벽 수면(02:06→09:00) 모두 올바르게 처리
+  const sleepAbs = sleepRaw;
+  const wakeAbs  = (wakeRaw!==null && sleepRaw!==null)
+    ? (wakeRaw < sleepRaw ? wakeRaw+1440 : wakeRaw)
+    : wakeRaw;
+  const bedAbs   = (sleepAbs!==null && onsetMin>0) ? sleepAbs - onsetMin : sleepAbs;
 
   if(sleepAbs===null && wakeAbs===null){
     ctx.fillStyle='#bbb'; ctx.font='11px sans-serif'; ctx.textAlign='center';
@@ -8831,9 +8835,9 @@ function drawSleepTimeline(canvasId, r){
     label('잠든시간',      x, barY+THICK/2+18,'#9B87D0','8px sans-serif', al);
   }
 
-  // 4. | 자정(오전12시) 마커 (흰색 선)
-  const midnightAbs = 24*60; // 00:00 → 1440분
-  if(midnightAbs > rangeStart && midnightAbs < rangeEnd){
+  // 4. | 자정(오전12시) 마커 (흰색 선) — sleepAbs<1440이고 wakeAbs>1440일 때만
+  const midnightAbs = 1440; // 00:00
+  if(sleepAbs!==null && wakeAbs!==null && sleepAbs < midnightAbs && wakeAbs > midnightAbs){
     const x=vLine(midnightAbs,'rgba(255,255,255,0.9)',[3,3],2);
     label('자정', x, barY+THICK/2+18, '#aaa','8px sans-serif','center');
   }
@@ -9088,16 +9092,38 @@ function openSleepReport(idx){
   if(eff>=85 && deepPct>=15 && remPct>=18){ evalScore='양호'; evalColor='#1E9E5A'; }
   else if(eff<70 || awakeMin>30){ evalScore='주의 필요'; evalColor='#C83535'; }
 
+  // evalTexts — evalScore와 일관성 유지 (주의필요일 때 긍정 단독 문장 방지)
   const evalTexts=[];
-  if(eff>=85) evalTexts.push('수면 효율이 우수합니다.');
-  else if(eff>=70) evalTexts.push('수면 효율이 양호한 편입니다.');
-  else if(eff>0) evalTexts.push('수면 효율이 다소 낮습니다. 취침 환경 개선을 권장합니다.');
-  if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
-  else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
-  else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
-  if(awakeMin>30) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
-  else if(awakeMin>0) evalTexts.push('각성 횟수는 정상 범위입니다.');
-  if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+  const _effGood=eff>=85, _awakeBad=awakeMin>30;
+  if(evalScore==='주의 필요'){
+    if(_effGood && _awakeBad) evalTexts.push('수면 효율은 우수하나, 각성 시간이 길어 수면 연속성 개선이 필요합니다.');
+    else if(_effGood) evalTexts.push('수면 효율이 우수합니다.');
+    else if(eff>=70) evalTexts.push('수면 효율이 양호한 편이나 개선의 여지가 있습니다.');
+    else if(eff>0) evalTexts.push('수면 효율이 낮습니다. 취침 환경 개선을 권장합니다.');
+    if(_awakeBad && !_effGood) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
+    if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
+    else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
+    else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
+    if(remPct>0&&remPct<18) evalTexts.push('REM 수면이 다소 부족합니다.');
+    else if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+  } else if(evalScore==='양호'){
+    evalTexts.push('수면 효율이 우수합니다.');
+    if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
+    else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
+    if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+    if(awakeMin>0&&awakeMin<=30) evalTexts.push('각성 횟수는 정상 범위입니다.');
+  } else {
+    if(_effGood) evalTexts.push('수면 효율은 우수하나 일부 지표 확인이 필요합니다.');
+    else if(eff>=70) evalTexts.push('수면 효율이 양호한 편입니다.');
+    else if(eff>0) evalTexts.push('수면 효율이 다소 낮습니다. 취침 환경 개선을 권장합니다.');
+    if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
+    else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
+    else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
+    if(_awakeBad) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
+    else if(awakeMin>0) evalTexts.push('각성 횟수는 정상 범위입니다.');
+    if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+    else if(remPct>0&&remPct<18) evalTexts.push('REM 수면이 다소 부족합니다.');
+  }
   if(r.nap && parseInt(r.nap)>60) evalTexts.push('낮잠 시간이 길어 야간 수면에 영향을 줄 수 있습니다.');
 
   const startH=22;
@@ -9535,16 +9561,38 @@ function openAllReport(name, age, gender){
       let evalScore='보통', evalColor='#C07820';
       if(eff>=85&&deepPct>=15&&remPct>=18){ evalScore='양호'; evalColor='#1E9E5A'; }
       else if(eff<70||awakeMin>30){ evalScore='주의 필요'; evalColor='#C83535'; }
+      // evalTexts — evalScore와 일관성 유지
       const evalTexts=[];
-      if(eff>=85) evalTexts.push('수면 효율이 우수합니다.');
-      else if(eff>=70) evalTexts.push('수면 효율이 양호한 편입니다.');
-      else if(eff>0) evalTexts.push('수면 효율이 다소 낮습니다. 취침 환경 개선을 권장합니다.');
-      if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
-      else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
-      else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
-      if(awakeMin>30) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
-      else if(awakeMin>0) evalTexts.push('각성 횟수는 정상 범위입니다.');
-      if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+      const _effGood2=eff>=85, _awakeBad2=awakeMin>30;
+      if(evalScore==='주의 필요'){
+        if(_effGood2&&_awakeBad2) evalTexts.push('수면 효율은 우수하나, 각성 시간이 길어 수면 연속성 개선이 필요합니다.');
+        else if(_effGood2) evalTexts.push('수면 효율이 우수합니다.');
+        else if(eff>=70) evalTexts.push('수면 효율이 양호한 편이나 개선의 여지가 있습니다.');
+        else if(eff>0) evalTexts.push('수면 효율이 낮습니다. 취침 환경 개선을 권장합니다.');
+        if(_awakeBad2&&!_effGood2) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
+        if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
+        else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
+        else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
+        if(remPct>0&&remPct<18) evalTexts.push('REM 수면이 다소 부족합니다.');
+        else if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+      } else if(evalScore==='양호'){
+        evalTexts.push('수면 효율이 우수합니다.');
+        if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
+        else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
+        if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+        if(awakeMin>0&&awakeMin<=30) evalTexts.push('각성 횟수는 정상 범위입니다.');
+      } else {
+        if(_effGood2) evalTexts.push('수면 효율은 우수하나 일부 지표 확인이 필요합니다.');
+        else if(eff>=70) evalTexts.push('수면 효율이 양호한 편입니다.');
+        else if(eff>0) evalTexts.push('수면 효율이 다소 낮습니다. 취침 환경 개선을 권장합니다.');
+        if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
+        else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
+        else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
+        if(_awakeBad2) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
+        else if(awakeMin>0) evalTexts.push('각성 횟수는 정상 범위입니다.');
+        if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+        else if(remPct>0&&remPct<18) evalTexts.push('REM 수면이 다소 부족합니다.');
+      }
       if(sr.nap&&parseInt(sr.nap)>60) evalTexts.push('낮잠 시간이 길어 야간 수면에 영향을 줄 수 있습니다.');
 
       canvasRegistry.push({type:'tl', id:tlId, r:sr});

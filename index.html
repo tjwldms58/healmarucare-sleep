@@ -3980,7 +3980,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.26';
+const APP_VER = '6.27';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -8184,6 +8184,9 @@ function drawSleepBarChart(canvasId, r, darkBg=true){
     return h>0 ? `${h}h${mn>0?mn+'m':''}` : `${mn}m`;
   };
 
+  // 툴팁용 막대 메타데이터 초기화
+  canvas._arBars = [];
+
   segs.forEach(seg=>{
     const segW=Math.max(2, Math.round(totalW*seg.min/totalMin));
     const barH=Math.max(2, Math.round(cH * stageH[seg.stage]));
@@ -8200,6 +8203,13 @@ function drawSleepBarChart(canvasId, r, darkBg=true){
     // 상단 밝은 선
     ctx.fillStyle = c;
     ctx.fillRect(xPos, yTop, bw, 2);
+
+    // 툴팁 메타데이터 저장
+    canvas._arBars.push({
+      x: xPos, w: bw,
+      valLabel: stageNames[seg.stage],
+      date: stageFmt(seg.min)||''
+    });
 
     xPos+=segW;
   });
@@ -8225,6 +8235,35 @@ function drawSleepBarChart(canvasId, r, darkBg=true){
       ctx.fillText(label, tx, ly);
       tx += ctx.measureText(label).width + 7;
     });
+  }
+
+  // 호버/클릭 툴팁 이벤트 등록
+  if(!canvas._arTooltipBound){
+    canvas._arTooltipBound = true;
+    const tip = document.getElementById('ar-bar-tooltip');
+    const tipVal = document.getElementById('ar-bar-tooltip-val');
+    const tipDate = document.getElementById('ar-bar-tooltip-date');
+    function showSlTip(e){
+      if(!tip||!canvas._arBars) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mx = (e.clientX - rect.left) * scaleX;
+      const hit = canvas._arBars.find(b => mx >= b.x && mx <= b.x + b.w);
+      if(hit && hit.valLabel){
+        tipVal.textContent = hit.valLabel;
+        tipDate.textContent = hit.date; // 해당 구간 시간
+        tip.style.display = 'block';
+        tip.style.left = (e.clientX - 36) + 'px';
+        tip.style.top  = (e.clientY - 80) + 'px';
+        canvas.style.cursor = 'pointer';
+      } else {
+        tip.style.display = 'none';
+        canvas.style.cursor = 'default';
+      }
+    }
+    canvas.addEventListener('mousemove', showSlTip);
+    canvas.addEventListener('click', showSlTip);
+    canvas.addEventListener('mouseleave', ()=>{ if(tip) tip.style.display='none'; canvas.style.cursor='default'; });
   }
 
   return {totalMin};

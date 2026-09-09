@@ -3975,7 +3975,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.22';
+const APP_VER = '6.23';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -9179,14 +9179,6 @@ function openAllReport(name, age, gender){
       ['휴식시', hr.rest?hr.rest+' BPM':'-', '#C0392B'],
     ]) : noData('심박수');
 
-    // 혈압
-    let bpSection = '';
-    if(bp){
-      const bpSt=getBpStatus(bp.sys,bp.dia);
-      bpSection = statRow([['수축기', bp.sys?bp.sys+' mmHg':'-','#8E44AD'],['이완기', bp.dia?bp.dia+' mmHg':'-','#8E44AD']])+
-        (bpSt?`<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${bpSt.bg};color:${bpSt.color}">${bpSt.icon} ${bpSt.label}</span></div>`:'');
-    } else bpSection = noData('혈압');
-
     // 혈중산소
     let o2Section = '';
     if(o2){
@@ -9194,21 +9186,6 @@ function openAllReport(name, age, gender){
       o2Section = statRow([['SpO₂', o2.daily?o2.daily+'%':'-', o2St?o2St.color:'var(--text-1)']])+
         (o2St&&o2.daily?`<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${o2St.bg};color:${o2St.color}">${o2St.icon} ${o2St.label}</span></div>`:'');
     } else o2Section = noData('혈중산소');
-
-    // 체중
-    let wtSection = '';
-    if(wt){
-      const wtSt=getBmiStatus(parseFloat(wt.bmi));
-      wtSection = statRow([['체중', wt.kg?wt.kg+' kg':'-','#1E8449'],['키', wt.height?wt.height+' cm':'-','var(--text-2)'],['BMI', wt.bmi||'-','var(--text-1)']])+
-        (wtSt&&wt.bmi?`<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${wtSt.bg};color:${wtSt.color}">${wtSt.label}</span></div>`:'');
-    } else wtSection = noData('체중');
-
-    // 여성건강
-    const whSection = wh ? statRow([
-      ['생리 기간', wh.periodDays?wh.periodDays+'일':'-','var(--text-1)'],
-      ['주기', wh.cycleLen?wh.cycleLen+'일':'-','var(--text-1)'],
-      ['갱년기', wh.menopause||'-','var(--text-2)'],
-    ]) : noData('여성건강');
 
     // 스트레스·활력
     let svSection = '';
@@ -9238,18 +9215,9 @@ function openAllReport(name, age, gender){
             <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">❤️ 심박수</div>${hrSection}
           </div>
           <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
-            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">🩸 혈압</div>${bpSection}
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
             <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">O₂ 혈중산소</div>${o2Section}
           </div>
-          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
-            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">⚖️ 체중</div>${wtSection}
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
-            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">🌸 여성건강</div>${whSection}
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
+          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px;grid-column:span 2">
             <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">🧠 스트레스·활력</div>${svSection}
           </div>
         </div>

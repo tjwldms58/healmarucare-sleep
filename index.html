@@ -3997,7 +3997,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.41';
+const APP_VER = '6.42';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -9769,9 +9769,9 @@ function saveProfNote(btn){
 }
 
 function printAllReport(){
-  // Canvas → <img> 변환: PDF 인쇄 시 그래프가 나오도록
   const arBody = document.getElementById('ar-body');
-  // 모든 canvas를 dataURL img로 교체한 클론 생성
+
+  // ── 1. canvas → <img> 변환 (그래프 보존) ──
   const clone = arBody.cloneNode(true);
   const origCanvases = arBody.querySelectorAll('canvas');
   const cloneCanvases = clone.querySelectorAll('canvas');
@@ -9781,58 +9781,143 @@ function printAllReport(){
       const img = document.createElement('img');
       img.src = dataUrl;
       img.style.cssText = c.style.cssText || 'width:100%;height:auto;display:block';
-      img.width  = c.width;
-      img.height = c.height;
+      img.width = c.width; img.height = c.height;
       if(cloneCanvases[i]) cloneCanvases[i].replaceWith(img);
-    } catch(e){ /* tainted canvas 무시 */ }
+    } catch(e){}
   });
-  // textarea 내용을 인쇄용 div 로 교체 (textarea는 인쇄 시 내용이 빠질 수 있음)
+
+  // ── 2. textarea → div 변환 (교수님 메모 텍스트 보존) ──
   const origTAs = arBody.querySelectorAll('textarea.ar-prof-note');
   const cloneTAs = clone.querySelectorAll('textarea.ar-prof-note');
   origTAs.forEach((ta, i) => {
     if(!cloneTAs[i]) return;
     const div = document.createElement('div');
-    div.style.cssText = 'font-family:inherit;font-size:.82rem;color:#3A2D00;line-height:1.6;min-height:72px;white-space:pre-wrap;word-break:break-all';
+    div.style.cssText = 'font-family:inherit;font-size:.82rem;color:#3A2D00;line-height:1.6;min-height:40px;white-space:pre-wrap;word-break:break-all';
     div.textContent = ta.value || '';
     cloneTAs[i].replaceWith(div);
   });
 
-  const body = clone.innerHTML;
-  const title = document.getElementById('ar-title').textContent;
-  const sub   = document.getElementById('ar-sub').textContent;
+  // ── 3. 메인 문서의 <style> 전체 수집 ──
+  const styleBlocks = [...document.querySelectorAll('style')]
+    .map(s => s.innerHTML).join('\n');
+
+  const title     = document.getElementById('ar-title').textContent;
+  const sub       = document.getElementById('ar-sub').textContent;
   const printDate = document.getElementById('ar-print-date').textContent;
 
-  const w = window.open('','_blank','width=860,height=1000');
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8">
-  <title>통합 건강 보고서</title>
+  // ── 4. 인쇄 창 열기 — 팝업과 동일한 구조/스타일 ──
+  const w = window.open('', '_blank', 'width=900,height=1100');
+  w.document.write(`<!doctype html><html><head>
+  <meta charset="utf-8">
+  <title>${title}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;padding:28px 36px;font-size:13px;color:#0D2246;line-height:1.6;background:#fff}
-    h1{font-size:17px;font-weight:800;color:#0D2246;margin-bottom:2px}
-    .sub{font-size:11px;color:#7A9FB8;margin-bottom:4px}
-    .print-date{font-size:10px;color:#7A9FB8;text-align:right}
-    hr{border:none;border-top:1.5px solid #D8ECF4;margin:10px 0 14px}
-    img{max-width:100%;height:auto!important;display:block}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:4px 8px;font-size:11px}
-    @media print{
-      @page{size:A4;margin:15mm 12mm}
-      body{padding:0}
+    /* ── 앱 전체 스타일 그대로 복사 ── */
+    ${styleBlocks}
+
+    /* ── 인쇄 창 전용 오버라이드 ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: #EEF6FB !important;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      color: #0D2246;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      color-adjust: exact;
+    }
+    /* 팝업에서 보이는 모달 박스 구조 재현 */
+    .print-page-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+    .print-modal-header {
+      background: #17324D;
+      border-radius: 14px 14px 0 0;
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .print-modal-header h1 {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 800;
+      margin: 0 0 2px;
+    }
+    .print-modal-header .sub {
+      color: rgba(255,255,255,.65);
+      font-size: .72rem;
+      margin: 0;
+    }
+    .print-modal-header .pdate {
+      color: rgba(255,255,255,.5);
+      font-size: .65rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .print-modal-body {
+      background: var(--bg, #F4FAFD);
+      border: 1px solid #C8DFF0;
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      padding: 18px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .print-modal-footer {
+      padding: 10px 18px;
+      background: var(--surface-2, #EDF4FA);
+      border-top: 1px solid #C8DFF0;
+      border-radius: 0 0 14px 14px;
+      font-size: .67rem;
+      color: var(--text-3, #7A9FB8);
+      display: flex;
+      justify-content: space-between;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    img { max-width: 100%; height: auto !important; display: block; }
+    canvas { display: none; }
+    @media print {
+      @page { size: A4; margin: 10mm 10mm; }
+      html, body { background: #EEF6FB !important; }
+      .print-page-wrap { padding: 0; }
       .ar-day-block + .ar-day-block { page-break-before: always; }
+      button { display: none !important; }
     }
   </style>
   </head><body>
-  <div class="print-date">${printDate}</div>
-  <h1>${title}</h1>
-  <div class="sub">${sub}</div>
-  <hr>
-  ${body}
+  <div class="print-page-wrap">
+    <div class="print-modal-header">
+      <div>
+        <h1>${title}</h1>
+        <p class="sub">${sub}</p>
+      </div>
+      <div class="pdate">${printDate}</div>
+    </div>
+    <div class="print-modal-body">
+      ${clone.innerHTML}
+    </div>
+    <div class="print-modal-footer">
+      <span>힐마루케어 · 시니어케어 통합 건강관리 시스템</span>
+      <span>${printDate}</span>
+    </div>
+  </div>
+  <script>
+    // 폰트 로드 후 인쇄 다이얼로그 열기
+    document.fonts.ready.then(()=>{ setTimeout(()=>{ window.print(); }, 400); });
+  </scr` + `ipt>
   </body></html>`);
   w.document.close();
   w.focus();
-  setTimeout(()=>{ w.print(); }, 800);
 }
 
 </script>

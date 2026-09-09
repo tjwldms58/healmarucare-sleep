@@ -3482,6 +3482,43 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 </div>
 
 <!-- ═══════════════════════════════════════
+     DEVICE RECORD EDIT MODAL
+═══════════════════════════════════════ -->
+<div id="edit-dv-modal" style="display:none;position:fixed;inset:0;background:rgba(7,20,42,.72);z-index:8001;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeEditDV()">
+  <div style="background:var(--surface);border-radius:18px;width:100%;max-width:520px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(7,20,42,.5)">
+    <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#6B5CE7;border-radius:18px 18px 0 0">
+      <div style="color:#fff;font-size:.9rem;font-weight:700">📦 기기관리 기록 수정</div>
+      <button onclick="closeEditDV()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div style="overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-field"><label>날짜</label><input type="date" id="edv-date"></div>
+        <div class="form-field"><label>담당간호사</label><input type="text" id="edv-nurse" placeholder="이름 입력"></div>
+        <div class="form-field"><label>고객명</label><input type="text" id="edv-name" placeholder="성명"></div>
+        <div class="form-field"><label>연락처</label><input type="text" id="edv-phone" placeholder="010-0000-0000"></div>
+        <div class="form-field"><label>업무구분</label>
+          <select id="edv-task">
+            <option value="">선택</option>
+            <option value="기기제공">📤 기기제공</option>
+            <option value="기기수거">📥 기기수거</option>
+            <option value="방문상담">🗣 방문상담</option>
+          </select>
+        </div>
+        <div class="form-field"><label>기기명</label><input type="text" id="edv-device" placeholder="예) 미밴드 10"></div>
+        <div class="form-field"><label>S/N</label><input type="text" id="edv-sn" placeholder="시리얼 번호"></div>
+        <div class="form-field"><label>방문장소</label><input type="text" id="edv-place" placeholder="예) 자택, 센터"></div>
+        <div class="form-field"><label>소요시간</label><input type="text" id="edv-duration" placeholder="예) 30분"></div>
+      </div>
+      <div class="form-field"><label>특이사항</label><textarea id="edv-note" rows="3" style="width:100%;resize:vertical;font-family:inherit;font-size:.82rem;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);color:var(--text-1)" placeholder="메모"></textarea></div>
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface-2)">
+      <button onclick="closeEditDV()" style="background:var(--border);color:var(--text-2);border:none;border-radius:10px;padding:8px 18px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="saveEditDV()" style="background:#6B5CE7;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
      ALL HEALTH REPORT MODAL (통합 보고서)
 ═══════════════════════════════════════ -->
 
@@ -3997,7 +4034,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.45';
+const APP_VER = '6.46';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5745,6 +5782,7 @@ function renderDeviceRecords(){
     <td>${r.duration||'-'}</td>
     <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${(r.note||'').replace(/"/g,'&quot;')}">${r.note||'-'}</td>
     <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+      <button class="del-btn" title="수정" onclick="openEditDV(${i});event.stopPropagation()" style="background:rgba(107,92,231,.12);color:#6B5CE7;border-color:rgba(107,92,231,.25)">✏️</button>
       <button class="del-btn" onclick="deleteDeviceRecord(${i})" title="삭제">×</button>
     </td>
   </tr>`).join('');
@@ -9503,6 +9541,57 @@ function saveEditWeight(){
   renderWeights();
   closeEditWeight();
   showToast('체중 기록이 수정되었습니다. ✅');
+}
+
+/* ═══════════════════════════════════════
+   DEVICE RECORD EDIT
+═══════════════════════════════════════ */
+let _editingDvIdx = null;
+function openEditDV(idx){
+  _editingDvIdx = idx;
+  const r = deviceRecords[idx];
+  if(!r) return;
+  const fv = (id, v) => { const el=document.getElementById(id); if(el) el.value = v||''; };
+  fv('edv-date',     r.date);
+  fv('edv-nurse',    r.nurse);
+  fv('edv-name',     r.name);
+  fv('edv-phone',    r.phone);
+  fv('edv-device',   r.device);
+  fv('edv-sn',       r.sn);
+  fv('edv-place',    r.place);
+  fv('edv-duration', r.duration);
+  fv('edv-note',     r.note);
+  const taskEl = document.getElementById('edv-task');
+  if(taskEl) taskEl.value = r.task||'';
+  document.getElementById('edit-dv-modal').style.display='flex';
+}
+function closeEditDV(){
+  _editingDvIdx = null;
+  document.getElementById('edit-dv-modal').style.display='none';
+}
+function saveEditDV(){
+  if(_editingDvIdx === null) return;
+  const gv = id => { const el=document.getElementById(id); return el ? el.value.trim() : ''; };
+  const updated = {
+    ...deviceRecords[_editingDvIdx],
+    date:     gv('edv-date'),
+    nurse:    gv('edv-nurse'),
+    name:     gv('edv-name'),
+    phone:    gv('edv-phone'),
+    task:     document.getElementById('edv-task').value,
+    device:   gv('edv-device'),
+    sn:       gv('edv-sn'),
+    place:    gv('edv-place'),
+    duration: gv('edv-duration'),
+    note:     gv('edv-note'),
+  };
+  if(!updated.date && !updated.name){ showToast('날짜 또는 고객명을 입력해 주세요.', true); return; }
+  deviceRecords[_editingDvIdx] = updated;
+  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  syncToSheet();
+  renderDeviceRecords();
+  closeEditDV();
+  showToast('기기관리 기록이 수정되었습니다. ✅');
 }
 
 /* ═══════════════════════════════════════

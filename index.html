@@ -3980,7 +3980,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.27';
+const APP_VER = '6.28';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -9341,8 +9341,14 @@ function openAllReport(name, age, gender){
           </div>
         </div>
         <div style="margin-top:12px;background:#FFFDF5;border:1.5px solid #E8C84A;border-radius:10px;padding:10px">
-          <div style="font-size:.72rem;font-weight:800;color:#7A5F00;margin-bottom:6px">📝 교수님 분석 및 제언</div>
-          <textarea class="ar-prof-note" placeholder="교수님 분석 및 제언을 입력하세요…"
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="font-size:.72rem;font-weight:800;color:#7A5F00">📝 교수님 분석 및 제언</div>
+            <button onclick="saveProfNote(this)"
+              data-name="${name.replace(/"/g,'&quot;')}" data-date="${date}"
+              style="background:#E8C84A;border:none;border-radius:6px;padding:3px 10px;font-size:.7rem;font-weight:700;color:#5A4400;cursor:pointer;font-family:inherit">💾 저장</button>
+          </div>
+          <textarea class="ar-prof-note" data-name="${name.replace(/"/g,'&quot;')}" data-date="${date}"
+            placeholder="교수님 분석 및 제언을 입력하세요…"
             style="width:100%;min-height:72px;border:none;background:transparent;resize:vertical;font-family:inherit;font-size:.82rem;color:#3A2D00;line-height:1.6;outline:none;padding:0"></textarea>
         </div>
       </div>`;
@@ -9351,6 +9357,14 @@ function openAllReport(name, age, gender){
   const noDataBlock = allDates.length===0 ? `<div style="text-align:center;padding:40px 0;color:var(--text-3);font-size:.85rem">📭 해당 대상자의 데이터가 없습니다</div>` : '';
 
   document.getElementById('ar-body').innerHTML = headerHtml + noDataBlock + dayBlocks.join('');
+  // 저장된 교수님 메모 불러오기
+  document.querySelectorAll('textarea.ar-prof-note').forEach(ta=>{
+    try {
+      const key = 'profNote_' + (ta.dataset.name||'') + '_' + (ta.dataset.date||'');
+      const saved = localStorage.getItem(key);
+      if(saved) ta.value = saved;
+    } catch(e){}
+  });
   document.getElementById('all-report-modal').style.display='flex';
 
   // ── 캔버스 그리기 ──
@@ -9369,6 +9383,32 @@ function openAllReport(name, age, gender){
 
 function closeAllReport(){
   document.getElementById('all-report-modal').style.display='none';
+}
+
+function saveProfNote(btn){
+  try {
+    const name = btn.dataset.name||'';
+    const date = btn.dataset.date||'';
+    // 같은 날짜의 textarea 찾기
+    const ta = btn.closest('div').parentElement.querySelector('textarea.ar-prof-note');
+    if(!ta) return;
+    const key = 'profNote_' + name + '_' + date;
+    localStorage.setItem(key, ta.value);
+    // 토스트 알림
+    let toast = document.getElementById('prof-note-toast');
+    if(!toast){
+      toast = document.createElement('div');
+      toast.id = 'prof-note-toast';
+      toast.style.cssText = 'position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#3D1FC8;color:#fff;padding:10px 24px;border-radius:24px;font-size:.82rem;font-weight:700;z-index:99999;box-shadow:0 4px 18px rgba(61,31,200,.35);opacity:0;transition:opacity .25s';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = '✅ 저장했습니다';
+    toast.style.opacity = '1';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>{ toast.style.opacity='0'; }, 1800);
+  } catch(e){
+    alert('저장 중 오류가 발생했습니다.');
+  }
 }
 
 function printAllReport(){

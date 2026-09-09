@@ -4050,7 +4050,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.47';
+const APP_VER = '6.48';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -7069,9 +7069,12 @@ function buildDocumentXml(imgEntries, recs){
 
   /* ── IMAGE paragraph ── */
   function imgPara(imgEntry){
-    const maxWemu = 14400000;
-    const ratio = imgEntry.h / imgEntry.w;
-    const cx = Math.min(imgEntry.w * 9525, maxWemu);
+    // 가로 전체(landscape A4 콘텐츠 폭 15398 dxa × 635 = 9,777,730 EMU)로 고정 → 최대 크기·고화질 표시
+    const contentWemu = 9777730;
+    const safeW = imgEntry.w || 640;
+    const safeH = imgEntry.h || 480;
+    const ratio = safeH / safeW;
+    const cx = contentWemu;
     const cy = Math.round(cx * ratio);
     return `<w:p><w:pPr><w:spacing w:before="80" w:after="80"/></w:pPr><w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="${imgEntry.recIdx+1}" name="Img${imgEntry.recIdx}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${imgEntry.recIdx}" name="Image"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${imgEntry.rId}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
   }
@@ -7157,12 +7160,15 @@ function _buildAllDocXml(allRows, imgEntries){
     return '정상';
   }
 
-  // 이미지 단락 (가로 최대 15398 dxa = 14,081,611 EMU)
-  const _maxImgEmu = 14081611;
+  // 이미지 단락 (landscape A4 콘텐츠 폭 15398 dxa × 635 = 9,777,730 EMU에 맞춰 최대 크기 표시)
   let _imgUid = 100;
   function imgPara(e){
-    const ratio = e.h / e.w;
-    const cx = Math.min(e.w * 9525, _maxImgEmu);
+    // 페이지 전체 너비로 고정 → 이미지 크기 최대화, 확대 시 화질 최상
+    const contentWemu = 9777730;
+    const safeW = e.w || 640;
+    const safeH = e.h || 480;
+    const ratio = safeH / safeW;
+    const cx = contentWemu;
     const cy = Math.round(cx * ratio);
     const uid = _imgUid++;
     return `<w:p><w:pPr><w:spacing w:before="40" w:after="40"/><w:jc w:val="left"/></w:pPr><w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="${uid}" name="AllImg${uid}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${uid}" name="Image${uid}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${e.rId}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;

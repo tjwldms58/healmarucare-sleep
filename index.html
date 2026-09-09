@@ -3997,7 +3997,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.43';
+const APP_VER = '6.44';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -8370,12 +8370,12 @@ function drawSleepStage7Chart(canvasId, sr7, allDates){
     const bx = cx - barW/2;
     const baseline = py(0);
 
-    // 스택 순서: awake(맨아래), rem, light, deep(맨위)
+    // 스택 순서: deep(맨아래)→light→rem→awake(맨위)
     const layers = [
-      { val: d.awake, color: stackColors[0] },
-      { val: d.rem,   color: stackColors[1] },
-      { val: d.light, color: stackColors[2] },
       { val: d.deep,  color: stackColors[3] },
+      { val: d.light, color: stackColors[2] },
+      { val: d.rem,   color: stackColors[1] },
+      { val: d.awake, color: stackColors[0] },
     ];
 
     // 전체 막대 높이 계산

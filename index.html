@@ -3980,7 +3980,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.28';
+const APP_VER = '6.29';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -8269,6 +8269,150 @@ function drawSleepBarChart(canvasId, r, darkBg=true){
   return {totalMin};
 }
 
+/* ═══ 7일 수면 단계 스택 바 차트 ══════════════════════════════════════════
+ * canvasId : canvas 요소 id
+ * sr7      : 수면 기록 배열 (최대 7개)
+ * allDates : 날짜 배열 (Day1~Day7 레이블용)
+ * ════════════════════════════════════════════════════════════════════════ */
+function drawSleepStage7Chart(canvasId, sr7, allDates){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas || !sr7 || !sr7.length) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = 'rgba(240,235,252,0.5)';
+  ctx.fillRect(0,0,W,H);
+
+  const padL=30, padR=10, padT=14, padB=26;
+  const cW = W-padL-padR, cH = H-padT-padB;
+  const n = Math.max(allDates.length, 1);
+  const slot = cW / Math.max(n, 7);
+  const barW = Math.max(8, Math.floor(slot * 0.55));
+
+  // 각 날짜별 단계별 분 계산
+  const dayData = allDates.map((date, i) => {
+    const sr = sr7.find(r=>r.date===date)||null;
+    if(!sr) return { dayNum: i+1, date, deep:0, light:0, rem:0, awake:0, total:0 };
+    const total = parseSleepMin(sr.total)||0;
+    const deep  = Math.round(total*(parseFloat(sr.deepPct)||0)/100);
+    const light = Math.round(total*(parseFloat(sr.lightPct)||0)/100);
+    const rem   = Math.round(total*(parseFloat(sr.remPct)||0)/100);
+    const awake = parseInt(sr.awake)||0;
+    return { dayNum: i+1, date, deep, light, rem, awake, total: deep+light+rem+awake };
+  });
+
+  // y축 최대값
+  const yMax = Math.max(...dayData.map(d=>d.total), 60) * 1.12;
+  const py = v => padT + cH*(1 - v/yMax);
+
+  // 그리드 & Y축 레이블
+  const steps = 3;
+  for(let i=0;i<=steps;i++){
+    const v = yMax*i/steps;
+    const y = py(v);
+    ctx.strokeStyle='rgba(100,90,130,0.1)'; ctx.setLineDash([2,3]); ctx.lineWidth=0.8;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(80,70,110,0.4)'; ctx.font='8px sans-serif';
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    const h=Math.floor(v/60), m=v%60;
+    ctx.fillText(h>0?(h+'h'+(m>0?m+'m':'')):(Math.round(v)+'m'), padL-3, y);
+  }
+
+  // 스택 바 컬러 (아래→위: 각성→REM→얕은수면→깊은수면)
+  const stackColors = ['#FF7043','#5A9EF5','#4878E0','#2D5BE3'];
+
+  canvas._arBars = [];
+  dayData.forEach((d, i)=>{
+    const cx = padL + slot*i + slot/2;
+    const bx = cx - barW/2;
+    const br = Math.min(barW/2, 3);
+    const baseline = py(0);
+    let yBot = baseline;
+
+    // 스택 순서: awake, rem, light, deep (아래에서 위로)
+    const layers = [
+      { val: d.awake, color: stackColors[0] },
+      { val: d.rem,   color: stackColors[1] },
+      { val: d.light, color: stackColors[2] },
+      { val: d.deep,  color: stackColors[3] },
+    ];
+    let stackTopY = baseline;
+    layers.forEach(layer=>{
+      if(!layer.val) return;
+      const bh = Math.max(2, baseline - py(layer.val) );
+      const yTop = stackTopY - bh;
+      ctx.fillStyle = layer.color+'CC';
+      ctx.fillRect(bx, yTop, barW, bh);
+      stackTopY = yTop;
+    });
+
+    // 막대 상단 둥근 처리
+    if(d.total > 0 && ctx.roundRect){
+      ctx.beginPath();
+      ctx.roundRect(bx, stackTopY, barW, 3, [br,br,0,0]);
+      ctx.fillStyle = stackColors[3]+'EE';
+      ctx.fill();
+    }
+
+    // 툴팁 메타데이터
+    const fmt = m=>{ if(!m) return '-'; const h=Math.floor(m/60),mn=m%60; return h>0?(h+'h'+(mn>0?' '+mn+'m':'')):(mn+'m'); };
+    canvas._arBars.push({
+      x: bx, w: barW,
+      valLabel: `Day${d.dayNum}`,
+      deep: fmt(d.deep), light: fmt(d.light), rem: fmt(d.rem), awake: fmt(d.awake),
+      date: d.date
+    });
+
+    // X축 레이블
+    ctx.fillStyle='rgba(80,70,110,0.6)'; ctx.font='8.5px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText('Day'+d.dayNum, cx, H-padB+4);
+  });
+
+  // 범례
+  const legend=[['깊은수면','#2D5BE3'],['얕은수면','#4878E0'],['REM','#5A9EF5'],['각성','#FF7043']];
+  let lx = padL;
+  ctx.font = '7.5px sans-serif'; ctx.textBaseline='bottom';
+  legend.forEach(([label,c])=>{
+    ctx.fillStyle=c; ctx.fillRect(lx, H-2, 6, -6); lx+=8;
+    ctx.fillStyle='rgba(50,40,90,0.65)'; ctx.fillText(label, lx, H-1); lx+=ctx.measureText(label).width+8;
+  });
+
+  // 호버/클릭 툴팁
+  if(!canvas._arTooltipBound){
+    canvas._arTooltipBound = true;
+    const tip = document.getElementById('ar-bar-tooltip');
+    const tipVal = document.getElementById('ar-bar-tooltip-val');
+    const tipDate = document.getElementById('ar-bar-tooltip-date');
+    function showTip7(e){
+      if(!tip||!canvas._arBars) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mx = (e.clientX - rect.left) * scaleX;
+      const hit = canvas._arBars.find(b=>mx>=b.x && mx<=b.x+b.w);
+      if(hit){
+        // 툴팁: 단계별 시간 (글자 크기 동일)
+        tipVal.innerHTML = `<span style="font-size:.75rem;font-weight:700">${hit.valLabel} · ${hit.date||''}</span>`;
+        tipDate.innerHTML =
+          `<span style="font-size:.75rem">깊은수면 ${hit.deep}</span><br>` +
+          `<span style="font-size:.75rem">얕은수면 ${hit.light}</span><br>` +
+          `<span style="font-size:.75rem">REM ${hit.rem}</span><br>` +
+          `<span style="font-size:.75rem">각성 ${hit.awake}</span>`;
+        tip.style.display='block';
+        tip.style.left=(e.clientX-50)+'px';
+        tip.style.top=(e.clientY-130)+'px';
+        canvas.style.cursor='pointer';
+      } else {
+        tip.style.display='none'; canvas.style.cursor='default';
+      }
+    }
+    canvas.addEventListener('mousemove', showTip7);
+    canvas.addEventListener('click', showTip7);
+    canvas.addEventListener('mouseleave',()=>{ if(tip) tip.style.display='none'; canvas.style.cursor='default'; });
+  }
+}
+
 /* ═══ 범용 건강 막대그래프 (삼성 헬스 스타일) ══════════════════════════════
  * canvasId  : canvas 요소 id
  * recs      : [{date, val, lo, hi}] 배열 (7개 이하)
@@ -9204,6 +9348,7 @@ function openAllReport(name, age, gender){
         ['기기 수거일', firstSr&&firstSr.collect||'-'], ['기간', allDates.length?allDates[0]+' ~ '+allDates[allDates.length-1]:'-'],
       ])}
       ${sr7.length>1?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">📈 수면시간 추이 (7일)</div>'+chartBox('ar-sr7-canvas',680,110):''}
+      ${sr7.length>0?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin:10px 0 4px">📊 수면 단계 분포 (7일)</div>'+chartBox('ar-sl7-canvas',680,130):''}
     </div>` : '';
 
   // ── Day별 섹션 ──
@@ -9249,17 +9394,12 @@ function openAllReport(name, age, gender){
       if(sr.nap&&parseInt(sr.nap)>60) evalTexts.push('낮잠 시간이 길어 야간 수면에 영향을 줄 수 있습니다.');
 
       canvasRegistry.push({type:'tl', id:tlId, r:sr});
-      canvasRegistry.push({type:'sl', id:slId, r:sr});
       canvasRegistry.push({type:'do', id:doId, r:sr});
 
       sleepSection = `
         <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">🕐 수면 타임라인</div>
         <div style="background:var(--surface);border-radius:8px;padding:6px 8px;overflow:hidden">
           <canvas id="${tlId}" width="680" height="90" style="width:100%;height:auto"></canvas>
-        </div>
-        <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin:8px 0 4px">📊 수면 단계 그래프</div>
-        <div style="background:var(--surface);border-radius:8px;padding:8px;overflow:hidden">
-          <canvas id="${slId}" width="680" height="110" style="width:100%;height:auto"></canvas>
         </div>
         <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
           <div style="position:relative;flex-shrink:0;width:90px;height:90px">
@@ -9371,12 +9511,15 @@ function openAllReport(name, age, gender){
   requestAnimationFrame(()=>{
     canvasRegistry.forEach(({type, id, r}) => {
       if(type==='tl') drawSleepTimeline(id, r);
-      else if(type==='sl') drawSleepBarChart(id, r, false);
       else if(type==='do') drawDonut(id, r);
     });
     if(sr7.length>1){
       const d=sr7.map(r=>({date:r.date, val:Math.round((parseSleepMin(r.total)||0)/6)/10}));
       drawHealthBarChart('ar-sr7-canvas', d, {color:'#4878E0', label:'수면시간(h)'});
+    }
+    // 7일 수면 단계 스택 바 차트
+    if(sr7.length>0){
+      drawSleepStage7Chart('ar-sl7-canvas', sr7, allDates);
     }
   });
 }

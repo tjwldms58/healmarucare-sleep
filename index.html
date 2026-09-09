@@ -3997,7 +3997,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.44';
+const APP_VER = '6.45';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -9794,6 +9794,7 @@ function saveProfNote(btn){
 
 function printAllReport(){
   const arBody = document.getElementById('ar-body');
+  if(!arBody){ alert('보고서 데이터가 없습니다.'); return; }
 
   // ── 1. canvas → <img> 변환 (그래프 보존) ──
   const clone = arBody.cloneNode(true);
@@ -9804,15 +9805,14 @@ function printAllReport(){
       const dataUrl = c.toDataURL('image/png');
       const img = document.createElement('img');
       img.src = dataUrl;
-      img.style.cssText = c.style.cssText || 'width:100%;height:auto;display:block';
-      img.width = c.width; img.height = c.height;
+      img.style.cssText = 'width:' + c.offsetWidth + 'px;height:auto;display:block;max-width:100%';
       if(cloneCanvases[i]) cloneCanvases[i].replaceWith(img);
     } catch(e){}
   });
 
-  // ── 2. textarea → div 변환 (교수님 메모 텍스트 보존) ──
-  const origTAs = arBody.querySelectorAll('textarea.ar-prof-note');
-  const cloneTAs = clone.querySelectorAll('textarea.ar-prof-note');
+  // ── 2. textarea → div 변환 ──
+  const origTAs = arBody.querySelectorAll('textarea');
+  const cloneTAs = clone.querySelectorAll('textarea');
   origTAs.forEach((ta, i) => {
     if(!cloneTAs[i]) return;
     const div = document.createElement('div');
@@ -9821,43 +9821,53 @@ function printAllReport(){
     cloneTAs[i].replaceWith(div);
   });
 
-  // ── 3. 메인 문서의 <style> 전체 수집 ──
-  const styleBlocks = [...document.querySelectorAll('style')]
-    .map(s => s.innerHTML).join('\n');
+  // ── 3. 버튼 숨기기 ──
+  clone.querySelectorAll('button').forEach(b => { b.style.display = 'none'; });
 
   const title     = document.getElementById('ar-title').textContent;
   const sub       = document.getElementById('ar-sub').textContent;
   const printDate = document.getElementById('ar-print-date').textContent;
 
-  // ── 4. 인쇄 창 열기 — 팝업과 동일한 구조/스타일 ──
+  // ── 4. CSS 변수(디자인 토큰)만 추출 — 앱 전체 CSS 제외 ──
+  const rootVars = `
+    :root {
+      --navy:#0D2246; --navy-deep:#07142A; --teal:#0E8FA3; --teal-light:#D0EEF3;
+      --mint:#5CC8B8; --mint-light:#D4F3EE;
+      --bg:#F2F8FC; --surface:#FFFFFF; --surface-2:#F7FBFD;
+      --border:#D8ECF4; --border-soft:#EBF4F9;
+      --text-1:#0D2246; --text-2:#3A5A78; --text-3:#7A9FB8;
+      --ok:#1E9E5A; --ok-bg:#D6F5E4; --warn:#C07820; --warn-bg:#FEF0D3;
+      --err:#C83535; --err-bg:#FDDFDF; --neutral:#6B8EA8; --neutral-bg:#ECF3F8;
+      --shadow-card:0 1px 4px rgba(13,34,70,.06),0 4px 16px rgba(13,34,70,.04);
+    }
+  `;
+
+  // ── 5. 인쇄 창 열기 ──
   const w = window.open('', '_blank', 'width=900,height=1100');
+  if(!w){ alert('팝업 차단을 해제해 주세요.'); return; }
   w.document.write(`<!doctype html><html><head>
   <meta charset="utf-8">
   <title>${title}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
   <style>
-    /* ── 앱 전체 스타일 그대로 복사 ── */
-    ${styleBlocks}
-
-    /* ── 인쇄 창 전용 오버라이드 ── */
-    *, *::before, *::after { box-sizing: border-box; }
+    ${rootVars}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      margin: 0; padding: 0;
-      background: #EEF6FB !important;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      background: #EEF6FB;
       color: #0D2246;
+      font-size: 15px;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
       color-adjust: exact;
     }
-    /* 팝업에서 보이는 모달 박스 구조 재현 */
-    .print-page-wrap {
+    .print-wrap {
       max-width: 820px;
       margin: 0 auto;
       padding: 20px 16px 40px;
     }
-    .print-modal-header {
+    .print-header {
       background: #17324D;
       border-radius: 14px 14px 0 0;
       padding: 16px 20px 12px;
@@ -9867,28 +9877,13 @@ function printAllReport(){
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    .print-modal-header h1 {
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 800;
-      margin: 0 0 2px;
-    }
-    .print-modal-header .sub {
-      color: rgba(255,255,255,.65);
-      font-size: .72rem;
-      margin: 0;
-    }
-    .print-modal-header .pdate {
-      color: rgba(255,255,255,.5);
-      font-size: .65rem;
-      text-align: right;
-      white-space: nowrap;
-    }
-    .print-modal-body {
-      background: var(--bg, #F4FAFD);
+    .print-header-title { color:#fff; font-size:1rem; font-weight:800; margin:0 0 2px; }
+    .print-header-sub   { color:rgba(255,255,255,.65); font-size:.72rem; margin:0; }
+    .print-header-date  { color:rgba(255,255,255,.5); font-size:.65rem; text-align:right; white-space:nowrap; }
+    .print-body {
+      background: #F4FAFD;
       border: 1px solid #C8DFF0;
       border-top: none;
-      border-radius: 0 0 14px 14px;
       padding: 18px 16px 20px;
       display: flex;
       flex-direction: column;
@@ -9896,48 +9891,47 @@ function printAllReport(){
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    .print-modal-footer {
+    .print-footer {
       padding: 10px 18px;
-      background: var(--surface-2, #EDF4FA);
-      border-top: 1px solid #C8DFF0;
+      background: #EDF4FA;
+      border: 1px solid #C8DFF0;
+      border-top: none;
       border-radius: 0 0 14px 14px;
       font-size: .67rem;
-      color: var(--text-3, #7A9FB8);
+      color: #7A9FB8;
       display: flex;
       justify-content: space-between;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    img { max-width: 100%; height: auto !important; display: block; }
-    canvas { display: none; }
+    img { max-width:100%; height:auto !important; display:block; }
+    canvas { display:none !important; }
+    button { display:none !important; }
     @media print {
       @page { size: A4; margin: 10mm 10mm; }
-      html, body { background: #EEF6FB !important; }
-      .print-page-wrap { padding: 0; }
-      .ar-day-block + .ar-day-block { page-break-before: always; }
-      button { display: none !important; }
+      html, body { background: #EEF6FB; }
+      .print-wrap { padding: 0; }
     }
   </style>
   </head><body>
-  <div class="print-page-wrap">
-    <div class="print-modal-header">
+  <div class="print-wrap">
+    <div class="print-header">
       <div>
-        <h1>${title}</h1>
-        <p class="sub">${sub}</p>
+        <div class="print-header-title">${title}</div>
+        <div class="print-header-sub">${sub}</div>
       </div>
-      <div class="pdate">${printDate}</div>
+      <div class="print-header-date">${printDate}</div>
     </div>
-    <div class="print-modal-body">
+    <div class="print-body">
       ${clone.innerHTML}
     </div>
-    <div class="print-modal-footer">
+    <div class="print-footer">
       <span>힐마루케어 · 시니어케어 통합 건강관리 시스템</span>
       <span>${printDate}</span>
     </div>
   </div>
   <script>
-    // 폰트 로드 후 인쇄 다이얼로그 열기
-    document.fonts.ready.then(()=>{ setTimeout(()=>{ window.print(); }, 400); });
+    document.fonts.ready.then(function(){ setTimeout(function(){ window.print(); }, 500); });
   </scr` + `ipt>
   </body></html>`);
   w.document.close();

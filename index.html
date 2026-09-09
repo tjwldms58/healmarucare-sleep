@@ -3997,7 +3997,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.39';
+const APP_VER = '6.41';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4895,11 +4895,13 @@ function renderAllRecords(){
 
     // 스트레스·활력
     const sv = row.stress;
-    const svStressCell = sv && sv.stress ? (()=>{
+    const svStressCell = sv && (sv.stress || sv.score) ? (()=>{
       const emoji = {휴식구간:'🟢',정상:'🔵',보통:'🟡',심각:'🔴'}[sv.stress]||'';
       const col = sv.stress==='심각'?'#C83535':sv.stress==='보통'?'#C07820':sv.stress==='정상'?'#0E8FA3':'#1E9E5A';
       const bg  = sv.stress==='심각'?'rgba(200,53,53,.12)':sv.stress==='보통'?'rgba(192,120,32,.12)':sv.stress==='정상'?'rgba(14,143,163,.12)':'rgba(30,158,90,.12)';
-      return `<span style="font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:20px;background:${bg};color:${col}">${emoji} ${sv.stress}</span>`;
+      const badge = sv.stress ? `<span style="font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:20px;background:${bg};color:${col}">${emoji} ${sv.stress}</span>` : '';
+      const scoreStr = sv.score ? `<span style="font-size:.65rem;font-weight:800;color:${col||'var(--text-2)'};margin-left:3px">${sv.score}점</span>` : '';
+      return badge + scoreStr || '-';
     })() : '-';
     const svVitalCell = sv && sv.vital ? `<span style="font-weight:800;color:${parseInt(sv.vital)>=80?'#1E9E5A':parseInt(sv.vital)>=50?'#0E8FA3':'#C07820'}">${sv.vital}</span>` : '-';
 
@@ -8856,8 +8858,16 @@ function drawSleepTimeline(canvasId, r){
     // 취침 시각 문자열 역산
     let bH=Math.floor(bedAbs/60)%24, bM=bedAbs%60;
     const bStr=(bH<10?'0':'')+bH+':'+(bM<10?'0':'')+bM;
-    label(bStr, Math.max(padL+2,x), barY-THIN/2-9, '#B39DDB','8px sans-serif','left');
-    label('취침', Math.max(padL+2,x), barY+THICK/2+18,'#C9BBED','8px sans-serif','left');
+    // 잠든시간 마커와 너무 가까우면 레이블을 위쪽으로 스태킹해서 겹침 방지
+    const sleepX = sleepAbs!==null ? px(sleepAbs) : x+100;
+    const tooClose = (sleepX - x) < 45;
+    if(tooClose){
+      // 겹칠 경우: 취침 레이블을 한 단계 더 위에 표시, 이름 레이블 생략
+      label(bStr, Math.max(padL+2,x), barY-THICK/2-22, '#B39DDB','8px sans-serif','left');
+    } else {
+      label(bStr, Math.max(padL+2,x), barY-THIN/2-9, '#B39DDB','8px sans-serif','left');
+      label('취침', Math.max(padL+2,x), barY+THICK/2+18,'#C9BBED','8px sans-serif','left');
+    }
   }
 }
 
@@ -9640,12 +9650,13 @@ function openAllReport(name, age, gender){
       ['휴식시', hr.rest?hr.rest+' BPM':'-', '#C0392B'],
     ]) : noData('심박수');
 
-    // 혈중산소
+    // 혈중산소 — oxygenRecords 우선, 없으면 수면기록의 sleepO2 폴백
     let o2Section = '';
-    if(o2){
-      const o2St=getSpO2Status(o2.daily);
-      o2Section = statRow([['SpO₂', o2.daily?o2.daily+'%':'-', o2St?o2St.color:'var(--text-1)']])+
-        (o2St&&o2.daily?`<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${o2St.bg};color:${o2St.color}">${o2St.icon} ${o2St.label}</span></div>`:'');
+    const _o2Val = (o2 && o2.daily) ? o2.daily : (sr && sr.sleepO2 ? sr.sleepO2 : null);
+    if(_o2Val){
+      const o2St=getSpO2Status(_o2Val);
+      o2Section = statRow([['SpO₂ (%)', _o2Val+'%', o2St?o2St.color:'var(--text-1)']])+
+        (o2St?`<div style="margin-top:6px;display:flex;align-items:center;gap:8px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${o2St.bg};color:${o2St.color}">${o2St.icon} ${o2St.label}</span><span style="font-size:.7rem;color:var(--text-3)">${_o2Val}%</span></div>`:'');
     } else o2Section = noData('혈중산소');
 
     // 스트레스·활력
@@ -9656,7 +9667,8 @@ function openAllReport(name, age, gender){
       const sEmoji={'휴식구간':'🟢','정상':'🔵','보통':'🟡','심각':'🔴'}[sv.stress]||'';
       const sC=sv.stress==='심각'?'#C83535':sv.stress==='보통'?'#C07820':sv.stress==='정상'?'#0E8FA3':'#1E9E5A';
       svSection = statRow([
-        ['스트레스', sv.stress?sEmoji+' '+sv.stress:'-', sC],
+        ['스트레스 점수', sv.score?sv.score+'점':'-', sv.score?(parseInt(sv.score)<=30?'#1E9E5A':parseInt(sv.score)<=60?'#C07820':'#C83535'):'var(--text-3)'],
+        ['스트레스 상태', sv.stress?sEmoji+' '+sv.stress:'-', sC],
         ['활력 점수', sv.vital?sv.vital+'점':'-', vC],
       ]);
     } else svSection = noData('스트레스·활력');

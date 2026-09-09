@@ -4050,7 +4050,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.48';
+const APP_VER = '6.49';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6767,17 +6767,20 @@ async function exportDocx(){
     const sortedSleepRecs=[];
     _docPM.forEach(arr=>{ arr.sort((a,b)=>(a.date||'')<(b.date||'')?-1:1); arr.forEach(r=>sortedSleepRecs.push(r)); });
 
-    // Collect images with their record indices
+    // Collect images with their record indices (PNG/JPEG 모두 지원)
     const imgEntries = [];
     sortedSleepRecs.forEach((r, i) => {
       if(r.img){
-        const b64 = r.img.replace(/^data:image\/[^;]+;base64,/, '');
-        imgEntries.push({ rId:`rId${imgEntries.length+2}`, name:`image${imgEntries.length+1}.jpeg`, b64, recIdx:i, w:r.imgW||640, h:r.imgH||480 });
+        const isPng = r.img.startsWith('data:image/png');
+        const ext  = isPng ? 'png' : 'jpeg';
+        const mime = isPng ? 'image/png' : 'image/jpeg';
+        const b64  = r.img.replace(/^data:image\/[^;]+;base64,/, '');
+        imgEntries.push({ rId:`rId${imgEntries.length+2}`, name:`image${imgEntries.length+1}.${ext}`, mime, b64, recIdx:i, w:r.imgW||640, h:r.imgH||480 });
       }
     });
 
     // [Content_Types].xml
-    const imgCT = imgEntries.map(e=>`<Override PartName="/word/media/${e.name}" ContentType="image/jpeg"/>`).join('');
+    const imgCT = imgEntries.map(e=>`<Override PartName="/word/media/${e.name}" ContentType="${e.mime||'image/jpeg'}"/>`).join('');
     zip.file('[Content_Types].xml',
       `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">\n<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>\n<Default Extension="xml" ContentType="application/xml"/>\n<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>\n${imgCT}\n</Types>`);
 
@@ -6954,14 +6957,18 @@ async function exportAllDocx(){
     });
     if(!allRows.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
 
-    // 이미지 수집 (수면 기록에 첨부된 이미지)
+    // 이미지 수집 (수면 기록에 첨부된 이미지, PNG/JPEG 모두 지원)
     const imgEntries = [];
     allRows.forEach(row=>{
       if(row.sleep?.img){
-        const b64 = row.sleep.img.replace(/^data:image\/[^;]+;base64,/,'');
+        const isPng = row.sleep.img.startsWith('data:image/png');
+        const ext   = isPng ? 'png' : 'jpeg';
+        const mime  = isPng ? 'image/png' : 'image/jpeg';
+        const b64   = row.sleep.img.replace(/^data:image\/[^;]+;base64,/,'');
         imgEntries.push({
           rId:`rId${imgEntries.length+2}`,
-          name:`image${imgEntries.length+1}.jpeg`,
+          name:`image${imgEntries.length+1}.${ext}`,
+          mime,
           b64,
           rowKey:`${row.date}||${row.name}||${row.age}||${row.gender}`,
           w:row.sleep.imgW||640, h:row.sleep.imgH||480
@@ -6972,7 +6979,7 @@ async function exportAllDocx(){
     const docXml = _buildAllDocXml(allRows, imgEntries);
     const zip = new JSZip();
     zip.file('word/document.xml', docXml);
-    const imgCT = imgEntries.map(e=>`<Override PartName="/word/media/${e.name}" ContentType="image/jpeg"/>`).join('');
+    const imgCT = imgEntries.map(e=>`<Override PartName="/word/media/${e.name}" ContentType="${e.mime||'image/jpeg'}"/>`).join('');
     zip.file('[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>${imgCT}</Types>`);
     zip.file('_rels/.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
     const imgRels = imgEntries.map(e=>`<Relationship Id="${e.rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${e.name}"/>`).join('');
@@ -7421,13 +7428,15 @@ function previewImg(input){
     reader.onload = function(e){
       const imgEl = new Image();
       imgEl.onload = function(){
-        const MAX = 1920;
-        let w = imgEl.width, h = imgEl.height;
+        const MAX = 2560; // 최대 해상도 상향
+        let w = imgEl.naturalWidth || imgEl.width;
+        let h = imgEl.naturalHeight || imgEl.height;
         if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
         const canvas = document.createElement('canvas');
         canvas.width=w; canvas.height=h;
         canvas.getContext('2d').drawImage(imgEl,0,0,w,h);
-        const b64data = canvas.toDataURL('image/jpeg', 0.92);
+        // PNG(무손실) 저장 — 수면 그래프처럼 선/텍스트가 있는 이미지에 JPEG 변환 시 화질 손상 방지
+        const b64data = canvas.toDataURL('image/png');
         pendingImgs[idx] = b64data;
         pendingImgsDims[idx] = {w, h};
         _renderPendingThumbs();
@@ -7549,11 +7558,13 @@ async function addEditImages(input){
       const b64data = await new Promise(res=>{
         const imgEl = new Image();
         imgEl.onload = function(){
-          const MAX=1920; let w=imgEl.width, h=imgEl.height;
+          const MAX=2560; // 최대 해상도 상향
+          let w=imgEl.naturalWidth||imgEl.width, h=imgEl.naturalHeight||imgEl.height;
           if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
           const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
           canvas.getContext('2d').drawImage(imgEl,0,0,w,h);
-          res(canvas.toDataURL('image/jpeg',0.92));
+          // PNG(무손실) 저장
+          res(canvas.toDataURL('image/png'));
         };
         imgEl.src = dataUrl;
       });

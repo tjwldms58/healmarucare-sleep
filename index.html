@@ -3585,7 +3585,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 ═══════════════════════════════════════ -->
 
 <div id="all-report-modal" style="display:none;position:fixed;inset:0;background:rgba(7,20,42,.72);z-index:9997;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeAllReport()">
-  <div style="background:var(--surface);border-radius:18px;width:100%;max-width:680px;max-height:94vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(7,20,42,.6)">
+  <div style="background:var(--surface);border-radius:18px;width:100%;max-width:800px;max-height:94vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(7,20,42,.6)">
     <!-- 헤더 -->
     <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--navy);border-radius:18px 18px 0 0;flex-shrink:0">
       <div>
@@ -4082,7 +4082,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.20';
+const APP_VER = '6.21';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -8508,6 +8508,129 @@ function drawDonut(canvasId, r){
   ctx.fill();
 }
 
+/* ── 수면 타임라인 그래프 (취침→잠든시간→자정→기상시간) ── */
+function drawSleepTimeline(canvasId, r){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // 배경
+  ctx.fillStyle = '#F8F4FF';
+  ctx.fillRect(0,0,W,H);
+
+  const BASE_HOUR = 18; // 오후 6시 기준
+  const TOTAL_MINS = 18 * 60; // 18시간 범위 (18시~다음날 12시)
+  const padL=40, padR=14, padT=18, padB=22;
+  const cW = W - padL - padR;
+  const midY = padT + (H - padT - padB) * 0.5;
+  const trackH = 14;
+
+  function timeStrToMins(str){
+    if(!str) return null;
+    const parts = str.split(':');
+    if(parts.length < 2) return null;
+    const h = parseInt(parts[0]), m = parseInt(parts[1]);
+    if(isNaN(h)||isNaN(m)) return null;
+    let mins = h*60 + m;
+    if(h < BASE_HOUR) mins += 24*60; // 자정 이후 → +24h
+    return mins - BASE_HOUR*60;
+  }
+
+  const px = mins => padL + Math.max(0, Math.min(1, mins / TOTAL_MINS)) * cW;
+
+  // X축 시간 레이블 + 그리드
+  const labels = [
+    {h:18,l:'18시'},{h:21,l:'21시'},{h:0,l:'자정'},{h:3,l:'3시'},{h:6,l:'6시'},{h:9,l:'9시'},{h:12,l:'12시'}
+  ];
+  ctx.font = '8px sans-serif';
+  ctx.textAlign = 'center';
+  labels.forEach(({h,l})=>{
+    let mins = h*60 - BASE_HOUR*60;
+    if(mins < 0) mins += 24*60;
+    const x = px(mins);
+    if(x < padL-2 || x > W-padR+4) return;
+    ctx.fillStyle = 'rgba(80,70,120,0.45)';
+    ctx.fillText(l, x, H-3);
+    ctx.strokeStyle = h===0 ? 'rgba(14,143,163,0.4)' : 'rgba(120,110,160,0.12)';
+    ctx.setLineDash(h===0 ? [3,3] : [2,4]);
+    ctx.lineWidth = h===0 ? 1.5 : 0.8;
+    ctx.beginPath(); ctx.moveTo(x, padT-4); ctx.lineTo(x, H-padB); ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  const sleepOnsetMins = parseInt(r.sleepOnset)||0;
+  const sleepTimeMins  = timeStrToMins(r.sleepTime);
+  const wakeTimeMins   = timeStrToMins(r.wakeTime);
+
+  // 수면 구간 파란 배경 (잠든시간~기상시간)
+  if(sleepTimeMins!==null && wakeTimeMins!==null && wakeTimeMins>sleepTimeMins){
+    const x1=px(sleepTimeMins), x2=px(wakeTimeMins);
+    const g=ctx.createLinearGradient(x1,0,x2,0);
+    g.addColorStop(0,'rgba(74,120,224,0.35)');
+    g.addColorStop(1,'rgba(92,200,184,0.25)');
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x1, midY-trackH/2, x2-x1, trackH, 3) : ctx.fillRect(x1, midY-trackH/2, x2-x1, trackH);
+    ctx.fill();
+  }
+
+  // 수면준비 구간 (취침시간~잠든시간, 회색 점선)
+  if(sleepTimeMins!==null && sleepOnsetMins>0){
+    const prepStart = sleepTimeMins - sleepOnsetMins;
+    const x1=px(Math.max(0,prepStart)), x2=px(sleepTimeMins);
+    ctx.fillStyle='rgba(160,150,200,0.22)';
+    ctx.fillRect(x1, midY-trackH/2, x2-x1, trackH);
+    ctx.strokeStyle='rgba(160,150,200,0.5)';
+    ctx.setLineDash([2,2]); ctx.lineWidth=0.8;
+    ctx.strokeRect(x1, midY-trackH/2, x2-x1, trackH);
+    ctx.setLineDash([]);
+  }
+
+  // 중심선
+  ctx.strokeStyle='rgba(120,110,160,0.18)';
+  ctx.lineWidth=0.5; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(padL, midY); ctx.lineTo(W-padR, midY); ctx.stroke();
+
+  // 잠든시간 마커 (파란 원)
+  if(sleepTimeMins!==null){
+    const x=px(sleepTimeMins);
+    ctx.fillStyle='#4878E0';
+    ctx.beginPath(); ctx.arc(x,midY,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(x,midY,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#4878E0';
+    ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(r.sleepTime||'', x, midY-10);
+  }
+
+  // 기상시간 마커 (녹색 원)
+  if(wakeTimeMins!==null){
+    const x=px(wakeTimeMins);
+    ctx.fillStyle='#1E9E5A';
+    ctx.beginPath(); ctx.arc(x,midY,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(x,midY,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#1E9E5A';
+    ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(r.wakeTime||'', x, midY-10);
+  }
+
+  // 범례 (좌상단)
+  const legY = padT - 2;
+  ctx.font='7.5px sans-serif'; ctx.textAlign='left';
+  // 파란점
+  ctx.fillStyle='#4878E0'; ctx.beginPath(); ctx.arc(padL+5,legY,3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(80,70,120,0.65)'; ctx.fillText('잠든시간', padL+10, legY+3);
+  // 녹색점
+  ctx.fillStyle='#1E9E5A'; ctx.beginPath(); ctx.arc(padL+72,legY,3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(80,70,120,0.65)'; ctx.fillText('기상시간', padL+77, legY+3);
+  // 회색박스
+  ctx.fillStyle='rgba(160,150,200,0.45)'; ctx.fillRect(padL+140,legY-3,8,6);
+  ctx.fillStyle='rgba(80,70,120,0.65)'; ctx.fillText('수면준비', padL+151, legY+3);
+}
+
 /* 수면 그래프 팝업 열기 */
 function openSleepChart(idx){
   const r=sleepRecords[idx];
@@ -9100,406 +9223,243 @@ function saveEditWeight(){
    통합 건강 보고서 (전체 탭)
 ═══════════════════════════════════════ */
 function openAllReport(name, age, gender){
-  // 이름+나이+성별로 인물 식별 → 첫 레코드를 요약 통계에 사용
   const matchPerson = r => (r.name||'')===name && (r.age||'')===age && (r.gender||'')===gender;
-  const matchGroup  = r => matchPerson(r) && (currentFilterGroup==='전체'||(r.group||'')===currentFilterGroup);
-  const srAll = sleepRecords.filter(matchGroup).length ? sleepRecords.filter(matchGroup) : sleepRecords.filter(matchPerson);
-  const sr = (srAll.sort((a,b)=>(a.date||'')<(b.date||'')?-1:1))[0]||null;
-  const hr = heartRateRecords.filter(matchPerson).sort((a,b)=>(a.date||'')<(b.date||'')?-1:1)[0]||null;
-  const bp = bloodPressureRecords.filter(matchPerson).sort((a,b)=>(a.date||'')<(b.date||'')?-1:1)[0]||null;
-  const o2 = oxygenRecords.filter(matchPerson).sort((a,b)=>(a.date||'')<(b.date||'')?-1:1)[0]||null;
-  const wt = weightRecords.filter(matchPerson).sort((a,b)=>(a.date||'')<(b.date||'')?-1:1)[0]||null;
-  const wh = womensHealthRecords.filter(matchPerson).sort((a,b)=>(a.date||'')<(b.date||'')?-1:1)[0]||null;
-  const sv = stressRecords.filter(matchPerson).sort((a,b)=>(a.date||'')<(b.date||'')?-1:1)[0]||null;
+
+  function getPerson7(arr){
+    return arr.filter(matchPerson).sort((a,b)=>(a.date||'')<(b.date||'')?-1:1);
+  }
+  const sr7 = getPerson7(sleepRecords);
+  const hr7 = getPerson7(heartRateRecords);
+  const bp7 = getPerson7(bloodPressureRecords);
+  const o27 = getPerson7(oxygenRecords);
+  const wt7 = getPerson7(weightRecords);
+  const wh7 = getPerson7(womensHealthRecords);
+  const sv7 = getPerson7(stressRecords);
+
+  const firstSr = sr7[0]||null;
+  const firstAny = firstSr || hr7[0] || bp7[0] || o27[0] || wt7[0] || wh7[0] || sv7[0] || null;
+
+  // 날짜 유니온 (최대 7일)
+  const allDates = [...new Set([...sr7,...hr7,...bp7,...o27,...wt7,...wh7,...sv7].map(r=>r.date||'').filter(Boolean))].sort().slice(-7);
 
   document.getElementById('ar-title').textContent = name+' 통합 건강 보고서';
-  const _reportBaseDate = (sr&&sr.give)||(hr&&hr.give)||(bp&&bp.give)||(o2&&o2.give)||(wt&&wt.give)||(sv&&sv.give)||'';
-  document.getElementById('ar-sub').textContent = (_reportBaseDate||'') + ' 기준  ·  나이 '+(age||'-')+'  ·  성별 '+(gender||'-');
+  const _baseDate = (firstSr&&firstSr.give)||'';
+  document.getElementById('ar-sub').textContent = (_baseDate?_baseDate+' 기준  ·  ':'')+' 나이 '+(age||'-')+'  ·  성별 '+(gender||'-');
   document.getElementById('ar-print-date').textContent = '보고일: '+new Date().toLocaleDateString('ko-KR');
 
-  // ── 7일치 데이터: 이름+나이+성별 기준 전체 수집 ──
-  function getSession7(arr){
-    return arr.filter(r=>(r.name||'')===name&&(r.age||'')===age&&(r.gender||'')===gender)
-              .sort((a,b)=>(a.date||'')<(b.date||'')?-1:1);
-  }
-  const sr7 = getSession7(sleepRecords);
-  const hr7 = getSession7(heartRateRecords);
-  const bp7 = getSession7(bloodPressureRecords);
-  const o27 = getSession7(oxygenRecords);
-  const wt7 = getSession7(weightRecords);
-  const wh7 = getSession7(womensHealthRecords);
-  const sv7 = getSession7(stressRecords);
-
-  const secStyle = 'background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px';
-  const secHead = (num, icon, title, desc) => `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <div style="background:var(--navy);color:#fff;font-size:.65rem;font-weight:800;border-radius:6px;padding:3px 7px;flex-shrink:0">${num}</div>
-      <div>
-        <div style="font-size:.85rem;font-weight:800;color:var(--text-1)">${icon} ${title}</div>
-        <div style="font-size:.68rem;color:var(--text-3)">${desc}</div>
-      </div>
-    </div>`;
-  const statRow = (items) => `<div style="display:flex;gap:10px;flex-wrap:wrap;">${items.map(([label,val,color])=>`
-    <div style="flex:1;min-width:80px;background:var(--surface);border:1px solid var(--border-soft);border-radius:8px;padding:8px 10px;text-align:center">
-      <div style="font-size:.62rem;color:var(--text-3);margin-bottom:3px">${label}</div>
-      <div style="font-size:.88rem;font-weight:800;color:${color||'var(--text-1)'}">${val}</div>
+  // ── 공통 헬퍼 ──
+  const secStyle = 'background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:16px';
+  const statRow = (items) => `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${items.map(([label,val,color])=>`
+    <div style="flex:1;min-width:72px;background:var(--surface);border:1px solid var(--border-soft);border-radius:8px;padding:7px 9px;text-align:center">
+      <div style="font-size:.6rem;color:var(--text-3);margin-bottom:2px">${label}</div>
+      <div style="font-size:.82rem;font-weight:800;color:${color||'var(--text-1)'}">${val}</div>
     </div>`).join('')}</div>`;
-  const noData = (label) => `<div style="text-align:center;padding:14px 0;color:var(--text-3);font-size:.75rem">📭 ${label} 데이터가 없습니다</div>`;
-  const chartBox = (id) => `<div style="background:var(--surface);border-radius:8px;padding:6px 8px;margin-top:10px;overflow:hidden"><canvas id="${id}" width="560" height="120" style="width:100%;height:auto"></canvas></div>`;
+  const noData = (label) => `<div style="text-align:center;padding:12px 0;color:var(--text-3);font-size:.73rem">📭 ${label} 데이터 없음</div>`;
+  const chartBox = (id, w, h) => `<div style="background:var(--surface);border-radius:8px;padding:6px 8px;margin-top:8px;overflow:hidden"><canvas id="${id}" width="${w||680}" height="${h||120}" style="width:100%;height:auto"></canvas></div>`;
+  const infoGrid = (items) => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px">${
+    items.map(([label,val])=>`<div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px">
+      <div style="font-size:.6rem;color:var(--text-3);margin-bottom:2px">${label}</div>
+      <div style="font-size:.8rem;font-weight:700;color:var(--text-1)">${val||'-'}</div>
+    </div>`).join('')
+  }</div>`;
 
-  // ── 수면 섹션 ──
-  let sleepHtml = '';
-  if(sr){
-    const totalMin=parseSleepMin(sr.total)||420;
-    const remPct=parseFloat(sr.remPct)||0, lightPct=parseFloat(sr.lightPct)||0, deepPct=parseFloat(sr.deepPct)||0;
-    const awakeMin=parseInt(sr.awake)||0;
-    const remMin=Math.round(totalMin*remPct/100);
-    const lightMin=Math.round(totalMin*lightPct/100);
-    const deepMin=Math.round(totalMin*deepPct/100);
-    const eff=parseFloat(sr.eff)||0;
-    const dh=Math.floor(totalMin/60), dm=totalMin%60;
+  // ── 환자 기본정보 헤더 ──
+  const headerHtml = firstAny ? `
+    <div style="${secStyle}">
+      <div style="font-size:.9rem;font-weight:800;color:var(--text-1);margin-bottom:10px">📋 기본 정보</div>
+      ${infoGrid([
+        ['고객명', name], ['나이/성별', (age||'-')+' / '+(gender||'-')],
+        ['암종', firstSr&&firstSr.cancer||'-'], ['병기', firstSr&&firstSr.stage||'-'],
+        ['담당 간호사', firstSr&&firstSr.nurse||'-'], ['기기 제공일', firstSr&&firstSr.give||'-'],
+        ['기기 수거일', firstSr&&firstSr.collect||'-'], ['기간', allDates.length?allDates[0]+' ~ '+allDates[allDates.length-1]:'-'],
+      ])}
+      ${sr7.length>1?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">📈 수면시간 추이 (7일)</div>'+chartBox('ar-sr7-canvas',680,110):''}
+    </div>` : '';
 
-    let evalScore='보통', evalColor='#C07820';
-    if(eff>=85&&deepPct>=15&&remPct>=18){ evalScore='양호'; evalColor='#1E9E5A'; }
-    else if(eff<70||awakeMin>30){ evalScore='주의 필요'; evalColor='#C83535'; }
+  // ── Day별 섹션 ──
+  const canvasRegistry = [];
 
-    const evalTexts=[];
-    if(eff>=85) evalTexts.push('수면 효율이 우수합니다.');
-    else if(eff>=70) evalTexts.push('수면 효율이 양호한 편입니다.');
-    else if(eff>0) evalTexts.push('수면 효율이 다소 낮습니다. 취침 환경 개선을 권장합니다.');
-    if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
-    else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
-    else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
-    if(awakeMin>30) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
-    else if(awakeMin>0) evalTexts.push('각성 횟수는 정상 범위입니다.');
-    if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
-    if(sr.nap&&parseInt(sr.nap)>60) evalTexts.push('낮잠 시간이 길어 야간 수면에 영향을 줄 수 있습니다.');
+  const dayBlocks = allDates.map((date, idx) => {
+    const dayNum = idx + 1;
+    const sr = sr7.find(r=>r.date===date)||null;
+    const hr = hr7.find(r=>r.date===date)||null;
+    const bp = bp7.find(r=>r.date===date)||null;
+    const o2 = o27.find(r=>r.date===date)||null;
+    const wt = wt7.find(r=>r.date===date)||null;
+    const wh = wh7.find(r=>r.date===date)||null;
+    const sv = sv7.find(r=>r.date===date)||null;
 
-    const startH=22;
-    const endTotalMin=startH*60+totalMin;
-    const endH=Math.floor(endTotalMin/60)%24;
-    const endM=endTotalMin%60;
+    const tlId = `ar-tl-d${idx}`, slId = `ar-sl-d${idx}`, doId = `ar-do-d${idx}`;
 
-    const infoGrid = (items) => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px">${
-      items.map(([label,val])=>`<div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px">
-        <div style="font-size:.6rem;color:var(--text-3);margin-bottom:2px">${label}</div>
-        <div style="font-size:.8rem;font-weight:700;color:var(--text-1)">${val||'-'}</div>
-      </div>`).join('')
-    }</div>`;
+    // 수면 섹션
+    let sleepSection = '';
+    if(sr){
+      const totalMin=parseSleepMin(sr.total)||0;
+      const remPct=parseFloat(sr.remPct)||0, lightPct=parseFloat(sr.lightPct)||0, deepPct=parseFloat(sr.deepPct)||0;
+      const awakeMin=parseInt(sr.awake)||0;
+      const remMin=Math.round(totalMin*remPct/100);
+      const lightMin=Math.round(totalMin*lightPct/100);
+      const deepMin=Math.round(totalMin*deepPct/100);
+      const eff=parseFloat(sr.eff)||0;
+      const dh=Math.floor(totalMin/60), dm=totalMin%60;
 
-    sleepHtml = `
-      <div style="${secStyle}">
-        ${secHead('01','🌙','수면 분석','수면 단계별 분포 및 수면 효율')}
+      let evalScore='보통', evalColor='#C07820';
+      if(eff>=85&&deepPct>=15&&remPct>=18){ evalScore='양호'; evalColor='#1E9E5A'; }
+      else if(eff<70||awakeMin>30){ evalScore='주의 필요'; evalColor='#C83535'; }
+      const evalTexts=[];
+      if(eff>=85) evalTexts.push('수면 효율이 우수합니다.');
+      else if(eff>=70) evalTexts.push('수면 효율이 양호한 편입니다.');
+      else if(eff>0) evalTexts.push('수면 효율이 다소 낮습니다. 취침 환경 개선을 권장합니다.');
+      if(deepPct>=20) evalTexts.push('깊은 수면 비율이 충분합니다.');
+      else if(deepPct>=10) evalTexts.push('깊은 수면 비율이 적정 수준입니다.');
+      else if(deepPct>0) evalTexts.push('깊은 수면 비율이 낮습니다. 수면의 질 향상이 필요합니다.');
+      if(awakeMin>30) evalTexts.push('각성 시간이 길어 수면 연속성 개선이 필요합니다.');
+      else if(awakeMin>0) evalTexts.push('각성 횟수는 정상 범위입니다.');
+      if(remPct>=20) evalTexts.push('REM 수면이 충분히 확보되어 인지기능 회복에 도움이 됩니다.');
+      if(sr.nap&&parseInt(sr.nap)>60) evalTexts.push('낮잠 시간이 길어 야간 수면에 영향을 줄 수 있습니다.');
 
-        ${infoGrid([
-          ['고객명', sr.name], ['나이/성별', (sr.age||'-')+' / '+(sr.gender||'-')],
-          ['암종', sr.cancer], ['병기', sr.stage],
-          ['담당 간호사', sr.nurse], ['기기 제공일', sr.give],
-          ['기기 수거일', sr.collect],
-        ])}
+      canvasRegistry.push({type:'tl', id:tlId, r:sr});
+      canvasRegistry.push({type:'sl', id:slId, r:sr});
+      canvasRegistry.push({type:'do', id:doId, r:sr});
 
-        <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">수면 단계 그래프 · ${startH}:00 → ${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}</div>
-        <div style="background:var(--surface);border-radius:8px;padding:8px;margin-bottom:10px;overflow:hidden">
-          <canvas id="ar-sleep-canvas" width="560" height="110" style="width:100%;height:auto"></canvas>
+      sleepSection = `
+        <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">🕐 수면 타임라인</div>
+        <div style="background:var(--surface);border-radius:8px;padding:6px 8px;overflow:hidden">
+          <canvas id="${tlId}" width="680" height="68" style="width:100%;height:auto"></canvas>
         </div>
-
-        <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
-          <div style="position:relative;flex-shrink:0;width:100px;height:100px">
-            <canvas id="ar-sleep-donut" width="120" height="120" style="width:100px;height:100px"></canvas>
+        <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin:8px 0 4px">📊 수면 단계 그래프</div>
+        <div style="background:var(--surface);border-radius:8px;padding:8px;overflow:hidden">
+          <canvas id="${slId}" width="680" height="110" style="width:100%;height:auto"></canvas>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+          <div style="position:relative;flex-shrink:0;width:90px;height:90px">
+            <canvas id="${doId}" width="120" height="120" style="width:90px;height:90px"></canvas>
             <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;line-height:1.2">
-              <span style="font-size:.9rem;font-weight:800;color:var(--text-1)">${dh}</span><span style="font-size:.65rem;color:var(--text-2)">시간</span><br>
-              <span style="font-size:.9rem;font-weight:800;color:var(--text-1)">${dm}</span><span style="font-size:.65rem;color:var(--text-2)">분</span>
+              <span style="font-size:.85rem;font-weight:800;color:var(--text-1)">${dh}h ${dm}m</span>
             </div>
           </div>
-          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
-            <div style="display:flex;align-items:center;gap:6px">
-              <div style="width:10px;height:10px;border-radius:50%;background:#2D5BE3;flex-shrink:0"></div>
-              <span style="font-size:.75rem;color:var(--text-2);flex:1">깊은 수면</span>
-              <span style="font-size:.78rem;font-weight:700;color:var(--text-1)">${minToHM(deepMin)}</span>
-              <span style="font-size:.7rem;color:var(--text-3);min-width:32px;text-align:right">${deepPct}%</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <div style="width:10px;height:10px;border-radius:50%;background:#4878E0;flex-shrink:0"></div>
-              <span style="font-size:.75rem;color:var(--text-2);flex:1">얕은 수면</span>
-              <span style="font-size:.78rem;font-weight:700;color:var(--text-1)">${minToHM(lightMin)}</span>
-              <span style="font-size:.7rem;color:var(--text-3);min-width:32px;text-align:right">${lightPct}%</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <div style="width:10px;height:10px;border-radius:50%;background:#5A9EF5;flex-shrink:0"></div>
-              <span style="font-size:.75rem;color:var(--text-2);flex:1">REM</span>
-              <span style="font-size:.78rem;font-weight:700;color:var(--text-1)">${minToHM(remMin)}</span>
-              <span style="font-size:.7rem;color:var(--text-3);min-width:32px;text-align:right">${remPct}%</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <div style="width:10px;height:10px;border-radius:50%;background:#FF7043;flex-shrink:0"></div>
-              <span style="font-size:.75rem;color:var(--text-2);flex:1">각성</span>
-              <span style="font-size:.78rem;font-weight:700;color:var(--text-1)">${awakeMin?awakeMin+'분':'-'}</span>
-              <span style="font-size:.7rem;color:var(--text-3);min-width:32px;text-align:right">-</span>
-            </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:#2D5BE3;flex-shrink:0"></div><span style="font-size:.72rem;color:var(--text-2);flex:1">깊은 수면</span><span style="font-size:.75rem;font-weight:700;color:var(--text-1)">${minToHM(deepMin)}</span><span style="font-size:.68rem;color:var(--text-3);min-width:28px;text-align:right">${deepPct}%</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:#4878E0;flex-shrink:0"></div><span style="font-size:.72rem;color:var(--text-2);flex:1">얕은 수면</span><span style="font-size:.75rem;font-weight:700;color:var(--text-1)">${minToHM(lightMin)}</span><span style="font-size:.68rem;color:var(--text-3);min-width:28px;text-align:right">${lightPct}%</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:#5A9EF5;flex-shrink:0"></div><span style="font-size:.72rem;color:var(--text-2);flex:1">REM</span><span style="font-size:.75rem;font-weight:700;color:var(--text-1)">${minToHM(remMin)}</span><span style="font-size:.68rem;color:var(--text-3);min-width:28px;text-align:right">${remPct}%</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:#FF7043;flex-shrink:0"></div><span style="font-size:.72rem;color:var(--text-2);flex:1">각성</span><span style="font-size:.75rem;font-weight:700;color:var(--text-1)">${awakeMin?awakeMin+'분':'-'}</span></div>
           </div>
         </div>
-
         ${statRow([
-          ['총 수면시간', sr.total||'-', 'var(--teal)'],
-          ['수면 효율', sr.eff?sr.eff+'%':'-', eff>=85?'#1E9E5A':eff>=70?'#C07820':'#C83535'],
+          ['총 수면', sr.total||'-', 'var(--teal)'],
+          ['효율', sr.eff?sr.eff+'%':'-', eff>=85?'#1E9E5A':eff>=70?'#C07820':'#C83535'],
+          ['잠든시간', sr.sleepTime||'-', 'var(--text-2)'],
+          ['기상시간', sr.wakeTime||'-', 'var(--text-2)'],
+          ['수면준비', sr.sleepOnset?sr.sleepOnset+'분':'-', 'var(--text-2)'],
           ['낮잠', sr.nap?sr.nap+'분':'-', 'var(--text-2)'],
         ])}
+        <div style="margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--surface);border-left:3px solid ${evalColor}">
+          <div style="font-size:.75rem;font-weight:800;color:${evalColor};margin-bottom:3px">● 종합 평가 — ${evalScore}</div>
+          <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">${evalTexts.join(' ')||'-'}</div>
+        </div>`;
+    } else {
+      sleepSection = noData('수면');
+    }
 
-        <div style="margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--surface);border-left:3px solid ${evalColor}">
-          <div style="font-size:.78rem;font-weight:800;color:${evalColor};margin-bottom:4px">● 종합 평가 — ${evalScore}</div>
-          <div style="font-size:.72rem;color:var(--text-2);line-height:1.6">${evalTexts.join(' ')}</div>
-        </div>
+    // 심박수
+    const hrSection = hr ? statRow([
+      ['범위 (BPM)', hr.range||'-', 'var(--text-1)'],
+      ['평균', hr.avg?hr.avg+' BPM':'-', '#E74C3C'],
+      ['휴식시', hr.rest?hr.rest+' BPM':'-', '#C0392B'],
+    ]) : noData('심박수');
 
-        ${sr7.length>1 ? chartBox('ar-sr7-canvas') : ''}
-      </div>`;
-  } else {
-    sleepHtml = `<div style="${secStyle}">${secHead('01','🌙','수면 분석','수면 단계별 분포 및 수면 효율')}${noData('수면')}</div>`;
-  }
+    // 혈압
+    let bpSection = '';
+    if(bp){
+      const bpSt=getBpStatus(bp.sys,bp.dia);
+      bpSection = statRow([['수축기', bp.sys?bp.sys+' mmHg':'-','#8E44AD'],['이완기', bp.dia?bp.dia+' mmHg':'-','#8E44AD']])+
+        (bpSt?`<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${bpSt.bg};color:${bpSt.color}">${bpSt.icon} ${bpSt.label}</span></div>`:'');
+    } else bpSection = noData('혈압');
 
-  // ── 심박수 섹션 ──
-  let hrHtml = '';
-  if(hr){
-    const hrRows = hr7.map((r,i)=>`<tr style="border-bottom:1px solid var(--border-soft)">
-      <td style="padding:4px 8px;font-size:.7rem;color:var(--text-3)">${i+1}일차</td>
-      <td style="padding:4px 8px;font-size:.72rem">${r.date||'-'}</td>
-      <td style="padding:4px 8px;font-size:.72rem;font-weight:700">${r.avg?r.avg+' BPM':'-'}</td>
-      <td style="padding:4px 8px;font-size:.72rem">${r.rest?r.rest+' BPM':'-'}</td>
-      <td style="padding:4px 8px;font-size:.72rem">${r.range||'-'}</td>
-    </tr>`).join('');
-    hrHtml = `
-      <div style="${secStyle}">
-        ${secHead('02','❤️','심박수','심박수 측정 결과')}
-        ${hr7.length>1?`<table style="width:100%;border-collapse:collapse;font-size:.72rem"><thead><tr style="background:var(--surface-2)">
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">일차</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">날짜</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">평균</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">휴식시</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">범위</th>
-        </tr></thead><tbody>${hrRows}</tbody></table>`
-        :statRow([
-          ['범위 (BPM)', hr.range||'-', 'var(--text-1)'],
-          ['평균 (BPM)', hr.avg?hr.avg+' BPM':'-', '#E74C3C'],
-          ['휴식시 (BPM)', hr.rest?hr.rest+' BPM':'-', '#C0392B'],
-          ['평균 걷기 심박수 (BPM)', hr.mean?hr.mean+' BPM':'-', '#E74C3C'],
-        ])}
-        ${hr7.length>0 ? chartBox('ar-hr7-canvas') : ''}
-      </div>`;
-  } else {
-    hrHtml = `<div style="${secStyle}">${secHead('02','❤️','심박수','심박수 측정 결과')}${noData('심박수')}</div>`;
-  }
+    // 혈중산소
+    let o2Section = '';
+    if(o2){
+      const o2St=getSpO2Status(o2.daily);
+      o2Section = statRow([['SpO₂', o2.daily?o2.daily+'%':'-', o2St?o2St.color:'var(--text-1)']])+
+        (o2St&&o2.daily?`<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${o2St.bg};color:${o2St.color}">${o2St.icon} ${o2St.label}</span></div>`:'');
+    } else o2Section = noData('혈중산소');
 
-  // ── 혈압 섹션 ──
-  let bpHtml = '';
-  if(bp){
-    const bpSt=getBpStatus(bp.sys,bp.dia);
-    const bpBadge=bpSt?`<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;background:${bpSt.bg};color:${bpSt.color}">${bpSt.icon} ${bpSt.label}</span>`:'';
-    const recheckBadge=bpSt&&bpSt.recheck?`<span style="display:inline-block;margin-left:4px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:#F0A930;color:#fff">⚠️ 재측정 권고</span>`:'';
-    const bpRows = bp7.map((r,i)=>{
-      const st=getBpStatus(r.sys,r.dia);
-      const badge=st?`<span style="font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:20px;background:${st.bg};color:${st.color}">${st.label}</span>`:'';
-      return `<tr style="border-bottom:1px solid var(--border-soft)">
-        <td style="padding:4px 8px;font-size:.7rem;color:var(--text-3)">${i+1}일차</td>
-        <td style="padding:4px 8px;font-size:.72rem">${r.date||'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem;font-weight:700;color:#8E44AD">${r.sys?r.sys+'mmHg':'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem;color:#8E44AD">${r.dia?r.dia+'mmHg':'-'}</td>
-        <td style="padding:4px 8px">${badge}</td>
-      </tr>`;
-    }).join('');
-    bpHtml = `
-      <div style="${secStyle}">
-        ${secHead('03','🩸','혈압','혈압 측정 및 상태 평가')}
-        ${bp7.length>1?`<table style="width:100%;border-collapse:collapse;font-size:.72rem"><thead><tr style="background:var(--surface-2)">
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">일차</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">날짜</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">수축기</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">이완기</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">판정</th>
-        </tr></thead><tbody>${bpRows}</tbody></table>`
-        :`${statRow([['수축기 (mmHg)', bp.sys?bp.sys+' mmHg':'-', '#8E44AD'],['이완기 (mmHg)', bp.dia?bp.dia+' mmHg':'-', '#8E44AD']])}<div style="margin-top:8px">${bpBadge}${recheckBadge}</div>`}
-        ${bp7.length>0 ? chartBox('ar-bp7-canvas') : ''}
-      </div>`;
-  } else {
-    bpHtml = `<div style="${secStyle}">${secHead('03','🩸','혈압','혈압 측정 및 상태 평가')}${noData('혈압')}</div>`;
-  }
+    // 체중
+    let wtSection = '';
+    if(wt){
+      const wtSt=getBmiStatus(parseFloat(wt.bmi));
+      wtSection = statRow([['체중', wt.kg?wt.kg+' kg':'-','#1E8449'],['키', wt.height?wt.height+' cm':'-','var(--text-2)'],['BMI', wt.bmi||'-','var(--text-1)']])+
+        (wtSt&&wt.bmi?`<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${wtSt.bg};color:${wtSt.color}">${wtSt.label}</span></div>`:'');
+    } else wtSection = noData('체중');
 
-  // ── 혈중산소 섹션 ──
-  let o2Html = '';
-  if(o2){
-    const o2St=getSpO2Status(o2.daily);
-    const o2Badge=o2St&&o2.daily?`<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;background:${o2St.bg};color:${o2St.color}">${o2St.icon} ${o2St.label}</span>`:'';
-    const o2Rows = o27.map((r,i)=>{
-      const st=getSpO2Status(r.daily);
-      const badge=st&&r.daily?`<span style="font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:20px;background:${st.bg};color:${st.color}">${st.label}</span>`:'';
-      return `<tr style="border-bottom:1px solid var(--border-soft)">
-        <td style="padding:4px 8px;font-size:.7rem;color:var(--text-3)">${i+1}일차</td>
-        <td style="padding:4px 8px;font-size:.72rem">${r.date||'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem;font-weight:700;color:${st?st.color:'var(--text-1)'}">${r.daily?r.daily+'%':'-'}</td>
-        <td style="padding:4px 8px">${badge}</td>
-      </tr>`;
-    }).join('');
-    o2Html = `
-      <div style="${secStyle}">
-        ${secHead('04','O₂','혈중산소포화도','SpO₂ 측정 결과')}
-        ${o27.length>1?`<table style="width:100%;border-collapse:collapse;font-size:.72rem"><thead><tr style="background:var(--surface-2)">
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">일차</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">날짜</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">SpO₂</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">판정</th>
-        </tr></thead><tbody>${o2Rows}</tbody></table>`
-        :`${statRow([['하루 SpO₂ (%)', o2.daily?o2.daily+'%':'-', o2St?o2St.color:'var(--text-1)']])}<div style="margin-top:6px">${o2Badge}</div>`}
-        ${o27.length>0 ? chartBox('ar-o27-canvas') : ''}
-      </div>`;
-  } else {
-    o2Html = `<div style="${secStyle}">${secHead('04','O₂','혈중산소포화도','SpO₂ 측정 결과')}${noData('혈중산소')}</div>`;
-  }
+    // 여성건강
+    const whSection = wh ? statRow([
+      ['생리 기간', wh.periodDays?wh.periodDays+'일':'-','var(--text-1)'],
+      ['주기', wh.cycleLen?wh.cycleLen+'일':'-','var(--text-1)'],
+      ['갱년기', wh.menopause||'-','var(--text-2)'],
+    ]) : noData('여성건강');
 
-  // ── 체중 섹션 ──
-  let wtHtml = '';
-  if(wt){
-    const wtRows = wt7.map((r,i)=>{ const s=getBmiStatus(parseFloat(r.bmi));
-      return `<tr style="border-bottom:1px solid var(--border-soft)">
-        <td style="padding:4px 8px;font-size:.7rem;color:var(--text-3)">${i+1}일차</td>
-        <td style="padding:4px 8px;font-size:.72rem">${r.date||'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem;font-weight:700;color:#1E8449">${r.kg?r.kg+' kg':'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem">${r.height?r.height+' cm':'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem">${r.bmi||'-'}</td>
-        <td style="padding:4px 8px">${r.bmi&&s?`<span style="font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:20px;background:${s.bg};color:${s.color}">${s.label}</span>`:''}</td>
-      </tr>`;
-    }).join('');
-    wtHtml = `
-      <div style="${secStyle}">
-        ${secHead('05','⚖️','체중','체중 측정 결과')}
-        ${wt7.length>1?`<table style="width:100%;border-collapse:collapse;font-size:.72rem"><thead><tr style="background:var(--surface-2)">
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">일차</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">날짜</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">체중</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">키</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">BMI</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">판정</th>
-        </tr></thead><tbody>${wtRows}</tbody></table>`
-        :statRow([['체중 (kg)', wt.kg?wt.kg+' kg':'-', '#1E8449'],['키 (cm)', wt.height?wt.height+' cm':'-', 'var(--text-2)'],['BMI', wt.bmi||'-', 'var(--text-1)']])}
-        ${wt7.length>0 ? chartBox('ar-wt7-canvas') : ''}
-      </div>`;
-  } else {
-    wtHtml = `<div style="${secStyle}">${secHead('05','⚖️','체중','체중 측정 결과')}${noData('체중')}</div>`;
-  }
-
-  // ── 스트레스·활력 섹션 ──
-  let svHtml = '';
-  if(sv){
-    const svRows = sv7.map((r,i)=>{
-      const vN=parseInt(r.vital)||0;
+    // 스트레스·활력
+    let svSection = '';
+    if(sv){
+      const vN=parseInt(sv.vital)||0;
       const vC=vN>=80?'#1E9E5A':vN>=50?'#0E8FA3':'#C07820';
-      const sEmoji={'휴식구간':'🟢','정상':'🔵','보통':'🟡','심각':'🔴'}[r.stress]||'';
-      const sC=r.stress==='심각'?'#C83535':r.stress==='보통'?'#C07820':r.stress==='정상'?'#0E8FA3':'#1E9E5A';
-      return `<tr style="border-bottom:1px solid var(--border-soft)">
-        <td style="padding:4px 8px;font-size:.7rem;color:var(--text-3)">${i+1}일차</td>
-        <td style="padding:4px 8px;font-size:.72rem">${r.date||'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem;font-weight:700;color:${sC}">${r.stress?sEmoji+' '+r.stress:'-'}</td>
-        <td style="padding:4px 8px;font-size:.72rem;font-weight:700;color:${vC}">${r.vital?r.vital+'점':'-'}</td>
-      </tr>`;
-    }).join('');
-    svHtml = `
-      <div style="${secStyle}">
-        ${secHead('07','🧠','스트레스 · 활력','스트레스 수준 및 활력 점수')}
-        ${sv7.length>1?`<table style="width:100%;border-collapse:collapse;font-size:.72rem"><thead><tr style="background:var(--surface-2)">
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">일차</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">날짜</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">스트레스</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">활력</th>
-        </tr></thead><tbody>${svRows}</tbody></table>`
-        :statRow([
-          ['스트레스', sv.stress?(({'휴식구간':'🟢','정상':'🔵','보통':'🟡','심각':'🔴'}[sv.stress]||'')+' '+sv.stress):'-', sv.stress==='심각'?'#C83535':sv.stress==='보통'?'#C07820':sv.stress==='정상'?'#0E8FA3':'#1E9E5A'],
-          ['활력 점수', sv.vital?sv.vital+'점':'-', parseInt(sv.vital||0)>=80?'#1E9E5A':parseInt(sv.vital||0)>=50?'#0E8FA3':'#C07820'],
-        ])}
-        ${sv7.length>0 ? chartBox('ar-sv7-canvas') : ''}
+      const sEmoji={'휴식구간':'🟢','정상':'🔵','보통':'🟡','심각':'🔴'}[sv.stress]||'';
+      const sC=sv.stress==='심각'?'#C83535':sv.stress==='보통'?'#C07820':sv.stress==='정상'?'#0E8FA3':'#1E9E5A';
+      svSection = statRow([
+        ['스트레스', sv.stress?sEmoji+' '+sv.stress:'-', sC],
+        ['활력 점수', sv.vital?sv.vital+'점':'-', vC],
+      ]);
+    } else svSection = noData('스트레스·활력');
+
+    return `
+      <div class="ar-day-block" style="${secStyle}">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:2px solid var(--navy);padding-bottom:8px">
+          <div style="background:var(--navy);color:#fff;font-size:.95rem;font-weight:800;border-radius:8px;padding:4px 12px;flex-shrink:0">Day ${dayNum}</div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--text-1)">${date||'-'}</div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:.78rem;font-weight:800;color:var(--navy);margin-bottom:6px">🌙 수면</div>
+          ${sleepSection}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">❤️ 심박수</div>${hrSection}
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">🩸 혈압</div>${bpSection}
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">O₂ 혈중산소</div>${o2Section}
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">⚖️ 체중</div>${wtSection}
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">🌸 여성건강</div>${whSection}
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:10px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px">🧠 스트레스·활력</div>${svSection}
+          </div>
+        </div>
       </div>`;
-  } else {
-    svHtml = `<div style="${secStyle}">${secHead('07','🧠','스트레스 · 활력','스트레스 수준 및 활력 점수')}${noData('스트레스·활력')}</div>`;
-  }
+  });
 
-  // ── 여성건강 섹션 ──
-  let whHtml = '';
-  if(wh){
-    const whRows = wh7.map((r,i)=>`<tr style="border-bottom:1px solid var(--border-soft)">
-      <td style="padding:4px 8px;font-size:.7rem;color:var(--text-3)">${i+1}일차</td>
-      <td style="padding:4px 8px;font-size:.72rem">${r.date||'-'}</td>
-      <td style="padding:4px 8px;font-size:.72rem">${r.periodDays?r.periodDays+'일':'-'}</td>
-      <td style="padding:4px 8px;font-size:.72rem">${r.cycleLen?r.cycleLen+'일':'-'}</td>
-      <td style="padding:4px 8px;font-size:.72rem">${r.menopause||'-'}</td>
-    </tr>`).join('');
-    whHtml = `
-      <div style="${secStyle}">
-        ${secHead('06','🌸','여성건강','생리 주기 및 갱년기 정보')}
-        ${wh7.length>1?`<table style="width:100%;border-collapse:collapse;font-size:.72rem"><thead><tr style="background:var(--surface-2)">
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">일차</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">날짜</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">생리일수</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">주기</th>
-          <th style="padding:4px 8px;text-align:left;color:var(--text-3);font-weight:600">갱년기</th>
-        </tr></thead><tbody>${whRows}</tbody></table>`
-        :statRow([
-          ['생리 기간', wh.periodDays?wh.periodDays+'일':'-', 'var(--text-1)'],
-          ['주기', wh.cycleLen?wh.cycleLen+'일':'-', 'var(--text-1)'],
-          ['갱년기', wh.menopause||'-', 'var(--text-2)'],
-        ])}
-      </div>`;
-  } else {
-    whHtml = `<div style="${secStyle}">${secHead('06','🌸','여성건강','생리 주기 및 갱년기 정보')}${noData('여성건강')}</div>`;
-  }
+  const noDataBlock = allDates.length===0 ? `<div style="text-align:center;padding:40px 0;color:var(--text-3);font-size:.85rem">📭 해당 대상자의 데이터가 없습니다</div>` : '';
 
-  // 스트레스 섹션 번호 조정 (07로)
-  svHtml = svHtml.replace(">06<",">"+"07"+"<");
-
-  document.getElementById('ar-body').innerHTML = sleepHtml+hrHtml+bpHtml+o2Html+wtHtml+whHtml+svHtml;
+  document.getElementById('ar-body').innerHTML = headerHtml + noDataBlock + dayBlocks.join('');
   document.getElementById('all-report-modal').style.display='flex';
 
   // ── 캔버스 그리기 ──
   requestAnimationFrame(()=>{
-    // 수면 단계 타임라인
-    if(sr) drawSleepBarChart('ar-sleep-canvas', sr, false);
-    // 수면 원그래프 (도넛)
-    if(sr) drawDonut('ar-sleep-donut', sr);
-
-    // 수면 7일 막대 (총 수면시간, 시간 단위)
+    canvasRegistry.forEach(({type, id, r}) => {
+      if(type==='tl') drawSleepTimeline(id, r);
+      else if(type==='sl') drawSleepBarChart(id, r, false);
+      else if(type==='do') drawDonut(id, r);
+    });
     if(sr7.length>1){
       const d=sr7.map(r=>({date:r.date, val:Math.round((parseSleepMin(r.total)||0)/6)/10}));
       drawHealthBarChart('ar-sr7-canvas', d, {color:'#4878E0', label:'수면시간(h)'});
-    }
-
-    // 심박수 7일 범위 막대 (range: "min-max")
-    if(hr7.length>0){
-      const d=hr7.map(r=>{
-        const pts=(r.range||'').split('-').map(s=>parseFloat(s.trim())).filter(v=>!isNaN(v));
-        if(pts.length>=2) return {date:r.date, lo:pts[0], hi:pts[1]};
-        const v=parseFloat(r.avg||r.mean)||null;
-        return {date:r.date, lo:v, hi:v};
-      });
-      drawHealthBarChart('ar-hr7-canvas', d, {color:'#E74C3C', rangeMode:true});
-    }
-
-    // 혈압 7일 범위 막대 (이완기~수축기)
-    if(bp7.length>0){
-      const d=bp7.map(r=>({date:r.date, lo:parseFloat(r.dia)||null, hi:parseFloat(r.sys)||null}));
-      drawHealthBarChart('ar-bp7-canvas', d, {color:'#8E44AD', rangeMode:true});
-    }
-
-    // 혈중산소 7일 막대
-    if(o27.length>0){
-      const d=o27.map(r=>({date:r.date, val:parseFloat(r.daily)||null}));
-      drawHealthBarChart('ar-o27-canvas', d, {color:'#1E9E5A'});
-    }
-
-    // 체중 7일 막대
-    if(wt7.length>0){
-      const d=wt7.map(r=>({date:r.date, val:parseFloat(r.kg)||null}));
-      drawHealthBarChart('ar-wt7-canvas', d, {color:'#27AE60'});
-    }
-
-    // 활력 7일 막대
-    if(sv7.length>0){
-      const d=sv7.map(r=>({date:r.date, val:parseFloat(r.vital)||null}));
-      drawHealthBarChart('ar-sv7-canvas', d, {color:'#3498DB'});
     }
   });
 }
@@ -9550,6 +9510,7 @@ function printAllReport(){
     @media print{
       @page{size:A4;margin:15mm 12mm}
       body{padding:0}
+      .ar-day-block + .ar-day-block { page-break-before: always; }
     }
   </style>
   </head><body>

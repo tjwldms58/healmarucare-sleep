@@ -2343,10 +2343,19 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
               <input type="date" id="o2-date" onchange="onDay1DateChange('o2')">
             </div>
             <div class="form-section-head" style="margin-top:4px">혈중산소포화도</div>
-            <div class="form-field">
-              <label>SpO₂ (%)</label>
-              <input type="number" id="o2-daily" placeholder="예) 97" min="0" max="100" step="0.1"
-                oninput="updateO2StatusBadge()">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+              <div class="form-field">
+                <label>최고 SpO₂ (%)</label>
+                <input type="number" id="o2-daily-max" placeholder="예) 99" min="0" max="100" step="0.1" oninput="updateO2StatusBadge()">
+              </div>
+              <div class="form-field">
+                <label>최저 SpO₂ (%)</label>
+                <input type="number" id="o2-daily-min" placeholder="예) 94" min="0" max="100" step="0.1" oninput="updateO2StatusBadge()">
+              </div>
+              <div class="form-field">
+                <label>평균 SpO₂ (%)</label>
+                <input type="number" id="o2-daily-avg" placeholder="예) 97" min="0" max="100" step="0.1" oninput="updateO2StatusBadge()">
+              </div>
             </div>
             <div id="o2-daily-status-wrap" style="display:none;margin:4px 0 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px">
               <span id="o2-daily-status-badge" style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:700"></span>
@@ -2857,13 +2866,13 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
             <thead>
               <tr>
                 <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th>
-                <th>하루 SpO₂(%)</th><th>상태</th>
+                <th>최고 SpO₂(%)</th><th>최저 SpO₂(%)</th><th>평균 SpO₂(%)</th><th>상태</th>
                 <th></th>
               </tr>
             </thead>
             <tbody id="o2-tbody">
               <tr id="empty-o2-row">
-                <td colspan="8"><div class="empty-state">
+                <td colspan="10"><div class="empty-state">
                   <div class="empty-icon">O₂</div>
                   <div class="empty-msg">저장된 혈중산소 기록이 없습니다</div>
                   <div class="empty-hint">왼쪽 폰 화면에서 혈중산소포화도를 선택 후 입력해 보세요</div>
@@ -3430,7 +3439,11 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
         <div class="form-field"><label>고객명</label><input type="text" id="eo2-name" placeholder="성명"></div>
         <div class="form-field"><label>나이</label><input type="number" id="eo2-age" placeholder="세"></div>
         <div class="form-field"><label>성별</label><select id="eo2-gender"><option value="">선택</option><option>여</option><option>남</option></select></div>
-        <div class="form-field"><label>하루 SpO₂ (%)</label><input type="number" id="eo2-daily" min="0" max="100" step="0.1" placeholder="예) 97"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div class="form-field"><label>최고 SpO₂ (%)</label><input type="number" id="eo2-daily-max" min="0" max="100" step="0.1" placeholder="예) 99"></div>
+        <div class="form-field"><label>최저 SpO₂ (%)</label><input type="number" id="eo2-daily-min" min="0" max="100" step="0.1" placeholder="예) 94"></div>
+        <div class="form-field"><label>평균 SpO₂ (%)</label><input type="number" id="eo2-daily-avg" min="0" max="100" step="0.1" placeholder="예) 97"></div>
       </div>
       <div style="font-size:.7rem;font-weight:700;color:var(--teal);letter-spacing:.05em;padding:4px 0 2px;border-top:1px solid var(--border-soft);margin-top:2px">주간 SpO₂ (%)</div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">
@@ -3643,7 +3656,7 @@ const _DAY_FIELDS = {
   sleep: ['f-date','f-rem-pct','f-rem-h','f-rem-m','f-light-pct','f-light-h','f-light-m','f-deep-pct','f-deep-h','f-deep-m','f-awake-h','f-awake-m','f-eff','f-total-h','f-total-m','f-nap-h','f-nap-m','f-sleep-hr','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time','f-sleep-score'],
   hr:    ['hr-date','hr-range','hr-avg','hr-rest','hr-mean'],
   bp:    ['bp-date','bp-sys','bp-dia'],
-  o2:    ['o2-date','o2-daily'],
+  o2:    ['o2-date','o2-daily-max','o2-daily-min','o2-daily-avg'],
   wt:    ['wt-date','wt-kg'],
   wh:    ['wh-date'],
   sv:    ['sv-date','sv-score','sv-note','sv-vital'],
@@ -3881,10 +3894,13 @@ function _submitAllDays(bufType){
       const group=_detectGroup(shared.name,shared.age,shared.gender);
       bloodPressureRecords.unshift({date:buf['bp-date'],...shared,sys,dia,status:st?st.label:'정상',recheck:st?st.recheck:false,group});
     } else if(bufType==='o2'){
-      const daily=buf['o2-daily']||'';
+      const dailyAvg=buf['o2-daily-avg']||'';
+      const dailyMax=buf['o2-daily-max']||'';
+      const dailyMin=buf['o2-daily-min']||'';
+      const daily=dailyAvg;
       const st=daily?getSpO2Status(daily):null;
       const group=_detectGroup(shared.name,shared.age,shared.gender);
-      oxygenRecords.unshift({date:buf['o2-date'],...shared,daily,weekly:[],dailyStatus:st?st.label:'',weeklyHospitalWarn:false,group});
+      oxygenRecords.unshift({date:buf['o2-date'],...shared,daily,dailyMax,dailyMin,dailyAvg,weekly:[],dailyStatus:st?st.label:'',weeklyHospitalWarn:false,group});
     } else if(bufType==='wt'){
       const kg=buf['wt-kg']||'';
       const bmi=(kg&&shared.height)?calcBmi(parseFloat(kg),parseFloat(shared.height)):null;
@@ -4034,7 +4050,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.46';
+const APP_VER = '6.47';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5225,16 +5241,16 @@ function getSpO2Status(val){
   return { label:'위험', icon:'🔴', bg:'#C83535', color:'#fff', deep:false, danger:true };
 }
 function updateO2StatusBadge(){
-  const dailyEl = document.getElementById('o2-daily');
+  const avgEl  = document.getElementById('o2-daily-avg');
   const weekEls = document.querySelectorAll('.o2-week-input');
   const dailyWrap  = document.getElementById('o2-daily-status-wrap');
   const dailyBadge = document.getElementById('o2-daily-status-badge');
   const extraBadge = document.getElementById('o2-daily-extra-badge');
   const weekWrap   = document.getElementById('o2-week-warn-wrap');
   if(!dailyWrap || !dailyBadge) return;
-  // 하루 상태
-  const st = getSpO2Status(dailyEl?.value);
-  if(st && dailyEl?.value){
+  // 하루 상태 — 평균값 기준
+  const st = getSpO2Status(avgEl?.value);
+  if(st && avgEl?.value){
     dailyWrap.style.display = 'flex';
     dailyBadge.textContent = st.icon + ' ' + st.label;
     dailyBadge.style.background = st.bg;
@@ -5265,7 +5281,10 @@ function addOxygen(){
   const name   = document.getElementById('o2-name').value.trim();
   const age    = document.getElementById('o2-age').value;
   const gender = document.getElementById('o2-gender').value;
-  const daily  = document.getElementById('o2-daily').value;
+  const dailyMax = document.getElementById('o2-daily-max').value;
+  const dailyMin = document.getElementById('o2-daily-min').value;
+  const dailyAvg = document.getElementById('o2-daily-avg').value;
+  const daily    = dailyAvg; // 평균값을 대표값으로 사용
   const weekEls = document.querySelectorAll('.o2-week-input');
   const weekly  = [...weekEls].map(el=>el.value==='' ? null : parseFloat(el.value));
   if(!date){ showToast('날짜를 입력해 주세요.', true); return; }
@@ -5274,7 +5293,7 @@ function addOxygen(){
   const cautionDays = weekly.filter(v=>v!==null && v>=90 && v<95).length;
   const weeklyHospitalWarn = cautionDays >= 3;
   const group = _detectGroup(name, age, gender);
-  const rec = { date, name, age: age||'', gender: gender||'', daily: daily||'', weekly, dailyStatus: st?st.label:'', weeklyHospitalWarn, group };
+  const rec = { date, name, age: age||'', gender: gender||'', daily: daily||'', dailyMax: dailyMax||'', dailyMin: dailyMin||'', dailyAvg: dailyAvg||'', weekly, dailyStatus: st?st.label:'', weeklyHospitalWarn, group };
   oxygenRecords.unshift(rec);
   saveOxygens();
   renderOxygens();
@@ -5312,7 +5331,7 @@ function deleteOxygen(idx){
   }
 }
 function clearO2Form(){
-  ['o2-date','o2-name','o2-age','o2-daily','o2-give','o2-collect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['o2-date','o2-name','o2-age','o2-daily-max','o2-daily-min','o2-daily-avg','o2-give','o2-collect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const g=document.getElementById('o2-gender'); if(g) g.value='';
   document.querySelectorAll('.o2-week-input').forEach(el=>el.value='');
   const dailyWrap = document.getElementById('o2-daily-status-wrap');
@@ -5340,13 +5359,16 @@ function renderOxygens(){
     const dailyBadge = st && r.daily
       ? `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.66rem;font-weight:700;background:${st.bg};color:${st.color}">${st.icon} ${st.label}</span>`
       : '-';
+    const _pct = v => (v!==undefined && v!==null && v!=='') ? v+'%' : '-';
     return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
       <td>${r.name||''}</td>
       <td>${r.age||'-'}</td>
       <td>${r.gender||'-'}</td>
-      <td>${r.daily ? r.daily+'%' : '-'}</td>
+      <td style="color:#1E9E5A;font-weight:600">${_pct(r.dailyMax||r.daily)}</td>
+      <td style="color:#C83535;font-weight:600">${_pct(r.dailyMin)}</td>
+      <td style="font-weight:700">${_pct(r.dailyAvg||r.daily)}</td>
       <td>${dailyBadge}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" title="수정" onclick="openEditO2(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
@@ -5358,9 +5380,10 @@ function renderOxygens(){
 async function exportO2Excel(){
   if(!oxygenRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
   const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const headers = ['#','날짜','고객명','나이','성별','하루 SpO₂(%)','상태','1일차','2일차','3일차','4일차','5일차','6일차','7일차','주간경고'];
+  const headers = ['#','날짜','고객명','나이','성별','최고 SpO₂(%)','최저 SpO₂(%)','평균 SpO₂(%)','상태','1일차','2일차','3일차','4일차','5일차','6일차','7일차','주간경고'];
   const rows = oxygenRecords.map((r,i)=>[
-    oxygenRecords.length-i, r.date||'', r.name||'', r.age||'', r.gender||'', r.daily||'', r.dailyStatus||'',
+    oxygenRecords.length-i, r.date||'', r.name||'', r.age||'', r.gender||'',
+    r.dailyMax||r.daily||'', r.dailyMin||'', r.dailyAvg||r.daily||'', r.dailyStatus||'',
     ...(r.weekly||[]).map(v=>v===null||v===undefined?'':v),
     r.weeklyHospitalWarn ? '병원 방문 권고' : ''
   ]);
@@ -6877,12 +6900,11 @@ async function exportO2Docx(){
   try {
     const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
     const subtitle = `총 ${oxygenRecords.length}건  ·  출력일: ${new Date().toLocaleDateString('ko-KR')}`;
-    const headers = ['날짜','이름','나이','성별','일평균(%)','7일 평균(%)'];
-    const rows = oxygenRecords.map(r=>{
-      const w = r.weekValues||[];
-      const avg7 = w.length ? (w.reduce((s,v)=>s+(Number(v)||0),0)/w.length).toFixed(1) : '-';
-      return [r.date||'',r.name||'',r.age||'',r.gender||'',r.daily||'',avg7];
-    });
+    const headers = ['날짜','이름','나이','성별','최고 SpO₂(%)','최저 SpO₂(%)','평균 SpO₂(%)','상태'];
+    const rows = oxygenRecords.map(r=>[
+      r.date||'', r.name||'', r.age||'', r.gender||'',
+      r.dailyMax||r.daily||'-', r.dailyMin||'-', r.dailyAvg||r.daily||'-', r.dailyStatus||'-'
+    ]);
     const blob = await _buildSimpleDocx('힐마루케어 · 혈중산소 기록', subtitle, headers, rows);
     await _saveDocxBlob(blob, `힐마루케어_혈중산소_${stamp}.docx`);
   } catch(e){ if(e?.code!=='declined') showToast(`워드 내보내기 실패: ${e?.message||e}`, true); }
@@ -9453,10 +9475,12 @@ function openEditO2(idx){
   const r = oxygenRecords[idx];
   if(!r) return;
   const fv = (id,v) => { const el=document.getElementById(id); if(el) el.value = v||''; };
-  fv('eo2-date',  r.date);
-  fv('eo2-name',  r.name);
-  fv('eo2-age',   r.age);
-  fv('eo2-daily', r.daily);
+  fv('eo2-date',      r.date);
+  fv('eo2-name',      r.name);
+  fv('eo2-age',       r.age);
+  fv('eo2-daily-max', r.dailyMax||r.daily);
+  fv('eo2-daily-min', r.dailyMin||'');
+  fv('eo2-daily-avg', r.dailyAvg||r.daily);
   const g = document.getElementById('eo2-gender');
   if(g) g.value = r.gender||'';
   const weekEls = document.querySelectorAll('.eo2-week-input');
@@ -9470,7 +9494,10 @@ function closeEditO2(){
 function saveEditO2(){
   if(_editingO2Idx === null) return;
   const gv = id => { const el=document.getElementById(id); return el ? el.value.trim() : ''; };
-  const daily = gv('eo2-daily');
+  const dailyMax = gv('eo2-daily-max');
+  const dailyMin = gv('eo2-daily-min');
+  const dailyAvg = gv('eo2-daily-avg');
+  const daily    = dailyAvg; // 평균을 대표값으로
   const weekEls = document.querySelectorAll('.eo2-week-input');
   const weekly = [...weekEls].map(el => el.value === '' ? null : parseFloat(el.value));
   const st = getSpO2Status(daily);
@@ -9482,6 +9509,9 @@ function saveEditO2(){
     age:     gv('eo2-age'),
     gender:  document.getElementById('eo2-gender').value,
     daily,
+    dailyMax,
+    dailyMin,
+    dailyAvg,
     weekly,
     dailyStatus: st ? st.label : '',
     weeklyHospitalWarn: cautionDays >= 3,
@@ -9765,11 +9795,15 @@ function openAllReport(name, age, gender){
 
     // 혈중산소 — oxygenRecords 우선, 없으면 수면기록의 sleepO2 폴백
     let o2Section = '';
-    const _o2Val = (o2 && o2.daily) ? o2.daily : (sr && sr.sleepO2 ? sr.sleepO2 : null);
-    if(_o2Val){
-      const o2St=getSpO2Status(_o2Val);
-      o2Section = statRow([['SpO₂ (%)', _o2Val+'%', o2St?o2St.color:'var(--text-1)']])+
-        (o2St?`<div style="margin-top:6px;display:flex;align-items:center;gap:8px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${o2St.bg};color:${o2St.color}">${o2St.icon} ${o2St.label}</span><span style="font-size:.7rem;color:var(--text-3)">${_o2Val}%</span></div>`:'');
+    const _o2Avg = (o2 && (o2.dailyAvg||o2.daily)) ? (o2.dailyAvg||o2.daily) : (sr && sr.sleepO2 ? sr.sleepO2 : null);
+    if(_o2Avg){
+      const o2St=getSpO2Status(_o2Avg);
+      const _rows = [];
+      if(o2 && o2.dailyMax) _rows.push(['최고 SpO₂', o2.dailyMax+'%', '#1E9E5A']);
+      if(o2 && o2.dailyMin) _rows.push(['최저 SpO₂', o2.dailyMin+'%', '#C83535']);
+      _rows.push(['평균 SpO₂', _o2Avg+'%', o2St?o2St.bg:'var(--text-1)']);
+      o2Section = statRow(_rows)+
+        (o2St?`<div style="margin-top:6px;display:flex;align-items:center;gap:8px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:${o2St.bg};color:${o2St.color}">${o2St.icon} ${o2St.label}</span><span style="font-size:.7rem;color:var(--text-3)">${_o2Avg}%</span></div>`:'');
     } else o2Section = noData('혈중산소');
 
     // 스트레스·활력

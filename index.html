@@ -2578,6 +2578,12 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
               <label>활력점수 <span style="font-size:.65rem;font-weight:400;color:var(--text-3)">(0 ~ 100)</span></label>
               <input type="number" id="sv-vital" placeholder="예) 75" min="0" max="100">
             </div>
+            <div id="sv-final-vital-wrap" style="display:none">
+              <div class="form-field" style="border-left:3px solid var(--teal);padding-left:8px;margin-top:4px">
+                <label style="color:var(--teal);font-weight:700">7일 최종 활력점수 <span style="font-size:.65rem;font-weight:400;color:var(--text-3)">(0 ~ 100)</span></label>
+                <input type="number" id="sv-final-vital" placeholder="예) 80" min="0" max="100">
+              </div>
+            </div>
             <div style="height:8px"></div>
           </div>
 
@@ -2753,12 +2759,12 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>심박수(BPM)</th>
                 <th>SpO₂(%)</th>
                 <th>SpO₂상태</th>
-                <th>스트레스</th><th>활력점수</th>
+                <th>스트레스</th><th>활력점수</th><th>최종 활력</th>
               </tr>
             </thead>
             <tbody id="all-tbody">
               <tr id="empty-all-row">
-                <td colspan="36" style="padding:0;border:none">
+                <td colspan="37" style="padding:0;border:none">
                   <div class="empty-state" style="position:sticky;left:0;width:600px">
                     <div class="empty-icon">📋</div>
                     <div class="empty-msg">저장된 건강 기록이 없습니다</div>
@@ -2890,7 +2896,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
             <thead>
               <tr>
                 <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th>
-                <th>스트레스 점수</th><th>서술</th><th>시간별 상태</th><th>활력점수</th><th></th>
+                <th>스트레스 점수</th><th>서술</th><th>시간별 상태</th><th>활력점수</th><th>최종 활력</th><th></th>
               </tr>
             </thead>
             <tbody id="stress-tbody">
@@ -3788,6 +3794,10 @@ function switchDay(type, idx){
   _loadDayFromBuf(type,idx);
   _refreshTabDots(type);
   _updateDayCount(type);
+  if(type==='sv'){
+    const fvWrap=document.getElementById('sv-final-vital-wrap');
+    if(fvWrap) fvWrap.style.display = idx===6 ? '' : 'none';
+  }
 }
 
 function onDay1DateChange(type){
@@ -3860,6 +3870,7 @@ function _submitAllDays(bufType){
   } else if(bufType==='sv'){
     shared.name=_gv('sv-name').trim(); shared.age=_gv('sv-age'); shared.gender=_gv('sv-gender');
     shared.give=_gv('sv-give'); shared.collect=_gv('sv-collect');
+    shared.finalVital=_gv('sv-final-vital');
   }
   if(!shared.name){ showToast('고객명은 필수 입력 항목입니다.', true); return; }
 
@@ -3914,7 +3925,8 @@ function _submitAllDays(bufType){
       const vital=buf['sv-vital']||'', score=buf['sv-score']||'', note=buf['sv-note']||'';
       const stressItems=(_svItemsBuf[i]||[]).filter(it=>it.state);
       const group=_detectGroup(shared.name,shared.age,shared.gender);
-      stressRecords.unshift({date:buf['sv-date'],...shared,score,note,stressItems,vital,group});
+      const finalVital=shared.finalVital||'';
+      stressRecords.unshift({date:buf['sv-date'],...shared,score,note,stressItems,vital,finalVital,group});
     }
     savedCount++;
   }
@@ -4050,7 +4062,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.49';
+const APP_VER = '6.50';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4957,6 +4969,7 @@ function renderAllRecords(){
       return badge + scoreStr || '-';
     })() : '-';
     const svVitalCell = sv && sv.vital ? `<span style="font-weight:800;color:${parseInt(sv.vital)>=80?'#1E9E5A':parseInt(sv.vital)>=50?'#0E8FA3':'#C07820'}">${sv.vital}</span>` : '-';
+    const svFinalVitalCell = sv && sv.finalVital ? `<span style="font-weight:800;color:${parseInt(sv.finalVital)>=80?'#1E9E5A':parseInt(sv.finalVital)>=50?'#0E8FA3':'#C07820'};border:1.5px solid currentColor;border-radius:5px;padding:1px 5px">${sv.finalVital}</span>` : '-';
 
     return `<tr style="${_aIsGF?'cursor:pointer;border-top:2px solid rgba(92,200,184,.3)':'cursor:default'}" ${_aIsGF?`onclick="openAllReport('${escapedName}','${escapedAge}','${escapedGender}')" title="클릭하면 통합 건강 보고서가 열립니다 (첫째날 행)"`:''}>
       <td>${idx + 1}</td>
@@ -4990,6 +5003,7 @@ function renderAllRecords(){
       <td>${spo2StatusCell}</td>
       <td>${svStressCell}</td>
       <td>${svVitalCell}</td>
+      <td>${svFinalVitalCell}</td>
     </tr>`;
   }).join('');
 }
@@ -5049,7 +5063,7 @@ async function exportAllExcel(){
     'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
     '수면시 평균 심박수 (BPM)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)','잠든시간','기상시간',
     '심박수범위','평균','휴식','평균 걷기 심박수',
-    '스트레스','활력점수'
+    '스트레스','활력점수','7일 최종 활력점수'
   ];
 
   const data = rows.map(row=>{
@@ -5061,7 +5075,7 @@ async function exportAllExcel(){
       s?s.deepPct||'':'', s?s.deepTime||'':'', s?s.awake||'':'', s?s.eff||'':'', s?s.total||'':'', s?s.nap||'':'',
       s?s.sleepHr||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
       h?h.range||'':'', h?h.avg||'':'', h?h.rest||'':'', h?h.mean||'':'',
-      sv?sv.stress||'':'', sv?sv.vital||'':''
+      sv?sv.stress||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':''
     ];
   });
 
@@ -5658,6 +5672,7 @@ function addStressVital(){
   const age    = document.getElementById('sv-age').value;
   const gender = document.getElementById('sv-gender').value;
   const vital  = document.getElementById('sv-vital').value;
+  const finalVital = (document.getElementById('sv-final-vital')||{}).value||'';
   const score  = document.getElementById('sv-score').value;
   const note   = (document.getElementById('sv-note')||{}).value||'';
   _saveSvItemsToBuf();
@@ -5665,7 +5680,7 @@ function addStressVital(){
   if(!date){ showToast('날짜를 입력해 주세요.', true); return; }
   if(!name){ showToast('고객명을 입력해 주세요.', true); return; }
   const group = _detectGroup(name, age, gender);
-  const rec = { date, name, age: age||'', gender: gender||'', score: score||'', note, stressItems, vital: vital||'', group };
+  const rec = { date, name, age: age||'', gender: gender||'', score: score||'', note, stressItems, vital: vital||'', finalVital: finalVital||'', group };
   stressRecords.unshift(rec);
   saveStressVital();
   renderStressVital();
@@ -5694,7 +5709,7 @@ function deleteStressVital(idx){
   }
 }
 function clearStressForm(){
-  ['sv-date','sv-name','sv-age','sv-vital','sv-give','sv-collect','sv-score','sv-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['sv-date','sv-name','sv-age','sv-vital','sv-final-vital','sv-give','sv-collect','sv-score','sv-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const g=document.getElementById('sv-gender'); if(g) g.value='';
   _svItemsBuf=Array(7).fill(null).map(()=>[]);
   _renderSvItems([]);
@@ -5707,7 +5722,7 @@ function renderStressVital(){
     : stressRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(svFiltered.length===0){
-    tbody.innerHTML = `<tr id="empty-stress-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">🧠⚡</div><div class="empty-msg">저장된 스트레스·활력 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 스트레스·활력을 선택 후 입력해 보세요</div></div></td></tr>`;
+    tbody.innerHTML = `<tr id="empty-stress-row"><td colspan="11"><div class="empty-state"><div class="empty-icon">🧠⚡</div><div class="empty-msg">저장된 스트레스·활력 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 스트레스·활력을 선택 후 입력해 보세요</div></div></td></tr>`;
     return;
   }
   const _svSeen=new Set();
@@ -5723,6 +5738,7 @@ function renderStressVital(){
       ? r.stressItems.map(it=>it.state?`<span style="display:inline-flex;align-items:center;gap:2px;font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:20px;background:${_stateBg(it.state)};color:${_stateColor(it.state)};white-space:nowrap">${_stressEmoji[it.state]||''} ${it.time?it.time+' ':''} ${it.state}</span>`:'').filter(Boolean).join(' ')
       : '<span style="color:var(--text-3);font-size:.75rem">—</span>';
     const vitalLabel = r.vital ? `<span style="font-size:.95rem;font-weight:800;color:${parseInt(r.vital)>=80?'#1E9E5A':parseInt(r.vital)>=50?'#0E8FA3':'#C07820'}">${r.vital}</span>` : '-';
+    const finalVitalLabel = r.finalVital ? `<span style="font-size:.9rem;font-weight:800;color:${parseInt(r.finalVital)>=80?'#1E9E5A':parseInt(r.finalVital)>=50?'#0E8FA3':'#C07820'};border:1.5px solid currentColor;border-radius:6px;padding:1px 6px">${r.finalVital}</span>` : '-';
     return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
@@ -5733,6 +5749,7 @@ function renderStressVital(){
       <td>${noteLabel}</td>
       <td>${itemsHtml}</td>
       <td>${vitalLabel}</td>
+      <td>${finalVitalLabel}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" onclick="deleteStressVital(${i})" title="삭제">×</button>
       </td>
@@ -6656,7 +6673,7 @@ async function exportExcel(){
       '수축기혈압','이완기혈압','정상여부',
       '체중(KG)','키(CM)','추천체중','BMI',
       '생리기간','주기길이','마지막생리','예측일',
-      '스트레스','활력점수'
+      '스트레스','활력점수','7일 최종 활력점수'
     ];
 
     const rows = allRowsE.map((row,i) => {
@@ -6672,7 +6689,7 @@ async function exportExcel(){
         wt?wt.kg||'':'', wt?wt.height||'':'', '',
         wt?wt.bmi||'':'',
         wh?wh.periodDays||'':'', wh?wh.cycleLen||'':'', wh?wh.lastPeriod||'':'', wh?wh.predicted||'':'',
-        sv?sv.stress||'':'', sv?sv.vital||'':''
+        sv?sv.stress||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':''
       ];
     });
 
@@ -7292,15 +7309,15 @@ function _buildAllDocXml(allRows, imgEntries){
     }
     body += para('', {}, {after:80});
 
-    // ── 섹션 2: 심박수·혈압·스트레스 기록 (10열) ──
+    // ── 섹션 2: 심박수·혈압·스트레스 기록 (11열) ──
     body += para('2. 심박수·혈압·스트레스 기록', {bold:true, sz:18, color:'1A2E3A'}, {after:40, before:0});
-    // 15398/10 = 1539.8 → 1540×9 + 1538 = 15398
-    const s2c = [1540,1540,1540,1540,1540,1540,1540,1540,1540,1538];
+    // 15398/11 = 1399.8 → 1400×10 + 1398 = 15398
+    const s2c = [1400,1400,1400,1400,1400,1400,1400,1400,1400,1400,1398];
     const s2Grid = s2c.map(w=>`<w:gridCol w:w="${w}"/>`).join('');
     const s2hdr = `<w:tr>`+
       H('날짜',s2c[0])+ H('심박수범위',s2c[1])+ H('평균',s2c[2])+ H('휴식',s2c[3])+
       H('평균 걷기 심박수',s2c[4])+ H('수축기혈압(mmHg)',s2c[5])+ H('이완기혈압(mmHg)',s2c[6])+
-      H('정상여부',s2c[7])+ H('스트레스',s2c[8])+ H('활력점수',s2c[9])+
+      H('정상여부',s2c[7])+ H('스트레스',s2c[8])+ H('활력점수',s2c[9])+ H('최종 활력점수',s2c[10])+
     `</w:tr>`;
     const s2data = dateRows.map(row=>{
       const h=row.heart, b=row.bp, sv=row.stress;
@@ -7310,7 +7327,7 @@ function _buildAllDocXml(allRows, imgEntries){
         V(h?h.mean||'':'', s2c[4])+
         V(b?b.sys||'':'', s2c[5])+ V(b?b.dia||'':'', s2c[6])+
         V(b?bpTxt(b.sys,b.dia):'', s2c[7])+
-        V(sv?sv.stress||'':'', s2c[8])+ V(sv?sv.vital||'':'', s2c[9])+
+        V(sv?sv.stress||'':'', s2c[8])+ V(sv?sv.vital||'':'', s2c[9])+ V(sv?sv.finalVital||'':'', s2c[10])+
       `</w:tr>`;
     }).join('');
     body += `<w:tbl><w:tblPr><w:tblW w:w="15398" w:type="dxa"/>${tblBdr()}<w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${s2Grid}</w:tblGrid>${s2hdr}${s2data}</w:tbl>`;
@@ -9830,10 +9847,13 @@ function openAllReport(name, age, gender){
       const vC=vN>=80?'#1E9E5A':vN>=50?'#0E8FA3':'#C07820';
       const sEmoji={'휴식구간':'🟢','정상':'🔵','보통':'🟡','심각':'🔴'}[sv.stress]||'';
       const sC=sv.stress==='심각'?'#C83535':sv.stress==='보통'?'#C07820':sv.stress==='정상'?'#0E8FA3':'#1E9E5A';
+      const fvN=parseInt(sv.finalVital)||0;
+      const fvC=fvN>=80?'#1E9E5A':fvN>=50?'#0E8FA3':'#C07820';
       svSection = statRow([
         ['스트레스 점수', sv.score?sv.score+'점':'-', sv.score?(parseInt(sv.score)<=30?'#1E9E5A':parseInt(sv.score)<=60?'#C07820':'#C83535'):'var(--text-3)'],
         ['스트레스 상태', sv.stress?sEmoji+' '+sv.stress:'-', sC],
         ['활력 점수', sv.vital?sv.vital+'점':'-', vC],
+        ['7일 최종 활력', sv.finalVital?sv.finalVital+'점':'-', sv.finalVital?fvC:'var(--text-3)'],
       ]);
     } else svSection = noData('스트레스·활력');
 

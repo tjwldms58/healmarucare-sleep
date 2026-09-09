@@ -2085,6 +2085,13 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <label>수면효율성 (%)</label>
                 <input type="number" id="f-eff" placeholder="0–100" min="0" max="100" step="0.1">
               </div>
+              <div class="form-field" style="grid-column:1/-1">
+                <label>수면점수 (0–100)</label>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <input type="number" id="f-sleep-score" placeholder="예) 85" min="0" max="100" step="1" style="flex:1" oninput="(function(el){const lbl=document.getElementById('f-sleep-score-label');if(lbl)lbl.textContent=_calcScoreLabel(el.value)})(this)">
+                  <span id="f-sleep-score-label" style="font-size:.75rem;font-weight:700;color:var(--teal);min-width:48px;text-align:center;background:var(--teal-light);border-radius:6px;padding:3px 8px;white-space:nowrap"></span>
+                </div>
+              </div>
               <div class="form-field">
                 <label>수면시간</label>
                 <div style="display:flex;gap:4px;align-items:center"><select id="f-total-h" style="flex:1;text-align:center"><option value="">시간</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option></select><select id="f-total-m" style="flex:1;text-align:center"><option value="">분</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option><option>32</option><option>33</option><option>34</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option><option>40</option><option>41</option><option>42</option><option>43</option><option>44</option><option>45</option><option>46</option><option>47</option><option>48</option><option>49</option><option>50</option><option>51</option><option>52</option><option>53</option><option>54</option><option>55</option><option>56</option><option>57</option><option>58</option><option>59</option></select></div>
@@ -3206,6 +3213,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
         <div class="form-field"><label>깊은수면 시간</label><div style="display:flex;gap:4px;align-items:center"><select id="ef-deep-h" style="flex:1;text-align:center"><option value="">시간</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option></select><select id="ef-deep-m" style="flex:1;text-align:center"><option value="">분</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option><option>32</option><option>33</option><option>34</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option><option>40</option><option>41</option><option>42</option><option>43</option><option>44</option><option>45</option><option>46</option><option>47</option><option>48</option><option>49</option><option>50</option><option>51</option><option>52</option><option>53</option><option>54</option><option>55</option><option>56</option><option>57</option><option>58</option><option>59</option></select></div></div>
         <div class="form-field"><label>각성</label><div style="display:flex;gap:4px;align-items:center"><select id="ef-awake-h" style="flex:1;text-align:center"><option value="">시간</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option></select><select id="ef-awake-m" style="flex:1;text-align:center"><option value="">분</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option><option>32</option><option>33</option><option>34</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option><option>40</option><option>41</option><option>42</option><option>43</option><option>44</option><option>45</option><option>46</option><option>47</option><option>48</option><option>49</option><option>50</option><option>51</option><option>52</option><option>53</option><option>54</option><option>55</option><option>56</option><option>57</option><option>58</option><option>59</option></select></div></div>
         <div class="form-field"><label>수면효율성 (%)</label><input type="number" id="ef-eff" min="0" max="100" step="0.1"></div>
+        <div class="form-field" style="grid-column:1/-1"><label>수면점수 (0–100)</label><div style="display:flex;gap:6px;align-items:center"><input type="number" id="ef-sleep-score" min="0" max="100" step="1" placeholder="예) 85" style="flex:1" oninput="(function(el){const lbl=document.getElementById('ef-sleep-score-label');if(lbl)lbl.textContent=_calcScoreLabel(el.value)})(this)"><span id="ef-sleep-score-label" style="font-size:.75rem;font-weight:700;color:var(--teal);min-width:48px;text-align:center;background:var(--teal-light);border-radius:6px;padding:3px 8px;white-space:nowrap"></span></div></div>
         <div class="form-field"><label>수면시간</label><div style="display:flex;gap:4px;align-items:center"><select id="ef-total-h" style="flex:1;text-align:center"><option value="">시간</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option></select><select id="ef-total-m" style="flex:1;text-align:center"><option value="">분</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option><option>32</option><option>33</option><option>34</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option><option>40</option><option>41</option><option>42</option><option>43</option><option>44</option><option>45</option><option>46</option><option>47</option><option>48</option><option>49</option><option>50</option><option>51</option><option>52</option><option>53</option><option>54</option><option>55</option><option>56</option><option>57</option><option>58</option><option>59</option></select></div></div>
         <div class="form-field"><label>낮잠</label><div style="display:flex;gap:4px;align-items:center"><select id="ef-nap-h" style="flex:1;text-align:center"><option value="">시간</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option></select><select id="ef-nap-m" style="flex:1;text-align:center"><option value="">분</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option><option>32</option><option>33</option><option>34</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option><option>40</option><option>41</option><option>42</option><option>43</option><option>44</option><option>45</option><option>46</option><option>47</option><option>48</option><option>49</option><option>50</option><option>51</option><option>52</option><option>53</option><option>54</option><option>55</option><option>56</option><option>57</option><option>58</option><option>59</option></select></div></div>
       </div>
@@ -3595,7 +3603,7 @@ function closePhoneScreen(){
    7일치 DAY BUFFER SYSTEM  (v5.61)
 ═══════════════════════════════════════ */
 const _DAY_FIELDS = {
-  sleep: ['f-date','f-rem-pct','f-rem-h','f-rem-m','f-light-pct','f-light-h','f-light-m','f-deep-pct','f-deep-h','f-deep-m','f-awake-h','f-awake-m','f-eff','f-total-h','f-total-m','f-nap-h','f-nap-m','f-sleep-hr','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time'],
+  sleep: ['f-date','f-rem-pct','f-rem-h','f-rem-m','f-light-pct','f-light-h','f-light-m','f-deep-pct','f-deep-h','f-deep-m','f-awake-h','f-awake-m','f-eff','f-total-h','f-total-m','f-nap-h','f-nap-m','f-sleep-hr','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time','f-sleep-score'],
   hr:    ['hr-date','hr-range','hr-avg','hr-rest','hr-mean'],
   bp:    ['bp-date','bp-sys','bp-dia'],
   o2:    ['o2-date','o2-daily'],
@@ -3615,6 +3623,14 @@ let _dayImgBuf = {};  // per-day image store (sleep only)
 
 function _gv(id){ const el=document.getElementById(id); return el ? el.value : ''; }
 function _sv(id,v){ const el=document.getElementById(id); if(el) el.value=(v||''); }
+function _calcScoreLabel(score){
+  const s=parseFloat(score);
+  if(isNaN(s)||score==='') return '';
+  if(s>=90) return '매우좋음';
+  if(s>=80) return '좋음';
+  if(s>=60) return '보통';
+  return '나쁨';
+}
 
 /* ── 스트레스 시간별 항목 버퍼 (sv 전용) ── */
 let _svItemsBuf = Array(7).fill(null).map(()=>[]);
@@ -3811,6 +3827,7 @@ function _submitAllDays(bufType){
         total:_combineTotalHM(buf['f-total-h'],buf['f-total-m']), nap:_combineTotalMin(buf['f-nap-h'],buf['f-nap-m']),
         sleepHr:buf['f-sleep-hr']||'', sleepO2:buf['f-sleep-o2']||'', sleepRr:buf['f-sleep-rr']||'', sleepOnset:buf['f-sleep-onset']||'',
         sleepTime:buf['f-sleep-time']||'', wakeTime:buf['f-wake-time']||'',
+        score:buf['f-sleep-score']||'', scoreLabel:_calcScoreLabel(buf['f-sleep-score']||''),
         imgUrls: ((_dayImgBuf.sleep[i]||{}).urls||[]).filter(Boolean),
         imgs:    ((_dayImgBuf.sleep[i]||{}).imgs||[]).filter(Boolean),
         imgUrl:  ((_dayImgBuf.sleep[i]||{}).urls||[]).find(Boolean)||null,
@@ -3980,7 +3997,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.29';
+const APP_VER = '6.30';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -7533,6 +7550,9 @@ function openEditRecord(idx) {
   fv('ef-sleep-onset', r.sleepOnset);
   fv('ef-sleep-time',  r.sleepTime);
   fv('ef-wake-time',   r.wakeTime);
+  fv('ef-sleep-score', r.score||'');
+  const _eScoreLbl = document.getElementById('ef-sleep-score-label');
+  if(_eScoreLbl) _eScoreLbl.textContent = _calcScoreLabel(r.score||'');
 
   const modal = document.getElementById('edit-record-modal');
   if(modal) modal.style.display = 'flex';
@@ -7577,6 +7597,8 @@ function saveEditRecord() {
     sleepOnset: gv('ef-sleep-onset'),
     sleepTime:  gv('ef-sleep-time'),
     wakeTime:   gv('ef-wake-time'),
+    score:      gv('ef-sleep-score'),
+    scoreLabel: _calcScoreLabel(gv('ef-sleep-score')),
     // 이미지 업데이트
     imgUrls:  [..._editImgUrls],
     imgs:     [..._editImgs],
@@ -8420,6 +8442,127 @@ function drawSleepStage7Chart(canvasId, sr7, allDates){
  *   - lo/hi : 범위 (심박수 범위·혈압 수축-이완)
  * opts      : { color, rangeMode, label }
  * ════════════════════════════════════════════════════════════════════════ */
+/* ── 수면점수 차트 (연보라색, 둥근 모서리, 그라데이션/투명도 없음) ── */
+function drawSleepScoreChart(canvasId, sr7, allDates){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // 데이터: allDates 기준 (점수 없으면 null)
+  const data = allDates.map((date, i) => {
+    const rec = sr7.find(r=>r.date===date)||null;
+    const score = rec ? (parseFloat(rec.score)||null) : null;
+    return { date, label:'Day'+(i+1), score };
+  });
+  const hasAny = data.some(d=>d.score!==null);
+  if(!hasAny){
+    ctx.fillStyle='#aaa'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('수면점수 데이터 없음', W/2, H/2);
+    return;
+  }
+
+  const padL=32, padR=10, padT=14, padB=28;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const n = data.length;
+  const maxScore = 100;
+
+  // 격자선
+  ctx.strokeStyle = 'rgba(0,0,0,.07)';
+  ctx.lineWidth = 1;
+  [0,25,50,75,100].forEach(v=>{
+    const y = padT + chartH * (1 - v/maxScore);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+chartW,y); ctx.stroke();
+    ctx.fillStyle='rgba(0,0,0,.38)'; ctx.font='9px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(v, padL-3, y+3);
+  });
+
+  // 막대 그리기
+  const BAR_COLOR = '#B39DDB'; // 연보라색
+  const radius = 5;
+  const barW = Math.max(12, Math.min(52, (chartW / n) * 0.6));
+  const step = chartW / n;
+
+  canvas._arBars = [];
+  data.forEach((d, i) => {
+    const cx = padL + step * i + step / 2;
+    if(d.score === null){
+      // 데이터 없는 날짜: 점선 표시
+      ctx.setLineDash([2,2]);
+      ctx.strokeStyle='rgba(0,0,0,.15)'; ctx.lineWidth=1;
+      const yBase = padT + chartH;
+      ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, yBase); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='rgba(0,0,0,.3)'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(d.label, cx, H-padB+11);
+      return;
+    }
+    const barH = Math.max(4, (d.score / maxScore) * chartH);
+    const x = cx - barW/2;
+    const y = padT + chartH - barH;
+
+    // 둥근 상단 모서리 막대
+    ctx.fillStyle = BAR_COLOR;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + barW - radius, y);
+    ctx.quadraticCurveTo(x + barW, y, x + barW, y + radius);
+    ctx.lineTo(x + barW, y + barH);
+    ctx.lineTo(x, y + barH);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+
+    // 점수 레이블 (막대 위)
+    ctx.fillStyle = '#6B50B8';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.score, cx, y - 3);
+
+    // X축 레이블
+    ctx.fillStyle = 'rgba(0,0,0,.5)';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText(d.label, cx, H - padB + 11);
+
+    // 툴팁 메타
+    canvas._arBars.push({
+      x1: x, x2: x + barW, y1: y, y2: y + barH,
+      date: d.date, label: d.label,
+      valLabel: `수면점수: ${d.score}점\n${_calcScoreLabel(d.score)}`
+    });
+  });
+
+  // 툴팁 이벤트 (공통 ar-bar-tooltip 사용)
+  if(!canvas._scoreEvt){
+    canvas._scoreEvt = true;
+    const tip = document.getElementById('ar-bar-tooltip');
+    const tipVal = document.getElementById('ar-bar-tooltip-val');
+    const tipDate = document.getElementById('ar-bar-tooltip-date');
+    canvas.addEventListener('mousemove', e => {
+      if(!tip||!canvas._arBars) return;
+      const rect = canvas.getBoundingClientRect();
+      const sx = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const sy = (e.clientY - rect.top) * (canvas.height / rect.height);
+      const hit = canvas._arBars.find(b=>sx>=b.x1&&sx<=b.x2&&sy>=b.y1&&sy<=b.y2);
+      if(hit){
+        tipVal.textContent = `수면점수: ${hit.valLabel.split('\n')[0].replace('수면점수: ','')}`;
+        tipDate.textContent = hit.label + ' (' + hit.date + ')';
+        tip.style.display='block';
+        tip.style.left=(e.clientX-36)+'px';
+        tip.style.top=(e.clientY-80)+'px';
+        canvas.style.cursor='pointer';
+      } else {
+        tip.style.display='none';
+        canvas.style.cursor='default';
+      }
+    });
+    canvas.addEventListener('mouseleave', ()=>{ if(tip) tip.style.display='none'; });
+  }
+}
+
 function drawHealthBarChart(canvasId, recs, opts){
   const canvas = document.getElementById(canvasId);
   if(!canvas || !recs || !recs.length) return;
@@ -9309,12 +9452,12 @@ function openAllReport(name, age, gender){
   const firstSr = sr7[0]||null;
   const firstAny = firstSr || hr7[0] || bp7[0] || o27[0] || wt7[0] || wh7[0] || sv7[0] || null;
 
-  // 날짜 유니온 (최대 7일) — 수면 기록 날짜를 기준으로 삼아, 타 데이터 날짜가 다를 때 수면 데이터 누락 방지
+  // 날짜 수집 — 수면 기록 날짜를 기준으로, 없을 때만 다른 타입 날짜 사용 (slice(-7) 제거: 입력한 모든 날짜 표시)
   const srDates = [...new Set(sr7.map(r=>r.date||'').filter(Boolean))].sort();
   const otherDatesAll = [...new Set([...hr7,...o27,...sv7].map(r=>r.date||'').filter(Boolean))];
   const allDates = srDates.length > 0
-    ? srDates.slice(-7)  // 수면 기록이 있으면 수면 날짜 우선
-    : [...new Set(otherDatesAll)].sort().slice(-7); // 수면 없을 때만 다른 날짜 활용
+    ? srDates  // 수면 기록이 있으면 수면 날짜 전체 사용 (7일 초과해도 모두 표시)
+    : [...new Set(otherDatesAll)].sort();
 
   document.getElementById('ar-title').textContent = name+' 통합 건강 보고서';
   const _baseDate = (firstSr&&firstSr.give)||'';
@@ -9347,7 +9490,7 @@ function openAllReport(name, age, gender){
         ['담당 간호사', firstSr&&firstSr.nurse||'-'], ['기기 제공일', firstSr&&firstSr.give||'-'],
         ['기기 수거일', firstSr&&firstSr.collect||'-'], ['기간', allDates.length?allDates[0]+' ~ '+allDates[allDates.length-1]:'-'],
       ])}
-      ${sr7.length>1?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">📈 수면시간 추이 (7일)</div>'+chartBox('ar-sr7-canvas',680,110):''}
+      ${sr7.some(r=>r.score)?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">🔮 수면점수 추이 ('+allDates.length+'일)</div>'+chartBox('ar-sr7-canvas',680,120):''}
       ${sr7.length>0?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin:10px 0 4px">📊 수면 단계 분포 (7일)</div>'+chartBox('ar-sl7-canvas',680,130):''}
     </div>` : '';
 
@@ -9418,9 +9561,9 @@ function openAllReport(name, age, gender){
         ${statRow([
           ['총 수면', sr.total||'-', 'var(--teal)'],
           ['효율', sr.eff?sr.eff+'%':'-', eff>=85?'#1E9E5A':eff>=70?'#C07820':'#C83535'],
+          ['수면점수', sr.score?(sr.score+'점 ('+_calcScoreLabel(sr.score)+')'):'-', sr.score?(parseFloat(sr.score)>=80?'#6B50B8':'#C07820'):'var(--text-3)'],
           ['잠든시간', sr.sleepTime||'-', 'var(--text-2)'],
           ['기상시간', sr.wakeTime||'-', 'var(--text-2)'],
-          ['수면준비', sr.sleepOnset?sr.sleepOnset+'분':'-', 'var(--text-2)'],
           ['낮잠', sr.nap?sr.nap+'분':'-', 'var(--text-2)'],
         ])}
         <div style="margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--surface);border-left:3px solid ${evalColor}">
@@ -9513,9 +9656,9 @@ function openAllReport(name, age, gender){
       if(type==='tl') drawSleepTimeline(id, r);
       else if(type==='do') drawDonut(id, r);
     });
-    if(sr7.length>1){
-      const d=sr7.map(r=>({date:r.date, val:Math.round((parseSleepMin(r.total)||0)/6)/10}));
-      drawHealthBarChart('ar-sr7-canvas', d, {color:'#4878E0', label:'수면시간(h)'});
+    // 수면점수 차트 (점수 데이터가 있는 경우에만)
+    if(sr7.some(r=>r.score)){
+      drawSleepScoreChart('ar-sr7-canvas', sr7, allDates);
     }
     // 7일 수면 단계 스택 바 차트
     if(sr7.length>0){

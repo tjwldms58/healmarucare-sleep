@@ -1012,6 +1012,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .row-action-btn.restore-btn:hover { background: var(--ok-bg); }
 .row-action-btn.del-row-btn { color: var(--err); }
 .row-action-btn.del-row-btn:hover { background: var(--err-bg); }
+tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 
 /* Auto-save status */
 .save-status {
@@ -4104,7 +4105,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.54';
+const APP_VER = '6.55';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6052,9 +6053,9 @@ function buildParticipantTable(){
   visible.forEach(({p, idx}, i) => {
     const st = getStatus(p);
     const tr = document.createElement('tr');
-    // 간호사명이 바로 위 행과 달라지는 지점에 굵은 상단 테두리를 표시해 담당 간호사별로 구분
+    // 간호사명이 바로 위 행과 달라지는 지점에 행 전체에 굵은 상단 테두리를 표시해 담당 간호사별로 구분
     const nurseChanged = i > 0 && (p.nurse||'') !== (visible[i-1].p.nurse||'');
-    const nurseCellStyle = nurseChanged ? 'border-top:2px solid var(--teal);' : '';
+    if(nurseChanged) tr.className = 'nurse-group-start';
     tr.innerHTML=`
       <td style="color:var(--text-3)">${i+1}</td>
       <td><span class="log-tag">${p.id}</span></td>
@@ -6065,7 +6066,7 @@ function buildParticipantTable(){
           ${DEVICES.map(d=>`<option value="${d}"${p.device===d?' selected':''}>${d}</option>`).join('')}
         </select>
       </td>
-      <td style="${nurseCellStyle}">
+      <td>
         <select class="edit-select" onchange="updateP(${idx},'nurse',this.value)">
           <option value="">-</option>
           ${['차규은','이청용','서지은'].map(n=>`<option value="${n}"${(p.nurse||'')===n?' selected':''}>${n}</option>`).join('')}

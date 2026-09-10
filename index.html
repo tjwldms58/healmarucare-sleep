@@ -1000,6 +1000,22 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 .del-btn:hover { opacity: 1; background: var(--err-bg); }
 
+.row-action-btn {
+  background: none; border: none;
+  color: var(--text-2); cursor: pointer; font-size: .72rem;
+  padding: 2px 5px; border-radius: 5px; opacity: .75;
+  transition: opacity .15s; font-family: inherit;
+}
+.row-action-btn:hover { opacity: 1; background: var(--border-soft); }
+.row-action-btn:disabled { opacity: .2; cursor: default; }
+.row-action-btn.restore-btn { color: var(--ok); }
+.row-action-btn.restore-btn:hover { background: var(--ok-bg); }
+.row-action-btn.del-row-btn { color: var(--err); }
+.row-action-btn.del-row-btn:hover { background: var(--err-bg); }
+tr.participant-row-deleted { opacity: .45; }
+tr.participant-row-deleted td input,
+tr.participant-row-deleted td select { pointer-events: none; }
+
 /* Auto-save status */
 .save-status {
   display: flex; align-items: center; gap: .4rem;
@@ -3067,6 +3083,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
                 <th>실제 수거일</th>
                 <th>진행 상태</th>
                 <th>비고</th>
+                <th>관리</th>
               </tr>
             </thead>
             <tbody id="participant-tbody"></tbody>
@@ -4062,7 +4079,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.51';
+const APP_VER = '6.52';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5972,10 +5989,10 @@ function buildDeviceTable(){
   tbody.innerHTML = '';
   DEVICES.forEach(devId => {
     // Find current user (monitoring today)
-    const current = participants.find(p => p.device===devId && p.start && !p.done
+    const current = participants.find(p => !p.deleted && p.device===devId && p.start && !p.done
       && dateCmp(p.start,TODAY)<=0 && dateCmp(p.end,TODAY)>=0);
     // Find next waiting
-    const next = participants.find(p => p.device===devId && p.start && dateCmp(p.start,TODAY)>0);
+    const next = participants.find(p => !p.deleted && p.device===devId && p.start && dateCmp(p.start,TODAY)>0);
 
     let statusLabel, statusCls, dotCls;
     if(current){
@@ -6006,7 +6023,9 @@ function buildParticipantTable(){
   tbody.innerHTML = '';
   participants.forEach((p,idx) => {
     const st = getStatus(p);
+    const isDeleted = !!p.deleted;
     const tr = document.createElement('tr');
+    if(isDeleted) tr.className = 'participant-row-deleted';
     tr.innerHTML=`
       <td><span class="log-tag">${p.id}</span></td>
       <td><input class="edit-input" value="${p.name.replace(/"/g,'&quot;')}" placeholder="이름" onchange="updateP(${idx},'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
@@ -6025,8 +6044,15 @@ function buildParticipantTable(){
       <td><input class="edit-input" type="date" value="${p.start}" onchange="updateP(${idx},'start',this.value)"></td>
       <td style="color:var(--text-2)">${p.end||'-'}</td>
       <td><input class="edit-input" type="date" value="${p.done}" onchange="updateP(${idx},'done',this.value)"></td>
-      <td><span class="badge ${st.cls}">${st.label}</span></td>
+      <td>${isDeleted ? '<span class="badge badge-err">🗑 삭제됨</span>' : `<span class="badge ${st.cls}">${st.label}</span>`}</td>
       <td><input class="edit-input" value="${p.note}" placeholder="-" onchange="updateP(${idx},'note',this.value)" style="max-width:100px"></td>
+      <td style="white-space:nowrap">
+        <button class="row-action-btn" title="위로 이동" onclick="moveParticipant(${idx},-1)"${idx===0?' disabled':''}>▲</button>
+        <button class="row-action-btn" title="아래로 이동" onclick="moveParticipant(${idx},1)"${idx===participants.length-1?' disabled':''}>▼</button>
+        ${isDeleted
+          ? `<button class="row-action-btn restore-btn" title="복구" onclick="restoreParticipant(${idx})">↩ 복구</button>`
+          : `<button class="row-action-btn del-row-btn" title="삭제" onclick="deleteParticipant(${idx})">🗑 삭제</button>`}
+      </td>
     `;
     tbody.appendChild(tr);
   });
@@ -6045,6 +6071,42 @@ function updateP(idx, key, val){
   buildParticipantTable();
   if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
   if(key==='done') buildLogTable(); // 수거 완료 시 이력 로그 즉시 반영
+}
+
+/* 참여자 행 순서 이동 (위/아래) */
+function moveParticipant(idx, dir){
+  const newIdx = idx + dir;
+  if(newIdx < 0 || newIdx >= participants.length) return;
+  const tmp = participants[idx];
+  participants[idx] = participants[newIdx];
+  participants[newIdx] = tmp;
+  saveParticipants();
+  buildParticipantTable();
+  if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
+}
+
+/* 참여자 소프트 삭제 (복구 가능하도록 배열에서 제거하지 않고 deleted 플래그만 표시) */
+function deleteParticipant(idx){
+  if(!participants[idx]) return;
+  participants[idx].deleted = true;
+  saveParticipants();
+  refreshStats();
+  buildDeviceTable();
+  buildParticipantTable();
+  if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
+  showToast('참여자가 삭제 처리되었습니다. (목록에서 복구 가능)');
+}
+
+/* 소프트 삭제된 참여자 복구 */
+function restoreParticipant(idx){
+  if(!participants[idx]) return;
+  participants[idx].deleted = false;
+  saveParticipants();
+  refreshStats();
+  buildDeviceTable();
+  buildParticipantTable();
+  if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
+  showToast('참여자가 복구되었습니다.');
 }
 
 function addParticipant(){
@@ -6073,10 +6135,10 @@ function addParticipant(){
    STATS
 ═══════════════════════════════════════ */
 function refreshStats(){
-  const monitoring = participants.filter(p=>p.start&&!p.done
+  const monitoring = participants.filter(p=>!p.deleted&&p.start&&!p.done
     &&dateCmp(p.start,TODAY)<=0&&dateCmp(p.end,TODAY)>=0).length;
-  const collectToday = participants.filter(p=>p.end===TODAY&&!p.done).length;
-  const delayed = participants.filter(p=>p.end&&dateCmp(p.end,TODAY)<0&&!p.done&&p.start).length;
+  const collectToday = participants.filter(p=>!p.deleted&&p.end===TODAY&&!p.done).length;
+  const delayed = participants.filter(p=>!p.deleted&&p.end&&dateCmp(p.end,TODAY)<0&&!p.done&&p.start).length;
   document.getElementById('stat-monitoring').textContent = monitoring;
   document.getElementById('stat-collect-today').textContent = collectToday;
   document.getElementById('stat-delayed').textContent = delayed;
@@ -6132,7 +6194,7 @@ function buildGantt(){
 
   DEVICES.forEach((devId,di) => {
     // Get all assignments for this device sorted by start
-    const assigns = participants.filter(p=>p.device===devId&&p.start)
+    const assigns = participants.filter(p=>!p.deleted&&p.device===devId&&p.start)
       .sort((a,b)=>a.start<b.start?-1:1);
 
     const tr = document.createElement('tr');

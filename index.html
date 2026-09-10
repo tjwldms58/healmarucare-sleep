@@ -1012,9 +1012,6 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .row-action-btn.restore-btn:hover { background: var(--ok-bg); }
 .row-action-btn.del-row-btn { color: var(--err); }
 .row-action-btn.del-row-btn:hover { background: var(--err-bg); }
-tr.participant-row-deleted { opacity: .45; }
-tr.participant-row-deleted td input,
-tr.participant-row-deleted td select { pointer-events: none; }
 
 /* Auto-save status */
 .save-status {
@@ -3007,6 +3004,7 @@ tr.participant-row-deleted td select { pointer-events: none; }
           <button class="sub-tab" onclick="switchSub('participants', this)">참여자 일정</button>
           <button class="sub-tab" onclick="switchSub('gantt', this)">간트 차트</button>
           <button class="sub-tab" onclick="switchSub('log', this)">이력 로그</button>
+          <button class="sub-tab" onclick="switchSub('manage', this)">관리</button>
         </div>
         <div style="display:flex;gap:6px;padding-right:4px">
           <button onclick="exportScheduleExcel()" id="btn-sched-export"
@@ -3074,6 +3072,7 @@ tr.participant-row-deleted td select { pointer-events: none; }
           <table class="sched-table" id="participant-table">
             <thead>
               <tr>
+                <th>번호</th>
                 <th>참여자 ID</th>
                 <th>참여자 이름</th>
                 <th>할당 기기</th>
@@ -3130,6 +3129,31 @@ tr.participant-row-deleted td select { pointer-events: none; }
               </tr>
             </thead>
             <tbody id="log-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUB: 관리 (삭제된 참여자 복구) -->
+      <div id="sub-manage" class="sub-content">
+        <div class="sec-head">
+          <div class="sec-title">삭제된 참여자 관리</div>
+          <div class="sec-note">참여자 일정 탭에서 삭제한 참여자를 여기서 복구할 수 있습니다</div>
+        </div>
+        <div class="sched-table-wrap">
+          <table class="sched-table" id="manage-table">
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>참여자 ID</th>
+                <th>참여자 이름</th>
+                <th>할당 기기</th>
+                <th>간호사명</th>
+                <th>지급일</th>
+                <th>비고</th>
+                <th>복구</th>
+              </tr>
+            </thead>
+            <tbody id="manage-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -4008,6 +4032,7 @@ function switchSub(id, btn){
   document.getElementById('sub-'+id).classList.add('active');
   btn.classList.add('active');
   if(id==='gantt') buildGantt();
+  if(id==='manage') buildManageTable();
 }
 
 /* ═══════════════════════════════════════
@@ -4079,7 +4104,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.52';
+const APP_VER = '6.53';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6021,12 +6046,14 @@ function buildDeviceTable(){
 function buildParticipantTable(){
   const tbody = document.getElementById('participant-tbody');
   tbody.innerHTML = '';
-  participants.forEach((p,idx) => {
+  // 삭제(soft-delete)된 참여자는 이 탭에서는 완전히 숨기고, '관리' 탭에서만 보여준다.
+  const visible = [];
+  participants.forEach((p, idx) => { if(!p.deleted) visible.push({p, idx}); });
+  visible.forEach(({p, idx}, i) => {
     const st = getStatus(p);
-    const isDeleted = !!p.deleted;
     const tr = document.createElement('tr');
-    if(isDeleted) tr.className = 'participant-row-deleted';
     tr.innerHTML=`
+      <td style="color:var(--text-3)">${i+1}</td>
       <td><span class="log-tag">${p.id}</span></td>
       <td><input class="edit-input" value="${p.name.replace(/"/g,'&quot;')}" placeholder="이름" onchange="updateP(${idx},'name',this.value)" style="font-weight:600;min-width:60px;max-width:90px"></td>
       <td>
@@ -6044,14 +6071,12 @@ function buildParticipantTable(){
       <td><input class="edit-input" type="date" value="${p.start}" onchange="updateP(${idx},'start',this.value)"></td>
       <td style="color:var(--text-2)">${p.end||'-'}</td>
       <td><input class="edit-input" type="date" value="${p.done}" onchange="updateP(${idx},'done',this.value)"></td>
-      <td>${isDeleted ? '<span class="badge badge-err">🗑 삭제됨</span>' : `<span class="badge ${st.cls}">${st.label}</span>`}</td>
+      <td><span class="badge ${st.cls}">${st.label}</span></td>
       <td><input class="edit-input" value="${p.note}" placeholder="-" onchange="updateP(${idx},'note',this.value)" style="max-width:100px"></td>
       <td style="white-space:nowrap">
-        <button class="row-action-btn" title="위로 이동" onclick="moveParticipant(${idx},-1)"${idx===0?' disabled':''}>▲</button>
-        <button class="row-action-btn" title="아래로 이동" onclick="moveParticipant(${idx},1)"${idx===participants.length-1?' disabled':''}>▼</button>
-        ${isDeleted
-          ? `<button class="row-action-btn restore-btn" title="복구" onclick="restoreParticipant(${idx})">↩ 복구</button>`
-          : `<button class="row-action-btn del-row-btn" title="삭제" onclick="deleteParticipant(${idx})">🗑 삭제</button>`}
+        <button class="row-action-btn" title="위로 이동" onclick="moveParticipant(${idx},-1)"${i===0?' disabled':''}>▲</button>
+        <button class="row-action-btn" title="아래로 이동" onclick="moveParticipant(${idx},1)"${i===visible.length-1?' disabled':''}>▼</button>
+        <button class="row-action-btn del-row-btn" title="삭제" onclick="deleteParticipant(${idx})">🗑 삭제</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -6060,6 +6085,35 @@ function buildParticipantTable(){
   const sel = document.getElementById('new-dev');
   sel.innerHTML = '<option value="">기기 선택</option>';
   DEVICES.forEach(d=>{ const o=document.createElement('option'); o.value=o.textContent=d; sel.appendChild(o); });
+}
+
+/* ═══════════════════════════════════════
+   MANAGE TABLE (삭제된 참여자 복구)
+═══════════════════════════════════════ */
+function buildManageTable(){
+  const tbody = document.getElementById('manage-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  const deletedList = [];
+  participants.forEach((p, idx) => { if(p.deleted) deletedList.push({p, idx}); });
+  if(deletedList.length === 0){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-3);padding:20px">삭제된 참여자가 없습니다</td></tr>';
+    return;
+  }
+  deletedList.forEach(({p, idx}, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td style="color:var(--text-3)">${i+1}</td>
+      <td><span class="log-tag">${p.id}</span></td>
+      <td><strong>${p.name}</strong></td>
+      <td>${p.device||'-'}</td>
+      <td>${p.nurse||'-'}</td>
+      <td>${p.start||'-'}</td>
+      <td style="color:var(--text-2)">${p.note||''}</td>
+      <td><button class="row-action-btn restore-btn" title="복구" onclick="restoreParticipant(${idx})">↩ 복구</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 function updateP(idx, key, val){
@@ -6075,17 +6129,22 @@ function updateP(idx, key, val){
 
 /* 참여자 행 순서 이동 (위/아래) */
 function moveParticipant(idx, dir){
-  const newIdx = idx + dir;
-  if(newIdx < 0 || newIdx >= participants.length) return;
+  // 삭제된(숨겨진) 참여자는 건너뛰고, 화면에 보이는 다음/이전 참여자와 순서를 바꾼다.
+  let j = idx + dir;
+  while(j >= 0 && j < participants.length && participants[j].deleted){
+    j += dir;
+  }
+  if(j < 0 || j >= participants.length) return;
   const tmp = participants[idx];
-  participants[idx] = participants[newIdx];
-  participants[newIdx] = tmp;
+  participants[idx] = participants[j];
+  participants[j] = tmp;
   saveParticipants();
   buildParticipantTable();
   if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
 }
 
-/* 참여자 소프트 삭제 (복구 가능하도록 배열에서 제거하지 않고 deleted 플래그만 표시) */
+/* 참여자 소프트 삭제: 배열에서 제거하지 않고 deleted 플래그만 표시해 복구 가능하게 하되,
+   참여자 일정 탭에서는 행 자체를 화면에서 제거하고 '관리' 탭으로 옮겨서 보여준다. */
 function deleteParticipant(idx){
   if(!participants[idx]) return;
   participants[idx].deleted = true;
@@ -6093,11 +6152,12 @@ function deleteParticipant(idx){
   refreshStats();
   buildDeviceTable();
   buildParticipantTable();
+  buildManageTable();
   if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
-  showToast('참여자가 삭제 처리되었습니다. (목록에서 복구 가능)');
+  showToast('참여자가 삭제되었습니다. (관리 탭에서 복구 가능)');
 }
 
-/* 소프트 삭제된 참여자 복구 */
+/* '관리' 탭에서 소프트 삭제된 참여자 복구 */
 function restoreParticipant(idx){
   if(!participants[idx]) return;
   participants[idx].deleted = false;
@@ -6105,6 +6165,7 @@ function restoreParticipant(idx){
   refreshStats();
   buildDeviceTable();
   buildParticipantTable();
+  buildManageTable();
   if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
   showToast('참여자가 복구되었습니다.');
 }

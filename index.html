@@ -970,6 +970,11 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   white-space: nowrap; color: var(--text-1);
 }
 .data-table tbody tr:hover { background: var(--surface-2); }
+/* 열 틀고정: 날짜/고객명/나이/성별/암종/간호사 열 (JS의 applyFreezeCols가 left값을 계산해 적용) */
+.data-table th.freeze-col, .data-table td.freeze-col { position: sticky; z-index: 2; }
+.data-table th.freeze-col { z-index: 3; }
+.data-table td.freeze-col { background: var(--surface); }
+.data-table tbody tr:hover td.freeze-col { background: var(--surface-2); }
 /* 수면 테이블 전용 컴팩트 */
 #records-table { font-size: .7rem; }
 #records-table th { padding: 7px 5px; font-size: .58rem; }
@@ -2745,12 +2750,12 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
             <thead>
               <tr>
                 <th>#</th>
-                <th>날짜</th>
-                <th>고객명</th>
-                <th>나이</th>
-                <th>성별</th>
-                <th>암종</th>
-                <th>담당간호사</th>
+                <th class="freeze-col">날짜</th>
+                <th class="freeze-col">고객명</th>
+                <th class="freeze-col">나이</th>
+                <th class="freeze-col">성별</th>
+                <th class="freeze-col">암종</th>
+                <th class="freeze-col">담당간호사</th>
                 <th>병기</th>
                 <th>제공일</th>
                 <th>수거일</th>
@@ -2801,12 +2806,12 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
             <thead>
               <tr>
                 <th>#</th>
-                <th>날짜</th>
-                <th>고객명</th>
-                <th>나이</th>
-                <th>성별</th>
-                <th>암종</th>
-                <th>간호사</th>
+                <th class="freeze-col">날짜</th>
+                <th class="freeze-col">고객명</th>
+                <th class="freeze-col">나이</th>
+                <th class="freeze-col">성별</th>
+                <th class="freeze-col">암종</th>
+                <th class="freeze-col">간호사</th>
                 <th>병기</th>
                 <th>제공일</th>
                 <th>수거일</th>
@@ -4108,7 +4113,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.56';
+const APP_VER = '6.57';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4822,6 +4827,33 @@ function exportCurrentDocx(){
 /* ═══════════════════════════════════════
    전체 데이터 — RENDER & EXPORT
 ═══════════════════════════════════════ */
+/* 열 틀고정: 헤더에 class="freeze-col"이 붙은 연속된 열들의 실제 렌더링 너비를 측정해
+   각 열(헤더+본문 모든 행)에 누적 left 값을 적용한다. (날짜/고객명/나이/성별/암종/간호사) */
+function applyFreezeCols(tableId){
+  const tbl = document.getElementById(tableId);
+  if(!tbl) return;
+  const theadRow = tbl.querySelector('thead tr');
+  if(!theadRow) return;
+  const startIdx = Array.prototype.findIndex.call(theadRow.children, th=>th.classList.contains('freeze-col'));
+  if(startIdx === -1) return;
+  const freezeThs = [];
+  for(let c=startIdx; c<theadRow.children.length; c++){
+    const th = theadRow.children[c];
+    if(!th.classList.contains('freeze-col')) break; // 동결 열은 연속 구간
+    freezeThs.push(th);
+  }
+  let acc = 0;
+  const lefts = freezeThs.map(th => { const l = acc; acc += th.offsetWidth; return l; });
+  tbl.querySelectorAll('tr').forEach(tr => {
+    for(let i=0;i<freezeThs.length;i++){
+      const cell = tr.children[startIdx+i];
+      if(!cell) break;
+      cell.classList.add('freeze-col');
+      cell.style.left = lefts[i] + 'px';
+    }
+  });
+}
+
 function renderAllRecords(){
   const tbody = document.getElementById('all-tbody');
   if(!tbody) return;
@@ -5052,6 +5084,7 @@ function renderAllRecords(){
       <td>${svFinalVitalCell}</td>
     </tr>`;
   }).join('');
+  applyFreezeCols('all-table');
 }
 
 /* 전체 엑셀 내보내기 — 샤오미데이터 형식 v5.28 */
@@ -7945,6 +7978,7 @@ function renderRecords(){
       </td>
     </tr>
   `; }).join('');
+  applyFreezeCols('records-table');
 }
 
 /* 날짜 인라인 편집: 첫째날 변경 시 묶음 전체 이동 + 타 건강데이터 자동연동 */
@@ -8242,6 +8276,7 @@ window.addEventListener('pageshow', function(){
     if(!tst||!tsc||!inner||!tbl) return;
     function updateInnerWidth(){
       inner.style.width = tbl.scrollWidth + 'px';
+      applyFreezeCols('records-table');
     }
     updateInnerWidth();
     new ResizeObserver(updateInnerWidth).observe(tbl);
@@ -8255,7 +8290,7 @@ window.addEventListener('pageshow', function(){
     const inner = document.getElementById('tst-all-inner');
     const tbl = document.getElementById('all-table');
     if(!tst||!tsc||!inner||!tbl) return;
-    function updateInnerWidth(){ inner.style.width = tbl.scrollWidth + 'px'; }
+    function updateInnerWidth(){ inner.style.width = tbl.scrollWidth + 'px'; applyFreezeCols('all-table'); }
     updateInnerWidth();
     new ResizeObserver(updateInnerWidth).observe(tbl);
     tst.addEventListener('scroll', ()=>{ if(tsc.scrollLeft !== tst.scrollLeft) tsc.scrollLeft = tst.scrollLeft; });

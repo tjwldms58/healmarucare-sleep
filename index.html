@@ -2982,7 +2982,10 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
       </div>
       <div class="stat-card s-warn">
         <div class="stat-label">오늘 수거 대상</div>
-        <div class="stat-value" id="stat-collect-today">0</div>
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <div class="stat-value" id="stat-collect-today">0</div>
+          <div id="stat-collect-today-names" style="font-size:.68rem;font-weight:600;color:var(--text-2);line-height:1.35"></div>
+        </div>
         <div class="stat-sub">수거 예정일 기준</div>
       </div>
       <div class="stat-card s-err">
@@ -4105,7 +4108,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.55';
+const APP_VER = '6.56';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6211,10 +6214,14 @@ function addParticipant(){
 function refreshStats(){
   const monitoring = participants.filter(p=>!p.deleted&&p.start&&!p.done
     &&dateCmp(p.start,TODAY)<=0&&dateCmp(p.end,TODAY)>=0).length;
-  const collectToday = participants.filter(p=>!p.deleted&&p.end===TODAY&&!p.done).length;
+  const collectTodayList = participants.filter(p=>!p.deleted&&p.end===TODAY&&!p.done);
   const delayed = participants.filter(p=>!p.deleted&&p.end&&dateCmp(p.end,TODAY)<0&&!p.done&&p.start).length;
   document.getElementById('stat-monitoring').textContent = monitoring;
-  document.getElementById('stat-collect-today').textContent = collectToday;
+  document.getElementById('stat-collect-today').textContent = collectTodayList.length;
+  const namesEl = document.getElementById('stat-collect-today-names');
+  if(namesEl){
+    namesEl.textContent = collectTodayList.map(p=>`${p.name}(${p.nurse||'-'})`).join(', ');
+  }
   document.getElementById('stat-delayed').textContent = delayed;
 }
 

@@ -4245,7 +4245,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.62';
+const APP_VER = '6.63';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6448,11 +6448,16 @@ async function extractPdfSurveyMarks(file){
     diffs.sort((a,b)=>a-b);
     const typicalH = diffs.length ? diffs[Math.floor(diffs.length/2)] : 60 * SCALE / 2.2;
 
-    rowYs.forEach(({ qIdx, y }) => {
+    rowYs.forEach(({ qIdx, y }, rowIdx) => {
       const x0 = Math.max(0, Math.round(colX0));
       const x1 = Math.min(canvas.width, Math.round(colX1));
-      const y0 = Math.max(0, Math.round(y - typicalH*0.15));
-      const y1 = Math.min(canvas.height, Math.round(y + typicalH*1.6));
+      // 손글씨는 질문 행 기준선보다 위/아래로 자유롭게 걸쳐 쓰이는 경우가 많아, 위·아래 여백을
+      // 고정 배수로 잡으면 옆 행의 표기가 섞이기 쉽다. 위/아래 이웃 행의 실제 y좌표가 있으면
+      // 그 중간 지점을 경계로 삼아 각 표기가 가장 가까운(자신의) 행에만 속하도록 한다.
+      const prevY = (rowIdx > 0) ? rowYs[rowIdx - 1].y : null;
+      const nextY = (rowIdx + 1 < rowYs.length) ? rowYs[rowIdx + 1].y : null;
+      const y0 = Math.max(0, Math.round(prevY !== null ? (y + prevY) / 2 : y - typicalH*0.6));
+      const y1 = Math.min(canvas.height, Math.round(nextY !== null ? (y + nextY) / 2 : y + typicalH*1.6));
       const w = x1-x0, h = y1-y0;
       if(w<=1 || h<=1) return;
       const region = ctx.getImageData(x0, y0, w, h);
@@ -6482,8 +6487,7 @@ async function extractPdfSurveyMarks(file){
         }
       }
       // 빨간 표기가 없으면(= 타이핑된 일반 텍스트) 같은 셀 범위의 텍스트를 답변으로 사용
-      const tightY0 = y - typicalH*0.15, tightY1 = y + typicalH*0.9;
-      const cellItems = items.filter(it => it.x >= colX0-5 && it.x <= colX1+5 && it.y >= tightY0 && it.y <= tightY1 && it.str.trim() !== '');
+      const cellItems = items.filter(it => it.x >= colX0-5 && it.x <= colX1+5 && it.y >= y0 && it.y <= y1 && it.str.trim() !== '');
       if(cellItems.length){
         cellItems.sort((a,b)=> a.y-b.y || a.x-b.x);
         results[qIdx].answer = cellItems.map(it=>it.str.trim()).join(' ').trim();

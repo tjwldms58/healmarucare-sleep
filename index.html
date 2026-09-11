@@ -4245,7 +4245,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.63';
+const APP_VER = '6.64';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6195,7 +6195,8 @@ function renderSurveyTable(){
     // 전체 탭과 동일한 방식: 고객(그룹)이 바뀌는 첫 행 위에 구분선 표시
     const trStyle = isFirstOfGroup ? ' style="border-top:2px solid rgba(92,200,184,.3)"' : '';
     const nameCell = isFirstOfGroup
-      ? `<input type="text" value="${(r.name||'').replace(/"/g,'&quot;')}" onchange="updateSurveyName('${r.groupId}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100px;font-weight:700">`
+      ? `<input type="text" value="${(r.name||'').replace(/"/g,'&quot;')}" onchange="updateSurveyName('${r.groupId}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100px;font-weight:700">
+         <button onclick="saveSurveyGroupAnswers('${r.groupId}')" title="이 고객의 18개 답변을 저장하고 미리보기 이미지를 숨깁니다" style="display:block;margin-top:4px;padding:3px 8px;font-size:.68rem;font-weight:600;border-radius:6px;border:1px solid rgba(14,143,163,.3);background:rgba(14,143,163,.1);color:var(--teal);cursor:pointer;white-space:nowrap">💾 18개답변 저장</button>`
       : '';
     const answerImgHtml = r.answerImg
       ? `<div style="margin-bottom:4px"><img src="${r.answerImg}" alt="원본 표기" title="PDF에서 인식된 빨간색 표기(참고용) — 아래 칸에 직접 입력해 주세요" style="max-width:220px;max-height:90px;object-fit:contain;border:1px solid var(--border);border-radius:6px;background:#fff;display:block"><span style="font-size:.65rem;color:#D64545;font-weight:600">🔴 원본 표기(참고, 직접 입력 필요)</span></div>`
@@ -6213,6 +6214,15 @@ function renderSurveyTable(){
   tbody.innerHTML = html;
   const badge = document.getElementById('record-count-badge');
   if(badge) badge.textContent = svyVisible.length + '건';
+}
+
+// 고객명 아래 "18개답변 저장" 버튼: 해당 고객의 답변을 저장하고, 더 이상 필요 없는
+// PDF 원본 표기 미리보기 이미지는 숨긴다(텍스트 답변 자체는 그대로 유지).
+function saveSurveyGroupAnswers(groupId){
+  surveyRecords.forEach(r => { if(r.groupId === groupId) r.answerImg = null; });
+  saveSurveyRecords();
+  renderSurveyTable();
+  showToast('18개 답변이 저장되었습니다.');
 }
 
 function updateSurveyField(idx, key, val){

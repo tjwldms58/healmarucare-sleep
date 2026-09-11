@@ -1759,6 +1759,11 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         onmouseover="this.style.background='rgba(255,200,50,.28)'" onmouseout="this.style.background='rgba(255,200,50,.18)'">
         📖 <span class="btn-guide-text">고객가이드</span>
       </button>
+      <button onclick="openSurvey()" title="대상자 설문 보기"
+        style="background:rgba(92,200,184,.18);border:1px solid rgba(92,200,184,.3);color:rgba(180,240,230,.95);border-radius:8px;padding:5px 11px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s"
+        onmouseover="this.style.background='rgba(92,200,184,.28)'" onmouseout="this.style.background='rgba(92,200,184,.18)'">
+        📝 <span class="btn-guide-text">대상자 설문</span>
+      </button>
       <button onclick="hmLogout()" title="로그아웃"
         style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap"
         onmouseover="this.style.background='rgba(255,80,80,.18)';this.style.color='#ff9090'" onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.color='rgba(255,255,255,.55)'">
@@ -3238,6 +3243,60 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
   </div>
 </div>
 
+<!-- Participant Survey Modal -->
+<div id="survey-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9990;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto" onclick="if(event.target===this)closeSurvey()">
+  <div style="background:#fff;border-radius:16px;max-width:960px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden" id="survey-modal-box">
+    <div style="background:linear-gradient(135deg,#17324D,#2F6B87);padding:20px 24px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="color:rgba(255,255,255,.6);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">힐마루케어 대상자 설문</div>
+        <div style="color:#fff;font-size:1.05rem;font-weight:800">디바이스 수거 설문</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="printSurvey.call(this, event)" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:6px 14px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit">🖨 인쇄</button>
+        <button onclick="closeSurvey()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:6px 12px;font-size:.85rem;cursor:pointer;font-family:inherit">✕</button>
+      </div>
+    </div>
+    <div id="survey-content" style="padding:24px 28px;font-family:'Noto Sans KR',sans-serif;color:#1a2a3a">
+      <p style="font-size:.8rem;color:#4a6a8a;margin:0 0 16px;padding:10px 14px;background:#EAF2F6;border-radius:8px;border-left:3px solid #2F6B87">
+        Sheet 3 · 고객에게 질문하고 답변한 내용을 그대로 기록합니다. 간호사의 해석은 입력하지 않습니다.
+      </p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:680px">
+          <thead>
+            <tr style="background:#0D2246">
+              <th style="padding:10px 12px;color:#fff;text-align:left;white-space:nowrap">구분</th>
+              <th style="padding:10px 12px;color:#fff;text-align:left">질문</th>
+              <th style="padding:10px 12px;color:#fff;text-align:left">응답</th>
+              <th style="padding:10px 12px;color:#fff;text-align:center;white-space:nowrap">응답 형식</th>
+              <th style="padding:10px 12px;color:#fff;text-align:center;white-space:nowrap">리포트 활용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">7일 종합</td><td style="padding:9px 12px">지난 7일의 전반적인 수면 만족도</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">1~5점</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">7일 종합</td><td style="padding:9px 12px">아침 피로감</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">1~5점</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">7일 종합</td><td style="padding:9px 12px">잠들기 어려웠던 날</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">0~7일</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">증상</td><td style="padding:9px 12px">잠을 방해한 증상</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">복수입력</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">증상</td><td style="padding:9px 12px">통증이 있었던 날</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">0~7일</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">증상</td><td style="padding:9px 12px">열감·야간발한이 있었던 날</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">0~7일</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">증상</td><td style="padding:9px 12px">야간뇨가 있었던 날</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">0~7일</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">생활습관</td><td style="padding:9px 12px">오후 카페인을 섭취한 날</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">0~7일</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">생활습관</td><td style="padding:9px 12px">긴 낮잠을 잔 날</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">0~7일</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">생활습관</td><td style="padding:9px 12px">음주·야식·늦은 운동·스마트폰 등</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">복수입력</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">치료·복약</td><td style="padding:9px 12px">측정기간 중 치료 또는 복약 변화 여부</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">없음·있음</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">치료·복약</td><td style="padding:9px 12px">변화가 있었다면 구체적인 내용</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">자유입력</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">개선목표</td><td style="padding:9px 12px">가장 개선하고 싶은 수면 문제</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">선택+기타</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">4페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">특정일</td><td style="padding:9px 12px">가장 잘 잤다고 느낀 날짜</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">yyyy-mm-dd</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">특정일</td><td style="padding:9px 12px">잘 잤다고 느낀 이유</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">자유입력</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">특정일</td><td style="padding:9px 12px">가장 못 잤다고 느낀 날짜</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">yyyy-mm-dd</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3페이지</td></tr>
+            <tr style="background:#F4F8FB"><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">특정일</td><td style="padding:9px 12px">못 잤다고 느낀 이유</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">자유입력</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3페이지</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:700;color:#17324D;white-space:nowrap">기타</td><td style="padding:9px 12px">고객이 추가로 말씀한 내용</td><td style="padding:9px 12px;background:#FEF9E0"></td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">자유입력</td><td style="padding:9px 12px;color:#5a7a94;text-align:center;white-space:nowrap">3·4페이지</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════
      RECORD EDIT MODAL
 ═══════════════════════════════════════ -->
@@ -4113,7 +4172,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.57';
+const APP_VER = '6.58';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -8218,6 +8277,56 @@ async function printGuide(){
 </style>
 </head><body>
 <h2>힐마루케어 · 샤오미 스마트밴드 설정 가이드</h2>
+${content}
+<script>window.addEventListener('load',function(){setTimeout(function(){window.print();},600);});<\/script>
+</body></html>`;
+
+    const win = window.open('', '_blank');
+    if(!win){ showToast('팝업이 차단되었습니다. 팝업 허용 후 다시 시도해 주세요.', true); return; }
+    win.document.write(html);
+    win.document.close();
+  }catch(e){
+    showToast('오류: ' + (e.message||JSON.stringify(e)), true);
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='🖨 인쇄'; }
+  }
+}
+
+/* ═══════════════════════════════════════
+   PARTICIPANT SURVEY MODAL (Sheet 3 · 디바이스 수거 설문)
+═══════════════════════════════════════ */
+function openSurvey(){
+  document.getElementById('survey-modal').style.display = 'flex';
+}
+function closeSurvey(){
+  document.getElementById('survey-modal').style.display = 'none';
+}
+async function printSurvey(){
+  const btn = event && event.target ? event.target.closest('button') : null;
+  if(btn){ btn.disabled=true; btn.textContent='⏳ 준비 중...'; }
+
+  try{
+    const content = document.getElementById('survey-content').innerHTML;
+    const html = `<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<title>힐마루케어 대상자 설문 · 디바이스 수거 설문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  @page{size:A4 landscape;margin:14mm}
+  body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;padding:20px 26px;color:#1a2a3a;font-size:13px}
+  h2{color:#17324D;font-size:1.2rem;margin-bottom:6px;font-weight:800}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+  thead{display:table-header-group}
+  tr{page-break-inside:avoid}
+  th{padding:9px 12px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  td{padding:9px 12px;border-bottom:1px solid #D8ECF4;vertical-align:top}
+  @media print{ [style*="background:#FEF9E0"]{background:#FFFDF2 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} [style*="background:#0D2246"] th{-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
+</head><body>
+<h2>힐마루케어 · 디바이스 수거 설문 (Sheet 3)</h2>
 ${content}
 <script>window.addEventListener('load',function(){setTimeout(function(){window.print();},600);});<\/script>
 </body></html>`;

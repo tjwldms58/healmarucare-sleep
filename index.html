@@ -2731,6 +2731,18 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 워드
               </button>
             </div>
+            <!-- 대상자 설문 탭 전용: 불러오기(워드/PDF) · 내보내기(엑셀) -->
+            <div id="survey-tools" style="display:none;gap:4px">
+              <input type="file" id="survey-import-input" accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple style="display:none" onchange="handleSurveyImport(this.files)">
+              <button class="btn-export" id="btn-survey-import" onclick="document.getElementById('survey-import-input').click()" style="background:#0E8FA3">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 9V2M3.5 4.5l3-3 3 3M2 11h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                불러오기
+              </button>
+              <button class="btn-export" id="btn-survey-export" onclick="exportSurveyExcel()" style="background:#1E7A3E">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M2 10h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                내보내기
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -2743,6 +2755,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <button class="dt-tab" onclick="switchDataTab('o2',this)">O₂ 혈중산소</button>
         <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
+        <button class="dt-tab" onclick="switchDataTab('survey',this)" style="color:#0E8FA3">📝 대상자 설문</button>
       </div>
 
       <!-- ── 전체 테이블 ── -->
@@ -2952,6 +2965,28 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                   <div class="empty-icon">📦</div>
                   <div class="empty-msg">저장된 기기관리 기록이 없습니다</div>
                   <div class="empty-hint">왼쪽 폰 화면에서 기기 제공·수거를 선택 후 입력해 보세요</div>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── 대상자 설문 패널 ── -->
+      <div id="data-panel-survey" style="display:none">
+        <div class="table-scroll">
+          <table class="data-table" id="survey-table">
+            <thead>
+              <tr>
+                <th>#</th><th>날짜</th><th>고객명</th><th>구분</th><th>질문</th><th>응답</th>
+              </tr>
+            </thead>
+            <tbody id="survey-tbody">
+              <tr id="empty-survey-row">
+                <td colspan="6"><div class="empty-state">
+                  <div class="empty-icon">📝</div>
+                  <div class="empty-msg">불러온 대상자 설문이 없습니다</div>
+                  <div class="empty-hint">우측 상단 "불러오기" 버튼으로 Word(.docx) 또는 PDF 설문 파일을 불러와 보세요</div>
                 </div></td>
               </tr>
             </tbody>
@@ -3680,6 +3715,15 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- 대상자 설문(PDF) 불러오기용 — 로드 실패 시 PDF 불러오기만 비활성, Word 불러오기는 JSZip만으로 정상 동작 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script>
+  try{
+    if(typeof pdfjsLib !== 'undefined'){
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    }
+  }catch(e){}
+</script>
 
 <script>
 'use strict';
@@ -4172,7 +4216,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.58';
+const APP_VER = '6.59';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4445,6 +4489,7 @@ let weightRecords = [];
 let womensHealthRecords = [];
 let stressRecords = [];
 let deviceRecords = [];
+let surveyRecords = []; // 대상자 설문(디바이스 수거 설문) 행 목록 — {groupId,name,date,cat,question,answer}
 
 /* ── Group / Folder state ── */
 let groups = ['삼성화재pilot1','삼성화재pilot2'];
@@ -4473,6 +4518,7 @@ async function initStorage(){
   try{ const wh=localStorage.getItem('hilmaru_wh'); if(wh) womensHealthRecords=JSON.parse(wh); }catch(e){}
   try{ const sv=localStorage.getItem('hilmaru_sv'); if(sv) stressRecords=JSON.parse(sv); }catch(e){}
   try{ const dv=localStorage.getItem('hilmaru_dv'); if(dv) deviceRecords=JSON.parse(dv); }catch(e){}
+  try{ const sy=localStorage.getItem('hilmaru_survey'); if(sy) surveyRecords=JSON.parse(sy); }catch(e){}
   try{ const p=localStorage.getItem('hilmaru_participants'); if(p) participants=JSON.parse(p); }catch(e){}
   try{
     const g=localStorage.getItem('hilmaru_groups');
@@ -4525,6 +4571,7 @@ async function initStorage(){
     if(data.womensHealthRecords && Array.isArray(data.womensHealthRecords)) womensHealthRecords = data.womensHealthRecords;
     if(data.stressRecords && Array.isArray(data.stressRecords)) stressRecords = data.stressRecords;
     if(data.deviceRecords && Array.isArray(data.deviceRecords)) deviceRecords = data.deviceRecords;
+    if(data.surveyRecords && Array.isArray(data.surveyRecords)) surveyRecords = data.surveyRecords;
     if(data.participants && Array.isArray(data.participants)) participants = data.participants;
     if(data.groups && Array.isArray(data.groups) && data.groups.length > 0) groups = data.groups;
 
@@ -4537,6 +4584,7 @@ async function initStorage(){
     try{ localStorage.setItem('hilmaru_wh', JSON.stringify(womensHealthRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+    try{ localStorage.setItem('hilmaru_survey', JSON.stringify(surveyRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_participants', JSON.stringify(participants)); }catch(e){}
     try{ localStorage.setItem('hilmaru_groups', JSON.stringify(groups)); }catch(e){}
     setGsStatus('ok', '시트 연결됨');
@@ -4563,7 +4611,7 @@ async function syncToSheet(){
     try{
       // base64 이미지 제외, Drive URL(imgUrl/imgUrls)만 저장
       const sleepNoImg = sleepRecords.map(r => { const {img, imgW, imgH, imgs, ...rest} = r; return rest; });
-      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, deviceRecords, participants, groups });
+      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, deviceRecords, surveyRecords, participants, groups });
       if(payload.length > 45000){
         console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
       }
@@ -4589,6 +4637,11 @@ async function syncToSheet(){
       setTimeout(()=>setGsStatus('idle','☁ Google Sheets'), 6000);
     }
   }, 500);
+}
+
+function saveSurveyRecords(){
+  try{ localStorage.setItem('hilmaru_survey', JSON.stringify(surveyRecords)); }catch(e){}
+  syncToSheet();
 }
 
 function saveParticipants(){
@@ -4810,7 +4863,8 @@ function switchDataTab(type, btn){
   const whPanel      = document.getElementById('data-panel-womens');
   const svPanel      = document.getElementById('data-panel-stress');
   const dvPanel      = document.getElementById('data-panel-device');
-  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,dvPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
+  const svyPanel     = document.getElementById('data-panel-survey');
+  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,dvPanel,svyPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
   // 그룹 필터 / 폴더 컨트롤: 항상 표시
   if(sleepTools) sleepTools.style.display='flex';
   const badge = document.getElementById('record-count-badge');
@@ -4820,6 +4874,8 @@ function switchDataTab(type, btn){
   const tabExcel = document.getElementById('btn-export');
   const tabWord  = document.getElementById('btn-export-word');
   if(exportTools) exportTools.style.display = (type === 'all' || type === 'device') ? 'flex' : 'none';
+  const surveyTools = document.getElementById('survey-tools');
+  if(surveyTools) surveyTools.style.display = (type === 'survey') ? 'flex' : 'none';
 
   if(type==='all'){
     if(allPanel) allPanel.style.display='';
@@ -4862,6 +4918,10 @@ function switchDataTab(type, btn){
     if(tabWord){ tabWord.disabled=true; tabWord.style.display='none'; }
     const dvWordBtn = document.getElementById('btn-device-docx');
     if(dvWordBtn){ dvWordBtn.style.display=''; dvWordBtn.disabled=!deviceRecords.length; }
+  } else if(type==='survey'){
+    if(svyPanel) svyPanel.style.display='';
+    if(badge) badge.textContent = surveyRecords.length + '건';
+    renderSurveyTable();
   } else {
     soonPanel.style.display='';
   }
@@ -5967,6 +6027,315 @@ function renderDeviceRecords(){
   const badge = document.getElementById('record-count-badge');
   if(badge) badge.textContent = deviceRecords.length + '건';
 }
+
+
+/* ═══════════════════════════════════════
+   대상자 설문 (참여자 설문지) — 불러오기 / 내보내기
+═══════════════════════════════════════ */
+// 설문 항목 정의 (구분/질문) — "디바이스 수거 설문" 18문항, 첨부 엑셀 템플릿(설문지만.xlsx)과 순서 동일
+const SURVEY_TEMPLATE = [
+  {cat:'7일 종합', q:'지난 7일의 전반적인 수면 만족도'},
+  {cat:'7일 종합', q:'아침 피로감'},
+  {cat:'7일 종합', q:'잠들기 어려웠던 날'},
+  {cat:'증상', q:'잠을 방해한 증상'},
+  {cat:'증상', q:'통증이 있었던 날'},
+  {cat:'증상', q:'열감·야간발한이 있었던 날'},
+  {cat:'증상', q:'야간뇨가 있었던 날'},
+  {cat:'생활습관', q:'오후 카페인을 섭취한 날'},
+  {cat:'생활습관', q:'긴 낮잠을 잔 날'},
+  {cat:'생활습관', q:'음주·야식·늦은 운동·스마트폰 등'},
+  {cat:'치료·복약', q:'측정기간 중 치료 또는 복약 변화 여부'},
+  {cat:'치료·복약', q:'변화가 있었다면 구체적인 내용'},
+  {cat:'개선목표', q:'가장 개선하고 싶은 수면 문제'},
+  {cat:'특정일', q:'가장 잘 잤다고 느낀 날짜'},
+  {cat:'특정일', q:'잘 잤다고 느낀 이유'},
+  {cat:'특정일', q:'가장 못 잤다고 느낀 날짜'},
+  {cat:'특정일', q:'못 잤다고 느낀 이유'},
+  {cat:'기타', q:'고객이 추가로 말씀한 내용'}
+];
+
+function renderSurveyTable(){
+  const tbody = document.getElementById('survey-tbody');
+  if(!tbody) return;
+  if(!surveyRecords.length){
+    tbody.innerHTML = `<tr id="empty-survey-row"><td colspan="6"><div class="empty-state"><div class="empty-icon">📝</div><div class="empty-msg">불러온 대상자 설문이 없습니다</div><div class="empty-hint">우측 상단 "불러오기" 버튼으로 Word(.docx) 또는 PDF 설문 파일을 불러와 보세요</div></div></td></tr>`;
+    return;
+  }
+  let html = '';
+  let rowNo = 0;
+  const seenGroups = new Set();
+  surveyRecords.forEach((r, idx) => {
+    rowNo++;
+    const isFirstOfGroup = !seenGroups.has(r.groupId);
+    seenGroups.add(r.groupId);
+    const nameCell = isFirstOfGroup
+      ? `<input type="text" value="${(r.name||'').replace(/"/g,'&quot;')}" onchange="updateSurveyName('${r.groupId}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100px;font-weight:700">`
+      : '';
+    html += `<tr>
+      <td>${rowNo}</td>
+      <td><input type="date" value="${r.date||''}" onchange="updateSurveyField(${idx},'date',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:128px"></td>
+      <td>${nameCell}</td>
+      <td>${r.cat||''}</td>
+      <td>${r.q||''}</td>
+      <td><textarea onchange="updateSurveyField(${idx},'answer',this.value)" rows="1" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100%;min-width:220px;resize:vertical;font-family:inherit">${(r.answer||'').replace(/</g,'&lt;')}</textarea></td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+  const badge = document.getElementById('record-count-badge');
+  if(badge) badge.textContent = surveyRecords.length + '건';
+}
+
+function updateSurveyField(idx, key, val){
+  if(!surveyRecords[idx]) return;
+  surveyRecords[idx][key] = val;
+  saveSurveyRecords();
+}
+
+function updateSurveyName(groupId, val){
+  surveyRecords.forEach(r => { if(r.groupId === groupId) r.name = val; });
+  saveSurveyRecords();
+}
+
+// 파일명에서 고객명 추정 (확장자/설문 관련 단어/날짜 패턴 제거)
+function guessSurveyCustomerName(filename){
+  let n = String(filename||'').replace(/\.(docx|pdf)$/i, '');
+  n = n.replace(/\d{4}[-._]?\d{1,2}[-._]?\d{1,2}/g, '');
+  n = n.replace(/(디바이스\s*수거\s*설문|수거\s*설문|설문지|설문|survey|questionnaire)/gi, '');
+  n = n.replace(/[_\-.()\[\]]+/g, ' ').trim();
+  n = n.replace(/\s{2,}/g, ' ').trim();
+  return n || '';
+}
+
+// 방식1: 표 구조(탭/행) 우선 매칭 — Word 표에서 추출된 텍스트에 최적
+function matchSurveyAnswersFromRows(text){
+  const answers = SURVEY_TEMPLATE.map(() => '');
+  let matchedCount = 0;
+  text.split('\n').forEach(line => {
+    if(!line.includes('\t')) return;
+    const cells = line.split('\t').map(c=>c.trim()).filter(c=>c!=='');
+    if(cells.length < 2) return;
+    for(let ci=0; ci<cells.length; ci++){
+      const qi = SURVEY_TEMPLATE.findIndex(item => item.q === cells[ci]);
+      if(qi !== -1 && ci+1 < cells.length){
+        answers[qi] = cells[ci+1];
+        matchedCount++;
+        break;
+      }
+    }
+  });
+  return { answers, matchedCount };
+}
+
+// 방식2: 연속 텍스트 앵커 매칭 — 표 구조가 사라진 경우(주로 PDF) 대비
+function matchSurveyAnswersAnchor(text){
+  const CATS = [...new Set(SURVEY_TEMPLATE.map(x => x.cat))];
+  const results = SURVEY_TEMPLATE.map(() => '');
+  const positions = SURVEY_TEMPLATE.map(item => text.indexOf(item.q));
+  for(let i=0; i<SURVEY_TEMPLATE.length; i++){
+    const pos = positions[i];
+    if(pos === -1) continue;
+    const start = pos + SURVEY_TEMPLATE[i].q.length;
+    let end = text.length;
+    for(let j=0; j<positions.length; j++){
+      if(positions[j] > pos && positions[j] < end) end = positions[j];
+    }
+    // 다음 질문 이전에 나오는 구분(카테고리) 라벨도 경계로 사용
+    CATS.forEach(cat => {
+      const cp = text.indexOf(cat, start);
+      if(cp !== -1 && cp < end) end = cp;
+    });
+    let ans = text.slice(start, end);
+    ans = ans.replace(/^[\s:：\-–—.\)\]]+/, '');
+    ans = ans.split('\n').map(s=>s.trim()).filter(Boolean).join(' ');
+    ans = ans.trim();
+    if(ans.length > 300) ans = ans.slice(0, 300);
+    results[i] = ans;
+  }
+  return results;
+}
+
+// 추출된 텍스트에서 18개 질문의 답변을 추정 (표 구조 매칭 우선, 실패 시 앵커 매칭으로 대체)
+function matchSurveyAnswers(flatText){
+  const text = String(flatText||'').replace(/\r/g, '');
+  const rowResult = matchSurveyAnswersFromRows(text);
+  if(rowResult.matchedCount >= Math.ceil(SURVEY_TEMPLATE.length / 2)) return rowResult.answers;
+  return matchSurveyAnswersAnchor(text);
+}
+
+// Word(.docx) 텍스트 추출 — JSZip으로 word/document.xml을 읽어 표/문단 구조를 개행으로 보존
+async function extractDocxText(file){
+  const buf = await file.arrayBuffer();
+  const zip = await JSZip.loadAsync(buf);
+  const docXmlFile = zip.file('word/document.xml');
+  if(!docXmlFile) throw new Error('워드 문서 구조를 읽을 수 없습니다.');
+  let xml = await docXmlFile.async('string');
+  xml = xml.replace(/<\/w:tc>/g, '\t')
+           .replace(/<\/w:tr>/g, '\n')
+           .replace(/<w:br\s*\/>/g, '\n')
+           .replace(/<\/w:p>/g, '\n');
+  let text = xml.replace(/<[^>]+>/g, '');
+  text = text.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,'\'').replace(/&amp;/g,'&');
+  return text;
+}
+
+// PDF 텍스트 추출 — pdf.js (CDN 로드 실패 시 명확한 오류 메시지로 대체)
+async function extractPdfText(file){
+  if(typeof pdfjsLib === 'undefined'){
+    throw new Error('PDF 처리 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인 후 다시 시도해 주세요.');
+  }
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+  let fullText = '';
+  for(let p=1; p<=pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    fullText += content.items.map(it => it.str).join(' ') + '\n';
+  }
+  return fullText;
+}
+
+let _surveyImporting = false;
+async function handleSurveyImport(fileList){
+  const input = document.getElementById('survey-import-input');
+  if(_surveyImporting) return;
+  const files = Array.from(fileList||[]);
+  if(!files.length){ if(input) input.value=''; return; }
+  const invalid = files.filter(f => !/\.(docx|pdf)$/i.test(f.name));
+  if(invalid.length){
+    alert('Word(.docx) 또는 PDF 파일만 불러올 수 있습니다.\n허용되지 않은 파일: ' + invalid.map(f=>f.name).join(', '));
+    if(input) input.value='';
+    return;
+  }
+  _surveyImporting = true;
+  try{
+    for(const file of files){
+      let text = '';
+      try{
+        text = /\.docx$/i.test(file.name) ? await extractDocxText(file) : await extractPdfText(file);
+      }catch(e){
+        alert(`"${file.name}" 파일을 읽는 중 오류가 발생했습니다: ${e.message||e}`);
+        continue;
+      }
+      const answers = matchSurveyAnswers(text);
+      const guessedName = guessSurveyCustomerName(file.name);
+      const inputName = window.prompt(`"${file.name}" 파일의 고객명을 확인해 주세요.`, guessedName);
+      if(inputName === null) continue;
+      const groupId = 'SV-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,7);
+      const today = new Date().toISOString().slice(0,10);
+      SURVEY_TEMPLATE.forEach((item, i) => {
+        surveyRecords.push({ groupId, date: today, name: inputName.trim(), cat: item.cat, q: item.q, answer: answers[i] || '' });
+      });
+    }
+    saveSurveyRecords();
+    renderSurveyTable();
+    showToast('대상자 설문을 불러왔습니다.');
+  } finally {
+    _surveyImporting = false;
+    if(input) input.value = '';
+  }
+}
+
+// 첨부된 "설문지만.xlsx" 템플릿 원본(base64) — 내보내기 시 이 템플릿을 그대로 복제하여 고객별 시트를 생성
+const SURVEY_XLSX_TEMPLATE_B64 = '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';
+
+async function exportSurveyExcel(){
+  if(!surveyRecords.length){ alert('내보낼 대상자 설문 기록이 없습니다.'); return; }
+  try{
+    const zip = await JSZip.loadAsync(SURVEY_XLSX_TEMPLATE_B64, {base64:true});
+    const templateSheetXml = await zip.file('xl/worksheets/sheet1.xml').async('string');
+
+    // groupId 순서를 보존하며 고객별로 묶기
+    const groups = [];
+    const groupMap = new Map();
+    surveyRecords.forEach(r => {
+      if(!groupMap.has(r.groupId)){
+        const g = { groupId:r.groupId, name:r.name||'', rows:[] };
+        groupMap.set(r.groupId, g);
+        groups.push(g);
+      }
+      groupMap.get(r.groupId).rows.push(r);
+    });
+    if(!groups.length){ alert('내보낼 대상자 설문 기록이 없습니다.'); return; }
+
+    // 시트명 정제 (엑셀 규칙: 최대 31자, 금지문자 제거, 중복 시 (2),(3)… 접미사)
+    const usedSheetNames = new Set();
+    function sanitizeSheetName(raw, fallback){
+      let n = String(raw||'').replace(/[:\\\/\?\*\[\]]/g, '').trim();
+      if(!n) n = fallback;
+      if(n.length > 31) n = n.slice(0, 31);
+      let base = n, i = 2;
+      while(usedSheetNames.has(n)){
+        const suffix = ` (${i})`;
+        n = base.slice(0, 31 - suffix.length) + suffix;
+        i++;
+      }
+      usedSheetNames.add(n);
+      return n;
+    }
+
+    const sheetEntries = groups.map((g, idx) => {
+      let sheetXml = templateSheetXml;
+      g.rows.slice(0, 18).forEach((r, qi) => {
+        const rowNum = 7 + qi;
+        const ans = escXml(r.answer||'');
+        const re = new RegExp(`<c r="C${rowNum}" s="(\\d+)"\\/>`);
+        sheetXml = sheetXml.replace(re, `<c r="C${rowNum}" s="$1" t="inlineStr"><is><t>${ans}</t></is></c>`);
+      });
+      return { sheetName: sanitizeSheetName(g.name, `설문${idx+1}`), fileName: `sheet${idx+1}.xml`, xml: sheetXml };
+    });
+
+    sheetEntries.forEach(entry => { zip.file(`xl/worksheets/${entry.fileName}`, entry.xml); });
+
+    // workbook.xml 재구성: N개의 시트를 rId1..rIdN으로 선언
+    const sheetsXmlList = sheetEntries.map((entry, idx) =>
+      `<sheet name="${escXml(entry.sheetName)}" sheetId="${idx+1}" r:id="rId${idx+1}"/>`
+    ).join('');
+    let workbookXml = await zip.file('xl/workbook.xml').async('string');
+    workbookXml = workbookXml.replace(/<sheets>.*?<\/sheets>/, `<sheets>${sheetsXmlList}</sheets>`);
+    zip.file('xl/workbook.xml', workbookXml);
+
+    // workbook.xml.rels 재구성: rId1..rIdN = 워크시트, 이후 theme/styles/sharedStrings
+    const N = sheetEntries.length;
+    const worksheetRels = sheetEntries.map((entry, idx) =>
+      `<Relationship Id="rId${idx+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/${entry.fileName}"/>`
+    ).join('');
+    const otherRels =
+      `<Relationship Id="rId${N+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>` +
+      `<Relationship Id="rId${N+2}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>` +
+      `<Relationship Id="rId${N+3}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>`;
+    const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${worksheetRels}${otherRels}</Relationships>`;
+    zip.file('xl/_rels/workbook.xml.rels', relsXml);
+
+    // [Content_Types].xml 재구성: 기존 sheet1.xml Override 제거 후 N개 새로 추가
+    let ctXml = await zip.file('[Content_Types].xml').async('string');
+    ctXml = ctXml.replace(/<Override PartName="\/xl\/worksheets\/sheet1\.xml"[^>]*\/>/, '');
+    const worksheetOverrides = sheetEntries.map(entry =>
+      `<Override PartName="/xl/worksheets/${entry.fileName}" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`
+    ).join('');
+    ctXml = ctXml.replace('</Types>', `${worksheetOverrides}</Types>`);
+    zip.file('[Content_Types].xml', ctXml);
+
+    zip.remove('xl/calcChain.xml');
+
+    const buf = await zip.generateAsync({type:'arraybuffer', compression:'DEFLATE', compressionOptions:{level:6}});
+    const blob = new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const fname = `대상자_설문_${stamp}.xlsx`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    showToast('대상자 설문 엑셀을 내보냈습니다.');
+  }catch(e){
+    console.error(e);
+    alert('엑셀 내보내기 중 오류가 발생했습니다: ' + (e.message||e));
+  }
+}
+
 
 function exportDeviceExcel(){
   if(!deviceRecords.length){ alert('기기관리 기록이 없습니다.'); return; }

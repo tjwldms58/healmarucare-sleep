@@ -2974,11 +2974,14 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 
       <!-- ── 대상자 설문 패널 ── -->
       <div id="data-panel-survey" style="display:none">
+        <div id="survey-img-notice" style="display:none;margin:0 0 10px;padding:10px 14px;background:#FFF7E6;border:1px solid #F5CD79;border-radius:8px;font-size:.8rem;color:#8A6D1D;font-weight:600">
+          🔴 미리보기 이미지 내용을 텍스트로 입력한 후 저장해 주세요.
+        </div>
         <div class="table-scroll">
           <table class="data-table" id="survey-table">
             <thead>
               <tr>
-                <th>#</th><th>날짜</th><th>고객명</th><th>구분</th><th>질문</th><th>응답</th>
+                <th>#</th><th>고객명</th><th>날짜</th><th>구분</th><th>질문</th><th>응답</th>
               </tr>
             </thead>
             <tbody id="survey-tbody">
@@ -4216,7 +4219,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.59';
+const APP_VER = '6.61';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4611,7 +4614,9 @@ async function syncToSheet(){
     try{
       // base64 이미지 제외, Drive URL(imgUrl/imgUrls)만 저장
       const sleepNoImg = sleepRecords.map(r => { const {img, imgW, imgH, imgs, ...rest} = r; return rest; });
-      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, deviceRecords, surveyRecords, participants, groups });
+      // 대상자 설문의 answerImg(PDF 인식 미리보기, base64)는 임시 참고용이라 시트에는 저장하지 않음
+      const surveyNoImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
+      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, deviceRecords, surveyRecords: surveyNoImg, participants, groups });
       if(payload.length > 45000){
         console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
       }
@@ -4640,7 +4645,11 @@ async function syncToSheet(){
 }
 
 function saveSurveyRecords(){
-  try{ localStorage.setItem('hilmaru_survey', JSON.stringify(surveyRecords)); }catch(e){}
+  // answerImg(PDF 인식 미리보기, base64)는 용량이 커서 로컬 캐시에는 저장하지 않음 (현재 세션 참고용)
+  try{
+    const noImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
+    localStorage.setItem('hilmaru_survey', JSON.stringify(noImg));
+  }catch(e){}
   syncToSheet();
 }
 
@@ -6057,10 +6066,13 @@ const SURVEY_TEMPLATE = [
 function renderSurveyTable(){
   const tbody = document.getElementById('survey-tbody');
   if(!tbody) return;
+  const imgNotice = document.getElementById('survey-img-notice');
   if(!surveyRecords.length){
     tbody.innerHTML = `<tr id="empty-survey-row"><td colspan="6"><div class="empty-state"><div class="empty-icon">📝</div><div class="empty-msg">불러온 대상자 설문이 없습니다</div><div class="empty-hint">우측 상단 "불러오기" 버튼으로 Word(.docx) 또는 PDF 설문 파일을 불러와 보세요</div></div></td></tr>`;
+    if(imgNotice) imgNotice.style.display = 'none';
     return;
   }
+  if(imgNotice) imgNotice.style.display = surveyRecords.some(r => r.answerImg) ? 'block' : 'none';
   let html = '';
   let rowNo = 0;
   const seenGroups = new Set();
@@ -6068,16 +6080,21 @@ function renderSurveyTable(){
     rowNo++;
     const isFirstOfGroup = !seenGroups.has(r.groupId);
     seenGroups.add(r.groupId);
+    // 전체 탭과 동일한 방식: 고객(그룹)이 바뀌는 첫 행 위에 구분선 표시
+    const trStyle = isFirstOfGroup ? ' style="border-top:2px solid rgba(92,200,184,.3)"' : '';
     const nameCell = isFirstOfGroup
       ? `<input type="text" value="${(r.name||'').replace(/"/g,'&quot;')}" onchange="updateSurveyName('${r.groupId}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100px;font-weight:700">`
       : '';
-    html += `<tr>
+    const answerImgHtml = r.answerImg
+      ? `<div style="margin-bottom:4px"><img src="${r.answerImg}" alt="원본 표기" title="PDF에서 인식된 빨간색 표기(참고용) — 아래 칸에 직접 입력해 주세요" style="max-width:220px;max-height:90px;object-fit:contain;border:1px solid var(--border);border-radius:6px;background:#fff;display:block"><span style="font-size:.65rem;color:#D64545;font-weight:600">🔴 원본 표기(참고, 직접 입력 필요)</span></div>`
+      : '';
+    html += `<tr${trStyle}>
       <td>${rowNo}</td>
-      <td><input type="date" value="${r.date||''}" onchange="updateSurveyField(${idx},'date',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:128px"></td>
       <td>${nameCell}</td>
+      <td><input type="date" value="${r.date||''}" onchange="updateSurveyField(${idx},'date',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:128px"></td>
       <td>${r.cat||''}</td>
       <td>${r.q||''}</td>
-      <td><textarea onchange="updateSurveyField(${idx},'answer',this.value)" rows="1" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100%;min-width:220px;resize:vertical;font-family:inherit">${(r.answer||'').replace(/</g,'&lt;')}</textarea></td>
+      <td>${answerImgHtml}<textarea onchange="updateSurveyField(${idx},'answer',this.value)" rows="1" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100%;min-width:220px;resize:vertical;font-family:inherit">${(r.answer||'').replace(/</g,'&lt;')}</textarea></td>
     </tr>`;
   });
   tbody.innerHTML = html;
@@ -6178,20 +6195,123 @@ async function extractDocxText(file){
   return text;
 }
 
-// PDF 텍스트 추출 — pdf.js (CDN 로드 실패 시 명확한 오류 메시지로 대체)
-async function extractPdfText(file){
+// PDF에서 "응답" 열의 빨간색 표기(손글씨 등)를 행별로 찾아 이미지로 추려낸다.
+// 인쇄된 설문 표(구분/질문/응답/응답 형식/리포트 활용)의 헤더·질문 텍스트 위치를 기준으로
+// "응답" 열의 x범위와 각 질문의 y위치(행)를 계산한 뒤, 그 영역 안에서 빨간 계열 픽셀의
+// 경계상자를 찾아 잘라낸다. 빨간 표기가 없으면(= 일반 텍스트로 타이핑된 응답) 같은 영역의
+// 텍스트를 그대로 답변으로 사용한다.
+async function extractPdfSurveyMarks(file){
   if(typeof pdfjsLib === 'undefined'){
     throw new Error('PDF 처리 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인 후 다시 시도해 주세요.');
   }
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({data: buf}).promise;
-  let fullText = '';
+  const results = SURVEY_TEMPLATE.map(() => ({ answer:'', answerImg:null }));
+  const SCALE = 2.2;
+  const isRed = (r,g,b) => r>120 && (r-g)>35 && (r-b)>35;
+
   for(let p=1; p<=pdf.numPages; p++){
     const page = await pdf.getPage(p);
-    const content = await page.getTextContent();
-    fullText += content.items.map(it => it.str).join(' ') + '\n';
+    const viewport = page.getViewport({ scale: SCALE });
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.ceil(viewport.width);
+    canvas.height = Math.ceil(viewport.height);
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    // pdf.js는 텍스트를 글자(또는 짧은 조각) 단위로 쪼개서 반환하는 경우가 많아 "응답"처럼
+    // 한 단어를 그대로 찾는 매칭은 실패하기 쉽다. 같은 줄(y)의 조각들을 이어붙여 줄 텍스트를
+    // 재구성하고, 그 안에서 부분 문자열로 찾은 뒤 해당 글자가 속한 조각의 x좌표를 사용한다.
+    const textContent = await page.getTextContent();
+    const items = textContent.items.map(it => {
+      const m = pdfjsLib.Util.transform(viewport.transform, it.transform);
+      return { str: it.str, x: m[4], y: m[5] };
+    }).filter(it => it.str !== '');
+
+    const Y_BUCKET = 3 * SCALE / 2.2;
+    const linesByY = new Map();
+    items.forEach(it => {
+      const ry = Math.round(it.y / Y_BUCKET) * Y_BUCKET;
+      if(!linesByY.has(ry)) linesByY.set(ry, []);
+      linesByY.get(ry).push(it);
+    });
+    const lines = [...linesByY.entries()].map(([ry, arr]) => {
+      arr.sort((a,b)=>a.x-b.x);
+      let text = '';
+      const charItems = [];
+      arr.forEach(it => { for(const ch of it.str){ text += ch; charItems.push(it); } });
+      return { y: ry, text, charItems };
+    });
+
+    // 헤더 줄(구분/질문/응답/응답 형식/리포트 활용)에서 "응답" 열의 좌우 x범위 추정
+    const hdrLine = lines.find(l => l.text.includes('구분') && l.text.includes('질문') && l.text.includes('응답'));
+    if(!hdrLine) continue; // 표 헤더를 찾을 수 없는 페이지는 건너뜀
+    const firstAnsIdx = hdrLine.text.indexOf('응답');
+    const secondAnsIdx = hdrLine.text.indexOf('응답', firstAnsIdx + 2);
+    const reportIdx = hdrLine.text.indexOf('리포트');
+    if(firstAnsIdx === -1) continue;
+    const colX0 = hdrLine.charItems[firstAnsIdx].x - 20 * SCALE / 2.2;
+    const colX1 = (secondAnsIdx !== -1 ? hdrLine.charItems[secondAnsIdx].x
+                    : reportIdx !== -1 ? hdrLine.charItems[reportIdx].x
+                    : hdrLine.charItems[firstAnsIdx].x + 300) - 10 * SCALE / 2.2;
+
+    const rowYs = [];
+    SURVEY_TEMPLATE.forEach((qItem, qIdx) => {
+      if(results[qIdx].answerImg || results[qIdx].answer) return; // 이전 페이지에서 이미 찾음
+      const line = lines.find(l => l.text.includes(qItem.q));
+      if(line) rowYs.push({ qIdx, y: line.y });
+    });
+    if(!rowYs.length) continue;
+    rowYs.sort((a,b)=>a.y-b.y);
+    const ys = rowYs.map(r=>r.y);
+    const diffs = [];
+    for(let i=0;i<ys.length-1;i++) diffs.push(ys[i+1]-ys[i]);
+    diffs.sort((a,b)=>a-b);
+    const typicalH = diffs.length ? diffs[Math.floor(diffs.length/2)] : 60 * SCALE / 2.2;
+
+    rowYs.forEach(({ qIdx, y }) => {
+      const x0 = Math.max(0, Math.round(colX0));
+      const x1 = Math.min(canvas.width, Math.round(colX1));
+      const y0 = Math.max(0, Math.round(y - typicalH*0.15));
+      const y1 = Math.min(canvas.height, Math.round(y + typicalH*1.6));
+      const w = x1-x0, h = y1-y0;
+      if(w<=1 || h<=1) return;
+      const region = ctx.getImageData(x0, y0, w, h);
+      const d = region.data;
+      let minX=w, minY=h, maxX=-1, maxY=-1;
+      for(let yy=0; yy<h; yy++){
+        for(let xx=0; xx<w; xx++){
+          const i4 = (yy*w+xx)*4;
+          if(isRed(d[i4], d[i4+1], d[i4+2])){
+            if(xx<minX) minX=xx; if(xx>maxX) maxX=xx;
+            if(yy<minY) minY=yy; if(yy>maxY) maxY=yy;
+          }
+        }
+      }
+      if(maxX >= 0){
+        const pad = 6;
+        const bx0 = Math.max(0, minX-pad), by0 = Math.max(0, minY-pad);
+        const bx1 = Math.min(w, maxX+pad), by1 = Math.min(h, maxY+pad);
+        const bw = bx1-bx0, bh = by1-by0;
+        if(bw>0 && bh>0){
+          const outCanvas = document.createElement('canvas');
+          outCanvas.width = bw; outCanvas.height = bh;
+          const outCtx = outCanvas.getContext('2d');
+          outCtx.putImageData(region, -bx0, -by0, bx0, by0, bw, bh);
+          results[qIdx].answerImg = outCanvas.toDataURL('image/png');
+          return;
+        }
+      }
+      // 빨간 표기가 없으면(= 타이핑된 일반 텍스트) 같은 셀 범위의 텍스트를 답변으로 사용
+      const tightY0 = y - typicalH*0.15, tightY1 = y + typicalH*0.9;
+      const cellItems = items.filter(it => it.x >= colX0-5 && it.x <= colX1+5 && it.y >= tightY0 && it.y <= tightY1 && it.str.trim() !== '');
+      if(cellItems.length){
+        cellItems.sort((a,b)=> a.y-b.y || a.x-b.x);
+        results[qIdx].answer = cellItems.map(it=>it.str.trim()).join(' ').trim();
+      }
+    });
   }
-  return fullText;
+  return results;
 }
 
 let _surveyImporting = false;
@@ -6209,26 +6329,36 @@ async function handleSurveyImport(fileList){
   _surveyImporting = true;
   try{
     for(const file of files){
-      let text = '';
+      let answers = SURVEY_TEMPLATE.map(() => '');
+      let marks = null; // PDF일 때만: [{answer, answerImg}, ...] 18개
       try{
-        text = /\.docx$/i.test(file.name) ? await extractDocxText(file) : await extractPdfText(file);
+        if(/\.docx$/i.test(file.name)){
+          const text = await extractDocxText(file);
+          answers = matchSurveyAnswers(text);
+        } else {
+          marks = await extractPdfSurveyMarks(file);
+          answers = marks.map(m => m.answer);
+        }
       }catch(e){
         alert(`"${file.name}" 파일을 읽는 중 오류가 발생했습니다: ${e.message||e}`);
         continue;
       }
-      const answers = matchSurveyAnswers(text);
       const guessedName = guessSurveyCustomerName(file.name);
       const inputName = window.prompt(`"${file.name}" 파일의 고객명을 확인해 주세요.`, guessedName);
       if(inputName === null) continue;
       const groupId = 'SV-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,7);
       const today = new Date().toISOString().slice(0,10);
       SURVEY_TEMPLATE.forEach((item, i) => {
-        surveyRecords.push({ groupId, date: today, name: inputName.trim(), cat: item.cat, q: item.q, answer: answers[i] || '' });
+        surveyRecords.push({
+          groupId, date: today, name: inputName.trim(), cat: item.cat, q: item.q,
+          answer: answers[i] || '',
+          answerImg: marks ? (marks[i].answerImg || null) : null
+        });
       });
     }
     saveSurveyRecords();
     renderSurveyTable();
-    showToast('대상자 설문을 불러왔습니다.');
+    showToast('대상자 설문을 불러왔습니다. PDF의 빨간색 표기는 참고 이미지로 표시되니, 응답 칸에 직접 옮겨 적어 주세요.');
   } finally {
     _surveyImporting = false;
     if(input) input.value = '';

@@ -2756,6 +2756,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
         <button class="dt-tab" onclick="switchDataTab('survey',this)" style="color:#0E8FA3">📝 대상자 설문</button>
+        <button class="dt-tab" onclick="switchDataTab('manage',this)" style="color:#8A6D1D">🗂️ 관리</button>
       </div>
 
       <!-- ── 전체 테이블 ── -->
@@ -2981,15 +2982,40 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
           <table class="data-table" id="survey-table">
             <thead>
               <tr>
-                <th>#</th><th>고객명</th><th>날짜</th><th>구분</th><th>질문</th><th>응답</th>
+                <th>#</th><th>고객명</th><th>날짜</th><th>구분</th><th>질문</th><th>응답</th><th>관리</th>
               </tr>
             </thead>
             <tbody id="survey-tbody">
               <tr id="empty-survey-row">
-                <td colspan="6"><div class="empty-state">
+                <td colspan="7"><div class="empty-state">
                   <div class="empty-icon">📝</div>
                   <div class="empty-msg">불러온 대상자 설문이 없습니다</div>
                   <div class="empty-hint">우측 상단 "불러오기" 버튼으로 Word(.docx) 또는 PDF 설문 파일을 불러와 보세요</div>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── 관리(삭제 기록 복구) 패널 ── -->
+      <div id="data-panel-manage" style="display:none">
+        <div style="margin:0 0 10px;padding:10px 14px;background:#FFF7E6;border:1px solid #F5CD79;border-radius:8px;font-size:.8rem;color:#8A6D1D;font-weight:600">
+          🗂️ 각 탭에서 삭제한 기록이 여기에 모입니다. 복구 버튼을 누르면 원래 탭으로 되돌아갑니다.
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="manage-data-table">
+            <thead>
+              <tr>
+                <th>#</th><th>구분</th><th>고객명</th><th>날짜</th><th>내용</th><th>복구</th>
+              </tr>
+            </thead>
+            <tbody id="manage-data-tbody">
+              <tr id="empty-manage-data-row">
+                <td colspan="6"><div class="empty-state">
+                  <div class="empty-icon">🗂️</div>
+                  <div class="empty-msg">삭제된 기록이 없습니다</div>
+                  <div class="empty-hint">각 탭에서 삭제한 기록은 이 탭에서 복구할 수 있습니다</div>
                 </div></td>
               </tr>
             </tbody>
@@ -4219,7 +4245,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.61';
+const APP_VER = '6.62';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4800,15 +4826,25 @@ let _pendingDeleteHr = null;
 function deleteHeartRate(idx){
   if(_pendingDeleteHr === idx){
     _pendingDeleteHr = null;
-    heartRateRecords.splice(idx, 1);
+    // 소프트 삭제: 배열에서 제거하지 않고 deleted 플래그만 표시 → '관리' 탭에서 복구 가능
+    if(heartRateRecords[idx]) heartRateRecords[idx].deleted = true;
     saveHeartRates();
     renderHeartRates();
-    showToast('기록이 삭제되었습니다.');
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteHr = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteHr = null; }, 3000);
   }
+}
+function restoreHeartRate(idx){
+  if(!heartRateRecords[idx]) return;
+  heartRateRecords[idx].deleted = false;
+  saveHeartRates();
+  renderHeartRates();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
 }
 function clearHrForm(){
   ['hr-date','hr-name','hr-age','hr-range','hr-avg','hr-rest','hr-mean','hr-give','hr-collect'].forEach(id=>{
@@ -4823,6 +4859,7 @@ function renderHeartRates(){
   const hrFiltered = ((currentFilterGroup==='전체')
     ? heartRateRecords.map((r,i)=>({r,i}))
     : heartRateRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
+    .filter(({r})=>!r.deleted)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(hrFiltered.length === 0){
     tbody.innerHTML = `<tr id="empty-hr-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">❤️</div><div class="empty-msg">저장된 심박수 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 심박수를 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -4873,7 +4910,8 @@ function switchDataTab(type, btn){
   const svPanel      = document.getElementById('data-panel-stress');
   const dvPanel      = document.getElementById('data-panel-device');
   const svyPanel     = document.getElementById('data-panel-survey');
-  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,dvPanel,svyPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
+  const mgPanel      = document.getElementById('data-panel-manage');
+  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,dvPanel,svyPanel,mgPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
   // 그룹 필터 / 폴더 컨트롤: 항상 표시
   if(sleepTools) sleepTools.style.display='flex';
   const badge = document.getElementById('record-count-badge');
@@ -4897,40 +4935,44 @@ function switchDataTab(type, btn){
     if(badge) badge.textContent = sleepRecords.length + '건';
   } else if(type==='heart'){
     heartPanel.style.display='';
-    if(badge) badge.textContent = heartRateRecords.length + '건';
+    if(badge) badge.textContent = heartRateRecords.filter(r=>!r.deleted).length + '건';
     renderHeartRates();
   } else if(type==='bp'){
     if(bpPanel) bpPanel.style.display='';
-    if(badge) badge.textContent = bloodPressureRecords.length + '건';
+    if(badge) badge.textContent = bloodPressureRecords.filter(r=>!r.deleted).length + '건';
     renderBloodPressures();
   } else if(type==='o2'){
     if(o2Panel) o2Panel.style.display='';
-    if(badge) badge.textContent = oxygenRecords.length + '건';
+    if(badge) badge.textContent = oxygenRecords.filter(r=>!r.deleted).length + '건';
     renderOxygens();
   } else if(type==='weight'){
     if(wtPanel) wtPanel.style.display='';
-    if(badge) badge.textContent = weightRecords.length + '건';
+    if(badge) badge.textContent = weightRecords.filter(r=>!r.deleted).length + '건';
     renderWeights();
   } else if(type==='womens'){
     if(whPanel) whPanel.style.display='';
-    if(badge) badge.textContent = womensHealthRecords.length + '건';
+    if(badge) badge.textContent = womensHealthRecords.filter(r=>!r.deleted).length + '건';
     renderWomensHealth();
   } else if(type==='stress'){
     if(svPanel) svPanel.style.display='';
-    if(badge) badge.textContent = stressRecords.length + '건';
+    if(badge) badge.textContent = stressRecords.filter(r=>!r.deleted).length + '건';
     renderStressVital();
   } else if(type==='device'){
     if(dvPanel) dvPanel.style.display='';
-    if(badge) badge.textContent = deviceRecords.length + '건';
+    if(badge) badge.textContent = deviceRecords.filter(r=>!r.deleted).length + '건';
     renderDeviceRecords();
-    if(tabExcel){ tabExcel.disabled=!deviceRecords.length; tabExcel.onclick=exportDeviceExcel; tabExcel.style.background='#1E7A3E'; }
+    if(tabExcel){ tabExcel.disabled=!deviceRecords.filter(r=>!r.deleted).length; tabExcel.onclick=exportDeviceExcel; tabExcel.style.background='#1E7A3E'; }
     if(tabWord){ tabWord.disabled=true; tabWord.style.display='none'; }
     const dvWordBtn = document.getElementById('btn-device-docx');
-    if(dvWordBtn){ dvWordBtn.style.display=''; dvWordBtn.disabled=!deviceRecords.length; }
+    if(dvWordBtn){ dvWordBtn.style.display=''; dvWordBtn.disabled=!deviceRecords.filter(r=>!r.deleted).length; }
   } else if(type==='survey'){
     if(svyPanel) svyPanel.style.display='';
-    if(badge) badge.textContent = surveyRecords.length + '건';
+    if(badge) badge.textContent = surveyRecords.filter(r=>!r.deleted).length + '건';
     renderSurveyTable();
+  } else if(type==='manage'){
+    if(mgPanel) mgPanel.style.display='';
+    if(badge) badge.textContent = '';
+    renderDataManageTable();
   } else {
     soonPanel.style.display='';
   }
@@ -5224,7 +5266,7 @@ async function exportAllExcel(){
   const wb = XLSX.utils.book_new();
 
   // 필터 적용
-  const filt = (arr) => currentFilterGroup==='전체' ? arr : arr.filter(r=>(r.group||'')===currentFilterGroup);
+  const filt = (arr) => arr.filter(r=>!r.deleted && (currentFilterGroup==='전체' || (r.group||'')===currentFilterGroup));
 
   // 웹페이지와 동일한 로직: 이름+나이+성별로 묶고, 각 타입 날짜순 정렬 후 위치(인덱스)로 병합
   const _pm = new Map();
@@ -5303,11 +5345,12 @@ async function exportAllExcel(){
 
 /* 심박수 엑셀 내보내기 */
 async function exportHrExcel(){
-  if(!heartRateRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
+  if(!heartRateRecords.filter(r=>!r.deleted).length){ showToast('내보낼 데이터가 없습니다.', true); return; }
   const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
   const headers = ['#','날짜','고객명','나이','성별','심박수 범위(BPM)','평균(BPM)','휴식시(BPM)','평균 걷기 심박수(BPM)'];
-  const rows = heartRateRecords.map((r,i)=>[
-    heartRateRecords.length-i, r.date||'', r.name||'', r.age||'', r.gender||'', r.range||'', r.avg||'', r.rest||'', r.mean||''
+  const hrLive = heartRateRecords.filter(r=>!r.deleted);
+  const rows = hrLive.map((r,i)=>[
+    hrLive.length-i, r.date||'', r.name||'', r.age||'', r.gender||'', r.range||'', r.avg||'', r.rest||'', r.mean||''
   ]);
   if(typeof XLSX !== 'undefined'){
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
@@ -5397,15 +5440,24 @@ let _pendingDeleteBp = null;
 function deleteBloodPressure(idx){
   if(_pendingDeleteBp === idx){
     _pendingDeleteBp = null;
-    bloodPressureRecords.splice(idx, 1);
+    if(bloodPressureRecords[idx]) bloodPressureRecords[idx].deleted = true;
     saveBloodPressures();
     renderBloodPressures();
-    showToast('기록이 삭제되었습니다.');
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteBp = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteBp = null; }, 3000);
   }
+}
+function restoreBloodPressure(idx){
+  if(!bloodPressureRecords[idx]) return;
+  bloodPressureRecords[idx].deleted = false;
+  saveBloodPressures();
+  renderBloodPressures();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
 }
 function clearBpForm(){
   ['bp-date','bp-name','bp-age','bp-sys','bp-dia','bp-give','bp-collect'].forEach(id=>{
@@ -5421,6 +5473,7 @@ function renderBloodPressures(){
   const bpFiltered = ((currentFilterGroup==='전체')
     ? bloodPressureRecords.map((r,i)=>({r,i}))
     : bloodPressureRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
+    .filter(({r})=>!r.deleted)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(bpFiltered.length === 0){
     tbody.innerHTML = `<tr id="empty-bp-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🩸</div><div class="empty-msg">저장된 혈압 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈압을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -5541,15 +5594,24 @@ let _pendingDeleteO2 = null;
 function deleteOxygen(idx){
   if(_pendingDeleteO2 === idx){
     _pendingDeleteO2 = null;
-    oxygenRecords.splice(idx,1);
+    if(oxygenRecords[idx]) oxygenRecords[idx].deleted = true;
     saveOxygens();
     renderOxygens();
-    showToast('기록이 삭제되었습니다.');
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteO2 = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteO2 = null; }, 3000);
   }
+}
+function restoreOxygen(idx){
+  if(!oxygenRecords[idx]) return;
+  oxygenRecords[idx].deleted = false;
+  saveOxygens();
+  renderOxygens();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
 }
 function clearO2Form(){
   ['o2-date','o2-name','o2-age','o2-daily-max','o2-daily-min','o2-daily-avg','o2-give','o2-collect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -5566,6 +5628,7 @@ function renderOxygens(){
   const o2Filtered = ((currentFilterGroup==='전체')
     ? oxygenRecords.map((r,i)=>({r,i}))
     : oxygenRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
+    .filter(({r})=>!r.deleted)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(o2Filtered.length === 0){
     tbody.innerHTML = `<tr id="empty-o2-row"><td colspan="8"><div class="empty-state"><div class="empty-icon" style="font-size:1.4rem;font-weight:900">O₂</div><div class="empty-msg">저장된 혈중산소 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈중산소포화도를 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -5599,11 +5662,12 @@ function renderOxygens(){
   }).join('');
 }
 async function exportO2Excel(){
-  if(!oxygenRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
+  const o2Live = oxygenRecords.filter(r=>!r.deleted);
+  if(!o2Live.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
   const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
   const headers = ['#','날짜','고객명','나이','성별','최고 SpO₂(%)','최저 SpO₂(%)','평균 SpO₂(%)','상태','1일차','2일차','3일차','4일차','5일차','6일차','7일차','주간경고'];
-  const rows = oxygenRecords.map((r,i)=>[
-    oxygenRecords.length-i, r.date||'', r.name||'', r.age||'', r.gender||'',
+  const rows = o2Live.map((r,i)=>[
+    o2Live.length-i, r.date||'', r.name||'', r.age||'', r.gender||'',
     r.dailyMax||r.daily||'', r.dailyMin||'', r.dailyAvg||r.daily||'', r.dailyStatus||'',
     ...(r.weekly||[]).map(v=>v===null||v===undefined?'':v),
     r.weeklyHospitalWarn ? '병원 방문 권고' : ''
@@ -5704,15 +5768,24 @@ let _pendingDeleteWt = null;
 function deleteWeight(idx){
   if(_pendingDeleteWt === idx){
     _pendingDeleteWt = null;
-    weightRecords.splice(idx,1);
+    if(weightRecords[idx]) weightRecords[idx].deleted = true;
     saveWeights();
     renderWeights();
-    showToast('기록이 삭제되었습니다.');
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteWt = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteWt = null; }, 3000);
   }
+}
+function restoreWeight(idx){
+  if(!weightRecords[idx]) return;
+  weightRecords[idx].deleted = false;
+  saveWeights();
+  renderWeights();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
 }
 function clearWeightForm(){
   ['wt-date','wt-name','wt-age','wt-kg','wt-height','wt-give','wt-collect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -5725,6 +5798,7 @@ function renderWeights(){
   const wtFiltered = ((currentFilterGroup==='전체')
     ? weightRecords.map((r,i)=>({r,i}))
     : weightRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
+    .filter(({r})=>!r.deleted)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(wtFiltered.length===0){
     tbody.innerHTML = `<tr id="empty-weight-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-msg">저장된 체중 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 체중을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -5821,15 +5895,24 @@ let _pendingDeleteWh = null;
 function deleteWomensHealth(idx){
   if(_pendingDeleteWh === idx){
     _pendingDeleteWh = null;
-    womensHealthRecords.splice(idx,1);
+    if(womensHealthRecords[idx]) womensHealthRecords[idx].deleted = true;
     saveWomensHealth();
     renderWomensHealth();
-    showToast('기록이 삭제되었습니다.');
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteWh = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteWh = null; }, 3000);
   }
+}
+function restoreWomensHealth(idx){
+  if(!womensHealthRecords[idx]) return;
+  womensHealthRecords[idx].deleted = false;
+  saveWomensHealth();
+  renderWomensHealth();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
 }
 function clearWomensForm(){
   ['wh-date','wh-name','wh-age','wh-period-days','wh-cycle-len','wh-last-period','wh-predicted','wh-give','wh-collect'].forEach(id=>{
@@ -5843,6 +5926,7 @@ function renderWomensHealth(){
   const whFiltered = ((currentFilterGroup==='전체')
     ? womensHealthRecords.map((r,i)=>({r,i}))
     : womensHealthRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
+    .filter(({r})=>!r.deleted)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(whFiltered.length===0){
     tbody.innerHTML = `<tr id="empty-womens-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">🌸</div><div class="empty-msg">저장된 여성건강 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 여성건강을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -5905,15 +5989,24 @@ let _pendingDeleteSv = null;
 function deleteStressVital(idx){
   if(_pendingDeleteSv === idx){
     _pendingDeleteSv = null;
-    stressRecords.splice(idx,1);
+    if(stressRecords[idx]) stressRecords[idx].deleted = true;
     saveStressVital();
     renderStressVital();
-    showToast('기록이 삭제되었습니다.');
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteSv = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteSv = null; }, 3000);
   }
+}
+function restoreStressVital(idx){
+  if(!stressRecords[idx]) return;
+  stressRecords[idx].deleted = false;
+  saveStressVital();
+  renderStressVital();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
 }
 function clearStressForm(){
   ['sv-date','sv-name','sv-age','sv-vital','sv-final-vital','sv-give','sv-collect','sv-score','sv-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -5927,6 +6020,7 @@ function renderStressVital(){
   const svFiltered = ((currentFilterGroup==='전체')
     ? stressRecords.map((r,i)=>({r,i}))
     : stressRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
+    .filter(({r})=>!r.deleted)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(svFiltered.length===0){
     tbody.innerHTML = `<tr id="empty-stress-row"><td colspan="11"><div class="empty-state"><div class="empty-icon">🧠⚡</div><div class="empty-msg">저장된 스트레스·활력 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 스트레스·활력을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -5998,17 +6092,32 @@ function clearDeviceForm(){
 
 function deleteDeviceRecord(idx){
   if(!confirm('이 기록을 삭제할까요?')) return;
-  deviceRecords.splice(idx,1);
+  // 소프트 삭제: 배열에서 제거하지 않고 deleted 플래그만 표시 → '관리' 탭에서 복구 가능
+  if(deviceRecords[idx]) deviceRecords[idx].deleted = true;
   try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
   syncToSheet();
   renderDeviceRecords();
+  renderDataManageTable();
+  showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+}
+function restoreDeviceRecord(idx){
+  if(!deviceRecords[idx]) return;
+  deviceRecords[idx].deleted = false;
+  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  syncToSheet();
+  renderDeviceRecords();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
 }
 
 function renderDeviceRecords(){
   const tbody = document.getElementById('dvrec-tbody');
   if(!tbody) return;
-  if(deviceRecords.length===0){
+  const dvVisible = deviceRecords.map((r,i)=>({r,i})).filter(({r})=>!r.deleted);
+  if(dvVisible.length===0){
     tbody.innerHTML=`<tr id="empty-dvrec-row"><td colspan="12"><div class="empty-state"><div class="empty-icon">📦</div><div class="empty-msg">저장된 기기관리 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 기기 제공·수거를 선택 후 입력해 보세요</div></div></td></tr>`;
+    const badge = document.getElementById('record-count-badge');
+    if(badge) badge.textContent = '0건';
     return;
   }
   const _taskBadge = t => {
@@ -6016,8 +6125,8 @@ function renderDeviceRecords(){
     if(t==='기기수거') return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700;background:rgba(107,92,231,.12);color:#6B5CE7">📥 수거</span>`;
     return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700;background:var(--neutral-bg);color:var(--neutral)">${t||'-'}</span>`;
   };
-  tbody.innerHTML = deviceRecords.map((r,i)=>`<tr>
-    <td>${deviceRecords.length-i}</td>
+  tbody.innerHTML = dvVisible.map(({r,i},fi)=>`<tr>
+    <td>${dvVisible.length-fi}</td>
     <td>${r.date||'-'}</td>
     <td>${r.nurse||'-'}</td>
     <td>${r.name||'-'}</td>
@@ -6034,7 +6143,7 @@ function renderDeviceRecords(){
     </td>
   </tr>`).join('');
   const badge = document.getElementById('record-count-badge');
-  if(badge) badge.textContent = deviceRecords.length + '건';
+  if(badge) badge.textContent = dvVisible.length + '건';
 }
 
 
@@ -6067,16 +6176,19 @@ function renderSurveyTable(){
   const tbody = document.getElementById('survey-tbody');
   if(!tbody) return;
   const imgNotice = document.getElementById('survey-img-notice');
-  if(!surveyRecords.length){
-    tbody.innerHTML = `<tr id="empty-survey-row"><td colspan="6"><div class="empty-state"><div class="empty-icon">📝</div><div class="empty-msg">불러온 대상자 설문이 없습니다</div><div class="empty-hint">우측 상단 "불러오기" 버튼으로 Word(.docx) 또는 PDF 설문 파일을 불러와 보세요</div></div></td></tr>`;
+  const svyVisible = surveyRecords.map((r,i)=>({r,i})).filter(({r})=>!r.deleted);
+  if(!svyVisible.length){
+    tbody.innerHTML = `<tr id="empty-survey-row"><td colspan="7"><div class="empty-state"><div class="empty-icon">📝</div><div class="empty-msg">불러온 대상자 설문이 없습니다</div><div class="empty-hint">우측 상단 "불러오기" 버튼으로 Word(.docx) 또는 PDF 설문 파일을 불러와 보세요</div></div></td></tr>`;
     if(imgNotice) imgNotice.style.display = 'none';
+    const badge = document.getElementById('record-count-badge');
+    if(badge) badge.textContent = '0건';
     return;
   }
-  if(imgNotice) imgNotice.style.display = surveyRecords.some(r => r.answerImg) ? 'block' : 'none';
+  if(imgNotice) imgNotice.style.display = svyVisible.some(({r}) => r.answerImg) ? 'block' : 'none';
   let html = '';
   let rowNo = 0;
   const seenGroups = new Set();
-  surveyRecords.forEach((r, idx) => {
+  svyVisible.forEach(({r, i:idx}) => {
     rowNo++;
     const isFirstOfGroup = !seenGroups.has(r.groupId);
     seenGroups.add(r.groupId);
@@ -6095,11 +6207,12 @@ function renderSurveyTable(){
       <td>${r.cat||''}</td>
       <td>${r.q||''}</td>
       <td>${answerImgHtml}<textarea onchange="updateSurveyField(${idx},'answer',this.value)" rows="1" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:100%;min-width:220px;resize:vertical;font-family:inherit">${(r.answer||'').replace(/</g,'&lt;')}</textarea></td>
+      <td><button class="del-btn" onclick="deleteSurveyRecord(${idx})" title="삭제">×</button></td>
     </tr>`;
   });
   tbody.innerHTML = html;
   const badge = document.getElementById('record-count-badge');
-  if(badge) badge.textContent = surveyRecords.length + '건';
+  if(badge) badge.textContent = svyVisible.length + '건';
 }
 
 function updateSurveyField(idx, key, val){
@@ -6111,6 +6224,72 @@ function updateSurveyField(idx, key, val){
 function updateSurveyName(groupId, val){
   surveyRecords.forEach(r => { if(r.groupId === groupId) r.name = val; });
   saveSurveyRecords();
+}
+
+let _pendingDeleteSurvey = null;
+function deleteSurveyRecord(idx){
+  if(_pendingDeleteSurvey === idx){
+    _pendingDeleteSurvey = null;
+    if(surveyRecords[idx]) surveyRecords[idx].deleted = true;
+    saveSurveyRecords();
+    renderSurveyTable();
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+  } else {
+    _pendingDeleteSurvey = idx;
+    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    setTimeout(()=>{ _pendingDeleteSurvey = null; }, 3000);
+  }
+}
+function restoreSurveyRecord(idx){
+  if(!surveyRecords[idx]) return;
+  surveyRecords[idx].deleted = false;
+  saveSurveyRecords();
+  renderSurveyTable();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
+}
+
+/* ═══════════════════════════════════════
+   관리 탭 — 삭제된 기록 통합 복구
+═══════════════════════════════════════ */
+function renderDataManageTable(){
+  const tbody = document.getElementById('manage-data-tbody');
+  if(!tbody) return;
+  const domains = [
+    { label:'수면',          arr: sleepRecords,          restoreFnName:'restoreRecord',        extra:r=>r.group||'' },
+    { label:'심박수',        arr: heartRateRecords,       restoreFnName:'restoreHeartRate',      extra:r=>r.avg?r.avg+' BPM':'' },
+    { label:'혈압',          arr: bloodPressureRecords,   restoreFnName:'restoreBloodPressure',  extra:r=>'' },
+    { label:'혈중산소',      arr: oxygenRecords,          restoreFnName:'restoreOxygen',         extra:r=>'' },
+    { label:'체중',          arr: weightRecords,          restoreFnName:'restoreWeight',         extra:r=>'' },
+    { label:'여성건강',      arr: womensHealthRecords,    restoreFnName:'restoreWomensHealth',   extra:r=>'' },
+    { label:'스트레스·활력', arr: stressRecords,          restoreFnName:'restoreStressVital',    extra:r=>'' },
+    { label:'기기관리',      arr: deviceRecords,          restoreFnName:'restoreDeviceRecord',   extra:r=>r.device||'' },
+    { label:'대상자 설문',   arr: surveyRecords,          restoreFnName:'restoreSurveyRecord',   extra:r=>r.q||'' },
+  ];
+  const rows = [];
+  domains.forEach(d => {
+    (d.arr||[]).forEach((r,i) => {
+      if(r && r.deleted){
+        rows.push({ label:d.label, name:r.name||'-', date:r.date||'-', extra:d.extra(r)||'-', idx:i, restoreFnName:d.restoreFnName });
+      }
+    });
+  });
+  const badge = document.getElementById('record-count-badge');
+  if(!rows.length){
+    tbody.innerHTML = `<tr id="empty-manage-data-row"><td colspan="6"><div class="empty-state"><div class="empty-icon">🗂️</div><div class="empty-msg">삭제된 기록이 없습니다</div><div class="empty-hint">각 탭에서 삭제한 기록은 이 탭에서 복구할 수 있습니다</div></div></td></tr>`;
+    if(badge) badge.textContent = '0건';
+    return;
+  }
+  tbody.innerHTML = rows.map((row, fi) => `<tr>
+    <td>${rows.length-fi}</td>
+    <td>${row.label}</td>
+    <td>${row.name}</td>
+    <td>${row.date}</td>
+    <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${String(row.extra).replace(/"/g,'&quot;')}">${row.extra}</td>
+    <td><button class="del-btn" onclick="${row.restoreFnName}(${row.idx})" title="복구" style="background:rgba(30,158,90,.12);color:#1E9E5A;border-color:rgba(30,158,90,.25)">↩ 복구</button></td>
+  </tr>`).join('');
+  if(badge) badge.textContent = rows.length + '건';
 }
 
 // 파일명에서 고객명 추정 (확장자/설문 관련 단어/날짜 패턴 제거)
@@ -6369,7 +6548,7 @@ async function handleSurveyImport(fileList){
 const SURVEY_XLSX_TEMPLATE_B64 = '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';
 
 async function exportSurveyExcel(){
-  if(!surveyRecords.length){ alert('내보낼 대상자 설문 기록이 없습니다.'); return; }
+  if(!surveyRecords.filter(r=>!r.deleted).length){ alert('내보낼 대상자 설문 기록이 없습니다.'); return; }
   try{
     const zip = await JSZip.loadAsync(SURVEY_XLSX_TEMPLATE_B64, {base64:true});
     const templateSheetXml = await zip.file('xl/worksheets/sheet1.xml').async('string');
@@ -6377,7 +6556,7 @@ async function exportSurveyExcel(){
     // groupId 순서를 보존하며 고객별로 묶기
     const groups = [];
     const groupMap = new Map();
-    surveyRecords.forEach(r => {
+    surveyRecords.filter(r=>!r.deleted).forEach(r => {
       if(!groupMap.has(r.groupId)){
         const g = { groupId:r.groupId, name:r.name||'', rows:[] };
         groupMap.set(r.groupId, g);
@@ -6468,10 +6647,11 @@ async function exportSurveyExcel(){
 
 
 function exportDeviceExcel(){
-  if(!deviceRecords.length){ alert('기기관리 기록이 없습니다.'); return; }
+  const dvLive = deviceRecords.filter(r=>!r.deleted);
+  if(!dvLive.length){ alert('기기관리 기록이 없습니다.'); return; }
   const headers=['#','날짜','담당간호사','고객명','연락처','업무구분','기기명','S/N','방문장소','소요시간','특이사항'];
-  const rows = deviceRecords.map((r,i)=>[
-    deviceRecords.length-i, r.date||'', r.nurse||'', r.name||'', r.phone||'',
+  const rows = dvLive.map((r,i)=>[
+    dvLive.length-i, r.date||'', r.nurse||'', r.name||'', r.phone||'',
     r.task||'', r.device||'', r.sn||'', r.place||'', r.duration||'', r.note||''
   ]);
   const ws = XLSX.utils.aoa_to_sheet([headers,...rows]);
@@ -6482,7 +6662,7 @@ function exportDeviceExcel(){
 }
 
 function exportDeviceDocx(){
-  if(!deviceRecords.length){ alert('기기관리 기록이 없습니다.'); return; }
+  if(!deviceRecords.filter(r=>!r.deleted).length){ alert('기기관리 기록이 없습니다.'); return; }
   // 업무 일지 형식 OOXML 생성 (첨부 파일 양식 참고)
   const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -6498,7 +6678,7 @@ function exportDeviceDocx(){
   function sub(text){ return `<w:p><w:pPr><w:spacing w:before="120" w:after="60"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="333333"/></w:rPr><w:t>${esc(text)}</w:t></w:r></w:p>`; }
   function pageBreak(){ return `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`; }
   const shade='EEF4FF';
-  const pages = deviceRecords.map((r,i)=>{
+  const pages = deviceRecords.filter(r=>!r.deleted).map((r,i)=>{
     const taskLabel = r.task==='기기제공'?'☑ 기기제공 (전달)  ☐ 기기수거  ☐ 기타'
                      :r.task==='기기수거'?'☐ 기기제공 (전달)  ☑ 기기수거  ☐ 기타'
                      :'☐ 기기제공 (전달)  ☐ 기기수거  ☑ 기타';
@@ -7364,8 +7544,8 @@ async function exportExcel(){
     if(!downloadsApi){ for(let i=0;i<30;i++){ await new Promise(r=>setTimeout(r,100)); if(downloadsApi) break; } }
     if(typeof XLSX === 'undefined'){ showToast('XLSX 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.', true); return; }
 
-    // 필터 적용
-    const filt = (arr) => currentFilterGroup==='전체' ? arr : arr.filter(r=>(r.group||'')===currentFilterGroup);
+    // 필터 적용 (+ 소프트 삭제된 기록은 내보내기에서도 제외)
+    const filt = (arr) => arr.filter(r=>!r.deleted && (currentFilterGroup==='전체' || (r.group||'')===currentFilterGroup));
 
     // 웹페이지와 동일한 로직: 이름+나이+성별로 묶고, 각 타입 날짜순 정렬 후 위치(인덱스)로 병합
     const _pmE = new Map();
@@ -7499,7 +7679,7 @@ async function exportExcel(){
    WORD (DOCX) EXPORT
 ═══════════════════════════════════════ */
 async function exportDocx(){
-  if(!sleepRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
+  if(!sleepRecords.filter(r=>!r.deleted).length){ showToast('내보낼 데이터가 없습니다.', true); return; }
   const btn = document.getElementById('btn-export-word');
   btn.disabled = true; btn.textContent = '생성 중…';
 
@@ -7508,7 +7688,7 @@ async function exportDocx(){
     const zip = new JSZip();
 
     // 웹페이지와 동일: 이름+나이+성별로 묶고 날짜 오름차순으로 정렬
-    const _filtSleep = (currentFilterGroup==='전체') ? sleepRecords : sleepRecords.filter(r=>(r.group||'')===currentFilterGroup);
+    const _filtSleep = sleepRecords.filter(r=>!r.deleted && (currentFilterGroup==='전체' || (r.group||'')===currentFilterGroup));
     const _docPM = new Map();
     _filtSleep.forEach(r=>{
       const k=`${r.name||''}||${r.age||''}||${r.gender||''}`;
@@ -7573,7 +7753,7 @@ async function exportDocx(){
     if(e?.code !== 'declined') showToast(`워드 내보내기 실패: ${e?.message||e}`, true);
   } finally {
     const btn = document.getElementById('btn-export-word');
-    btn.disabled = (sleepRecords.length === 0);
+    btn.disabled = (sleepRecords.filter(r=>!r.deleted).length === 0);
     btn.innerHTML = SVG_DL + ' 워드 내보내기';
   }
 }
@@ -7677,7 +7857,7 @@ async function exportAllDocx(){
     if(typeof JSZip === 'undefined'){ showToast('JSZip 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.', true); return; }
 
     // 웹페이지와 동일: 이름+나이+성별로 묶고, 각 타입 날짜순 정렬 후 위치(인덱스)로 병합
-    const filt2 = (arr) => currentFilterGroup==='전체' ? arr : arr.filter(r=>(r.group||'')===currentFilterGroup);
+    const filt2 = (arr) => arr.filter(r=>!r.deleted && (currentFilterGroup==='전체' || (r.group||'')===currentFilterGroup));
     const _pm2 = new Map();
     function _getPK2(n,a,g){ return `${n||''}||${a||''}||${g||''}`; }
     function _getP2(n,a,g,ex){
@@ -8453,13 +8633,13 @@ function saveEditRecord() {
 let _pendingDelete = null;
 function deleteRecord(idx){
   if(_pendingDelete === idx){
-    // 두 번째 클릭 → 실제 삭제
+    // 두 번째 클릭 → 실제 삭제 (소프트 삭제: deleted 플래그만 표시 → '관리' 탭에서 복구 가능)
     _pendingDelete = null;
-    const _sr = sleepRecords[idx]||{};
-    sleepRecords.splice(idx,1);
+    if(sleepRecords[idx]) sleepRecords[idx].deleted = true;
     saveRecords();
     renderRecords();
-    showToast('기록이 삭제되었습니다.');
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     // 첫 번째 클릭 → 확인 요청
     _pendingDelete = idx;
@@ -8467,16 +8647,25 @@ function deleteRecord(idx){
     setTimeout(()=>{ _pendingDelete = null; }, 3000);
   }
 }
+function restoreRecord(idx){
+  if(!sleepRecords[idx]) return;
+  sleepRecords[idx].deleted = false;
+  saveRecords();
+  renderRecords();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
+}
 
 function renderRecords(){
   rebuildGroupSelects();
   const tbody = document.getElementById('records-tbody');
   const badge = document.getElementById('record-count-badge');
-  // Filter by group
-  const filtered = currentFilterGroup === '전체'
+  // Filter by group (+ 소프트 삭제된 기록은 숨김)
+  const filtered = (currentFilterGroup === '전체'
     ? sleepRecords.map((r,i)=>({r,i}))
-    : sleepRecords.map((r,i)=>({r,i})).filter(({r})=>(r.group||'') === currentFilterGroup);
-  badge.textContent = (currentFilterGroup==='전체'?sleepRecords.length:filtered.length)+'건';
+    : sleepRecords.map((r,i)=>({r,i})).filter(({r})=>(r.group||'') === currentFilterGroup))
+    .filter(({r})=>!r.deleted);
+  badge.textContent = filtered.length+'건';
   if(filtered.length===0){
     tbody.innerHTML=`<tr id="empty-record-row"><td colspan="20">
       <div class="empty-state">

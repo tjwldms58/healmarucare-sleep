@@ -4358,7 +4358,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.68';
+const APP_VER = '6.69';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -7339,9 +7339,9 @@ function buildGantt(){
   }
 
   DEVICES.forEach((devId,di) => {
-    // Get all assignments for this device sorted by start
+    // Get all assignments for this device, 시작일 최신순 정렬 (겹치는 날짜는 최근 배정이 우선 표시되도록)
     const assigns = participants.filter(p=>!p.deleted&&p.device===devId&&p.start)
-      .sort((a,b)=>a.start<b.start?-1:1);
+      .sort((a,b)=>a.start>b.start?-1:1);
 
     const tr = document.createElement('tr');
 

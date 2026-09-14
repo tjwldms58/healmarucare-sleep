@@ -4358,7 +4358,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.69';
+const APP_VER = '6.70';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -7337,6 +7337,12 @@ function buildGantt(){
     if(nurseName==='서지은') return 'gb-3'; // 파스텔 레드
     return 'gb-4'; // 미지정: 파스텔 퍼플
   }
+  // 기기 점유 종료일: 완료(수거일자)가 예정 종료일보다 이르면(조기 반납) 완료일에서 종료,
+  // 완료가 예정 종료일보다 늦게 입력돼도(수거 처리 지연) 예정 종료일 이후는 빈 시간으로 표시
+  function _ganttOccEnd(p){
+    if(p.end && p.done) return p.done < p.end ? p.done : p.end;
+    return p.done || p.end || '9999';
+  }
 
   DEVICES.forEach((devId,di) => {
     // Get all assignments for this device, 시작일 최신순 정렬 (겹치는 날짜는 최근 배정이 우선 표시되도록)
@@ -7362,10 +7368,10 @@ function buildGantt(){
         min-width:28px;text-align:center;`;
 
       // Check if any assignment covers this date
-      const assign = assigns.find(p=> iso>=p.start && iso<=(p.done||p.end||'9999'));
+      const assign = assigns.find(p=> iso>=p.start && iso<=_ganttOccEnd(p));
       if(assign){
         const isStart = iso===assign.start;
-        const isEnd = iso===(p2=>p2.done||p2.end)(assign);
+        const isEnd = iso===_ganttOccEnd(assign);
         const barClass = _ganttNurseClass(assign.nurse||'');
         const bar = document.createElement('div');
         bar.className=`gantt-bar-inner ${barClass}`;

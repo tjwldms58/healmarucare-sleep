@@ -1968,7 +1968,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <div class="hs-dock-icon">❤️</div>
                 건강
               </div>
-              <div class="hs-dock-item">
+              <div class="hs-dock-item" onclick="openPhoneScreen('activity')" style="cursor:pointer">
                 <div class="hs-dock-icon">🏃</div>
                 운동
               </div>
@@ -2405,6 +2405,111 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
             <div id="o2-daily-status-wrap" style="display:none;margin:4px 0 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px">
               <span id="o2-daily-status-badge" style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:700"></span>
               <span id="o2-daily-extra-badge" style="display:none;padding:3px 11px;border-radius:20px;font-size:.70rem;font-weight:700;background:#F0A930;color:#fff"></span>
+            </div>
+            <div style="height:4px"></div>
+          </div>
+
+          <!-- 활동량 Form -->
+          <div class="phone-body" id="phone-activity-body" style="display:none">
+            <div class="form-section-head">기본 정보</div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>고객명</label>
+                <input type="text" id="act-name" placeholder="성명 입력">
+              </div>
+              <div class="form-field">
+                <label>나이</label>
+                <input type="number" id="act-age" placeholder="예) 65" min="1" max="120">
+              </div>
+              <div class="form-field">
+                <label>성별</label>
+                <select id="act-gender">
+                  <option value="">선택</option>
+                  <option>여</option>
+                  <option>남</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-section-head">기기 일정</div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>제공일자</label>
+                <input type="date" id="act-give" onchange="onGiveDateChange('act')">
+              </div>
+              <div class="form-field">
+                <label>수거일자</label>
+                <input type="date" id="act-collect">
+              </div>
+            </div>
+            <div class="form-section-head">날짜 선택 (7일치)</div>
+            <div class="day-tabs-wrap">
+              <button class="day-arrow" type="button" aria-label="이전" onclick="document.getElementById('day-tabs-act').scrollLeft-=90">&#60;</button>
+              <div class="day-tabs-bar" id="day-tabs-act">
+                <button class="day-tab active" onclick="switchDay('act',0)">Day 1</button>
+                <button class="day-tab" onclick="switchDay('act',1)">Day 2</button>
+                <button class="day-tab" onclick="switchDay('act',2)">Day 3</button>
+                <button class="day-tab" onclick="switchDay('act',3)">Day 4</button>
+                <button class="day-tab" onclick="switchDay('act',4)">Day 5</button>
+                <button class="day-tab" onclick="switchDay('act',5)">Day 6</button>
+                <button class="day-tab" onclick="switchDay('act',6)">Day 7</button>
+              </div>
+              <button class="day-arrow" type="button" aria-label="다음" onclick="document.getElementById('day-tabs-act').scrollLeft+=90">&#62;</button>
+            </div>
+            <div class="day-info-row">📅 Day1 날짜 선택 시 Day2~7 자동 입력 · <span class="day-save-count" id="act-day-count">0/7일</span></div>
+            <div class="form-field">
+              <label>측정날짜</label>
+              <input type="date" id="act-date" onchange="onDay1DateChange('act')">
+            </div>
+            <div class="form-section-head" style="margin-top:4px">활동량 그래프</div>
+            <div style="background:var(--surface-2);border-radius:12px;padding:10px 8px 6px;margin-bottom:8px">
+              <canvas id="act-gauge-canvas" width="300" height="168" style="width:100%;height:auto;display:block"></canvas>
+              <div style="display:flex;gap:6px;margin-top:2px">
+                <div style="flex:1;text-align:center">
+                  <div style="font-size:.62rem;color:var(--text-3)">🔥 칼로리 (kcal)</div>
+                  <div id="act-cal-label" style="font-size:.85rem;font-weight:800;color:#FF6B35">0/0</div>
+                </div>
+                <div style="flex:1;text-align:center">
+                  <div style="font-size:.62rem;color:var(--text-3)">👣 걸음</div>
+                  <div id="act-steps-label" style="font-size:.85rem;font-weight:800;color:#FFB300">0/0</div>
+                </div>
+                <div style="flex:1;text-align:center">
+                  <div style="font-size:.62rem;color:var(--text-3)">⏱ 고중강도 활동(분)</div>
+                  <div id="act-hi-label" style="font-size:.85rem;font-weight:800;color:#29B6F6">0/0</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section-head">칼로리 (kcal)</div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>실제 소모 칼로리</label>
+                <input type="number" id="act-cal-actual" placeholder="예) 243" min="0" step="1" oninput="updateActivityGauge()">
+              </div>
+              <div class="form-field">
+                <label>목표 칼로리</label>
+                <input type="number" id="act-cal-target" placeholder="예) 400" min="0" step="1" oninput="updateActivityGauge()">
+              </div>
+            </div>
+            <div class="form-section-head">걸음수</div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>실제 걸음수</label>
+                <input type="number" id="act-steps-actual" placeholder="예) 4447" min="0" step="1" oninput="updateActivityGauge()">
+              </div>
+              <div class="form-field">
+                <label>목표 걸음수</label>
+                <input type="number" id="act-steps-target" placeholder="예) 6000" min="0" step="1" oninput="updateActivityGauge()">
+              </div>
+            </div>
+            <div class="form-section-head">고중강도 활동 (분)</div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>실제 고중강도 활동(분)</label>
+                <input type="number" id="act-hi-actual" placeholder="예) 35" min="0" step="1" oninput="updateActivityGauge()">
+              </div>
+              <div class="form-field">
+                <label>목표 고중강도 활동(분)</label>
+                <input type="number" id="act-hi-target" placeholder="예) 30" min="0" step="1" oninput="updateActivityGauge()">
+              </div>
             </div>
             <div style="height:4px"></div>
           </div>
@@ -2855,6 +2960,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <button class="dt-tab active" onclick="switchDataTab('sleep',this)">🌙 수면</button>
         <button class="dt-tab" onclick="switchDataTab('heart',this)">❤️ 심박수</button>
         <button class="dt-tab" onclick="switchDataTab('o2',this)">O₂ 혈중산소</button>
+        <button class="dt-tab" onclick="switchDataTab('activity',this)" style="color:#FF6B35">🔥 활동량</button>
         <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
         <button class="dt-tab" onclick="switchDataTab('survey',this)" style="color:#0E8FA3">📝 대상자 설문</button>
@@ -2900,11 +3006,12 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <th>SpO₂(%)</th>
                 <th>SpO₂상태</th>
                 <th>스트레스</th><th>활력점수</th><th>최종 활력</th>
+                <th>칼로리(실제/목표)</th><th>걸음수(실제/목표)</th><th>고강도활동(실제/목표)</th>
               </tr>
             </thead>
             <tbody id="all-tbody">
               <tr id="empty-all-row">
-                <td colspan="37" style="padding:0;border:none">
+                <td colspan="40" style="padding:0;border:none">
                   <div class="empty-state" style="position:sticky;left:0;width:600px">
                     <div class="empty-icon">📋</div>
                     <div class="empty-msg">저장된 건강 기록이 없습니다</div>
@@ -3022,6 +3129,30 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                   <div class="empty-icon">O₂</div>
                   <div class="empty-msg">저장된 혈중산소 기록이 없습니다</div>
                   <div class="empty-hint">왼쪽 폰 화면에서 혈중산소포화도를 선택 후 입력해 보세요</div>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── 활동량 테이블 ── -->
+      <div id="data-panel-activity" style="display:none">
+        <div class="table-scroll">
+          <table class="data-table" id="act-table">
+            <thead>
+              <tr>
+                <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th>
+                <th>칼로리(kcal) 실제/목표</th><th>걸음수 실제/목표</th><th>고강도활동(분) 실제/목표</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="act-tbody">
+              <tr id="empty-act-row">
+                <td colspan="9"><div class="empty-state">
+                  <div class="empty-icon">🔥</div>
+                  <div class="empty-msg">저장된 활동량 기록이 없습니다</div>
+                  <div class="empty-hint">왼쪽 폰 화면 하단 '운동'을 선택 후 입력해 보세요</div>
                 </div></td>
               </tr>
             </tbody>
@@ -3890,8 +4021,9 @@ function openPhoneScreen(type){
   const stressBody  = document.getElementById('phone-stress-body');
   const deviceBody  = document.getElementById('phone-device-body');
   const profileBody = document.getElementById('phone-profile-body');
+  const activityBody = document.getElementById('phone-activity-body');
   const titleEl     = document.getElementById('phone-form-title');
-  [sleepBody, hrBody, bpBody, o2Body, weightBody, womensBody, stressBody, deviceBody, profileBody].forEach(el=>{ if(el) el.style.display='none'; });
+  [sleepBody, hrBody, bpBody, o2Body, weightBody, womensBody, stressBody, deviceBody, profileBody, activityBody].forEach(el=>{ if(el) el.style.display='none'; });
   const today = new Date().toISOString().slice(0,10);
   if(type === 'sleep'){
     sleepBody.style.display = '';
@@ -3933,6 +4065,10 @@ function openPhoneScreen(type){
     if(submitBtn) submitBtn.textContent = '저장';
     const clearBtn = document.getElementById('phone-clear-btn');
     if(clearBtn) clearBtn.textContent = '초기화';
+  } else if(type === 'activity'){
+    activityBody.style.display = '';
+    titleEl.childNodes[titleEl.childNodes.length-1].textContent = ' 활동량 입력';
+    updateActivityGauge();
   }
   if(type !== 'device' && type !== 'profile'){
     const submitBtn = document.getElementById('phone-submit-btn');
@@ -3958,12 +4094,13 @@ const _DAY_FIELDS = {
   wt:    ['wt-date','wt-kg'],
   wh:    ['wh-date'],
   sv:    ['sv-date','sv-score','sv-note','sv-vital'],
+  act:   ['act-date','act-cal-actual','act-cal-target','act-steps-actual','act-steps-target','act-hi-actual','act-hi-target'],
 };
-const _DATE_KEY = {sleep:'f-date',hr:'hr-date',bp:'bp-date',o2:'o2-date',wt:'wt-date',wh:'wh-date',sv:'sv-date'};
+const _DATE_KEY = {sleep:'f-date',hr:'hr-date',bp:'bp-date',o2:'o2-date',wt:'wt-date',wh:'wh-date',sv:'sv-date',act:'act-date'};
 let _dayBuf = {};
 let _dayIdx = {};
 let _dayImgBuf = {};  // per-day image store (sleep only)
-['sleep','hr','bp','o2','wt','wh','sv'].forEach(t => {
+['sleep','hr','bp','o2','wt','wh','sv','act'].forEach(t => {
   _dayBuf[t] = Array(7).fill(null).map(()=>({}));
   _dayImgBuf[t] = Array(7).fill(null).map(()=>({imgs:[],dims:[],urls:[]}));
   _dayIdx[t] = 0;
@@ -4053,6 +4190,8 @@ function _loadDayFromBuf(type, idx){
   (_DAY_FIELDS[type]||[]).forEach(id=>{ _sv(id, buf[id]||''); });
   // sv: 시간별 항목 복원
   if(type==='sv') _loadSvItemsFromBuf(idx);
+  // activity: 해당 Day 값으로 반달그래프 갱신
+  if(type==='act') updateActivityGauge();
   // sleep: 해당 Day의 이미지 복원
   if(type==='sleep'){
     const ib = _dayImgBuf.sleep[idx] || {imgs:[],dims:[],urls:[]};
@@ -4164,6 +4303,9 @@ function _submitAllDays(bufType){
     shared.name=_gv('sv-name').trim(); shared.age=_gv('sv-age'); shared.gender=_gv('sv-gender');
     shared.give=_gv('sv-give'); shared.collect=_gv('sv-collect');
     shared.finalVital=_gv('sv-final-vital');
+  } else if(bufType==='act'){
+    shared.name=_gv('act-name').trim(); shared.age=_gv('act-age'); shared.gender=_gv('act-gender');
+    shared.give=_gv('act-give'); shared.collect=_gv('act-collect');
   }
   if(!shared.name){ showToast('고객명은 필수 입력 항목입니다.', true); return; }
 
@@ -4220,6 +4362,12 @@ function _submitAllDays(bufType){
       const group=_detectGroup(shared.name,shared.age,shared.gender);
       const finalVital=shared.finalVital||'';
       stressRecords.unshift({date:buf['sv-date'],...shared,score,note,stressItems,vital,finalVital,group});
+    } else if(bufType==='act'){
+      const calActual=buf['act-cal-actual']||'', calTarget=buf['act-cal-target']||'';
+      const stepsActual=buf['act-steps-actual']||'', stepsTarget=buf['act-steps-target']||'';
+      const hiActual=buf['act-hi-actual']||'', hiTarget=buf['act-hi-target']||'';
+      const group=_detectGroup(shared.name,shared.age,shared.gender);
+      activityRecords.unshift({date:buf['act-date'],...shared,calActual,calTarget,stepsActual,stepsTarget,hiActual,hiTarget,group});
     }
     savedCount++;
   }
@@ -4234,6 +4382,7 @@ function _submitAllDays(bufType){
   else if(bufType==='wt'){ saveWeights(); renderWeights(); }
   else if(bufType==='wh'){ saveWomensHealth(); renderWomensHealth(); }
   else if(bufType==='sv'){ saveStressVital(); renderStressVital(); }
+  else if(bufType==='act'){ saveActivities(); renderActivities(); }
 
   showToast('✅ '+savedCount+'일치 기록이 저장되었습니다!');
   _resetDayBuf(bufType);
@@ -4245,12 +4394,13 @@ function _submitAllDays(bufType){
   else if(bufType==='wt') clearWeightForm();
   else if(bufType==='wh') clearWomensForm();
   else if(bufType==='sv') clearStressForm();
+  else if(bufType==='act') clearActivityForm();
 
   document.getElementById('phone-form-body').scrollTop=0;
 }
 
 // 폼 저장/초기화 통합 핸들러
-const _PHONE_TO_BUF={sleep:'sleep',heart:'hr',bp:'bp',o2:'o2',weight:'wt',womens:'wh',stress:'sv'};
+const _PHONE_TO_BUF={sleep:'sleep',heart:'hr',bp:'bp',o2:'o2',weight:'wt',womens:'wh',stress:'sv',activity:'act'};
 function phoneSubmit(){
   if(_currentPhoneType === 'device'){ saveDeviceRecord(); return; }
   if(_currentPhoneType === 'profile'){ saveProfileRecord(); return; }
@@ -4269,6 +4419,7 @@ function phoneClear(){
   else if(_currentPhoneType==='stress') clearStressForm();
   else if(_currentPhoneType==='profile') clearProfileForm();
   else if(_currentPhoneType==='device') clearDeviceForm();
+  else if(_currentPhoneType==='activity') clearActivityForm();
 }
 
 /* ═══════════════════════════════════════
@@ -4358,7 +4509,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.70';
+const APP_VER = '6.71';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4630,6 +4781,7 @@ let oxygenRecords = [];
 let weightRecords = [];
 let womensHealthRecords = [];
 let stressRecords = [];
+let activityRecords = []; // 활동량(칼로리/걸음수/고강도활동 실제·목표) — {date,name,age,gender,give,collect,calActual,calTarget,stepsActual,stepsTarget,hiActual,hiTarget,group}
 let deviceRecords = [];
 let surveyRecords = []; // 대상자 설문(디바이스 수거 설문) 행 목록 — {groupId,name,date,cat,question,answer}
 let profileRecords = []; // 대상자 인적사항(부대표님 엑셀 추가내용) — {name,age,gender,birth,job,workType,diagDate,surgDate,treatment,meds,comorbid,sleepTxHistory,symptoms,analysis}
@@ -4660,6 +4812,7 @@ async function initStorage(){
   try{ const w=localStorage.getItem('hilmaru_weight'); if(w) weightRecords=JSON.parse(w); }catch(e){}
   try{ const wh=localStorage.getItem('hilmaru_wh'); if(wh) womensHealthRecords=JSON.parse(wh); }catch(e){}
   try{ const sv=localStorage.getItem('hilmaru_sv'); if(sv) stressRecords=JSON.parse(sv); }catch(e){}
+  try{ const ac=localStorage.getItem('hilmaru_act'); if(ac) activityRecords=JSON.parse(ac); }catch(e){}
   try{ const dv=localStorage.getItem('hilmaru_dv'); if(dv) deviceRecords=JSON.parse(dv); }catch(e){}
   try{ const sy=localStorage.getItem('hilmaru_survey'); if(sy) surveyRecords=JSON.parse(sy); }catch(e){}
   try{ const pf=localStorage.getItem('hilmaru_profile'); if(pf) profileRecords=JSON.parse(pf); }catch(e){}
@@ -4714,6 +4867,7 @@ async function initStorage(){
     if(data.weightRecords && Array.isArray(data.weightRecords)) weightRecords = data.weightRecords;
     if(data.womensHealthRecords && Array.isArray(data.womensHealthRecords)) womensHealthRecords = data.womensHealthRecords;
     if(data.stressRecords && Array.isArray(data.stressRecords)) stressRecords = data.stressRecords;
+    if(data.activityRecords && Array.isArray(data.activityRecords)) activityRecords = data.activityRecords;
     if(data.deviceRecords && Array.isArray(data.deviceRecords)) deviceRecords = data.deviceRecords;
     if(data.surveyRecords && Array.isArray(data.surveyRecords)) surveyRecords = data.surveyRecords;
     if(data.profileRecords && Array.isArray(data.profileRecords)) profileRecords = data.profileRecords;
@@ -4728,6 +4882,7 @@ async function initStorage(){
     try{ localStorage.setItem('hilmaru_weight', JSON.stringify(weightRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_wh', JSON.stringify(womensHealthRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
+    try{ localStorage.setItem('hilmaru_act', JSON.stringify(activityRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_survey', JSON.stringify(surveyRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_profile', JSON.stringify(profileRecords)); }catch(e){}
@@ -4759,7 +4914,7 @@ async function syncToSheet(){
       const sleepNoImg = sleepRecords.map(r => { const {img, imgW, imgH, imgs, ...rest} = r; return rest; });
       // 대상자 설문의 answerImg(PDF 인식 미리보기, base64)는 임시 참고용이라 시트에는 저장하지 않음
       const surveyNoImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
-      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, deviceRecords, surveyRecords: surveyNoImg, profileRecords, participants, groups });
+      const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, activityRecords, deviceRecords, surveyRecords: surveyNoImg, profileRecords, participants, groups });
       if(payload.length > 45000){
         console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
       }
@@ -5025,10 +5180,11 @@ function switchDataTab(type, btn){
   const wtPanel      = document.getElementById('data-panel-weight');
   const whPanel      = document.getElementById('data-panel-womens');
   const svPanel      = document.getElementById('data-panel-stress');
+  const actPanel     = document.getElementById('data-panel-activity');
   const dvPanel      = document.getElementById('data-panel-device');
   const svyPanel     = document.getElementById('data-panel-survey');
   const mgPanel      = document.getElementById('data-panel-manage');
-  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,dvPanel,svyPanel,mgPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
+  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,actPanel,dvPanel,svyPanel,mgPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
   // 그룹 필터 / 폴더 컨트롤: 항상 표시
   if(sleepTools) sleepTools.style.display='flex';
   const badge = document.getElementById('record-count-badge');
@@ -5043,7 +5199,7 @@ function switchDataTab(type, btn){
 
   if(type==='all'){
     if(allPanel) allPanel.style.display='';
-    const hasAny = sleepRecords.length||heartRateRecords.length||bloodPressureRecords.length||oxygenRecords.length||weightRecords.length||womensHealthRecords.length||stressRecords.length;
+    const hasAny = sleepRecords.length||heartRateRecords.length||bloodPressureRecords.length||oxygenRecords.length||weightRecords.length||womensHealthRecords.length||stressRecords.length||activityRecords.length;
     if(tabExcel){ tabExcel.disabled=!hasAny; tabExcel.onclick=exportAllExcel; tabExcel.style.background='#5C6BC0'; }
     if(tabWord){ tabWord.disabled=!hasAny; tabWord.onclick=exportAllDocx; tabWord.style.background='#1F4E79'; }
     renderAllRecords(); // badge는 renderAllRecords 내부에서 고유인원 기준으로 업데이트
@@ -5074,6 +5230,10 @@ function switchDataTab(type, btn){
     if(svPanel) svPanel.style.display='';
     if(badge) badge.textContent = stressRecords.filter(r=>!r.deleted).length + '건';
     renderStressVital();
+  } else if(type==='activity'){
+    if(actPanel) actPanel.style.display='';
+    if(badge) badge.textContent = activityRecords.filter(r=>!r.deleted).length + '건';
+    renderActivities();
   } else if(type==='device'){
     if(dvPanel) dvPanel.style.display='';
     if(badge) badge.textContent = deviceRecords.filter(r=>!r.deleted).length + '건';
@@ -5103,11 +5263,11 @@ function switchDataTab(type, btn){
 
 // 현재 탭 엑셀/워드 내보내기 디스패처 (버튼 onclick 직접 할당 방식으로 대체됨 — fallback용)
 function exportCurrentExcel(){
-  const fn = {all:exportAllExcel, sleep:exportExcel, heart:exportHrExcel, o2:exportO2Excel}[_currentDataTab];
+  const fn = {all:exportAllExcel, sleep:exportExcel, heart:exportHrExcel, o2:exportO2Excel, activity:exportActivityExcel}[_currentDataTab];
   if(fn) fn();
 }
 function exportCurrentDocx(){
-  const fn = {all:exportAllDocx, sleep:exportDocx, heart:exportHrDocx, o2:exportO2Docx}[_currentDataTab];
+  const fn = {all:exportAllDocx, sleep:exportDocx, heart:exportHrDocx, o2:exportO2Docx, activity:exportActivityDocx}[_currentDataTab];
   if(fn) fn();
 }
 
@@ -5154,7 +5314,7 @@ function renderAllRecords(){
     if(!personMap.has(k)) personMap.set(k, Object.assign(
       { name:name||'', age:age||'', gender:gender||'',
         group:'', cancer:'', nurse:'', stage:'', give:'', collect:'',
-        sleep:[], heart:[], bp:[], o2:[], weight:[], womens:[], stress:[] }, extra));
+        sleep:[], heart:[], bp:[], o2:[], weight:[], womens:[], stress:[], act:[] }, extra));
     return personMap.get(k);
   }
 
@@ -5202,26 +5362,32 @@ function renderAllRecords(){
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).stress.push(r);
   });
+  activityRecords.forEach(r => {
+    const pk = getPKey(r.name||'', r.age||'', r.gender||'');
+    if(isFiltered && !activePKeys.has(pk)) return;
+    getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).act.push(r);
+  });
 
   // 각 사람별 묶음에서 날짜 순 정렬 후 위치(순서)로 결합 → map 생성
   const map = new Map();
-  const TYPES = ['sleep','heart','bp','o2','weight','womens','stress'];
+  const TYPES = ['sleep','heart','bp','o2','weight','womens','stress','act'];
   personMap.forEach(person => {
     TYPES.forEach(t => person[t].sort((a,b)=>(a.date||'')<(b.date||'')?-1:1));
     const maxDays = Math.max(...TYPES.map(t=>person[t].length), 0);
     for(let i=0; i<maxDays; i++){
       const s=person.sleep[i]||null, h=person.heart[i]||null, b=person.bp[i]||null,
-            o=person.o2[i]||null,   w=person.weight[i]||null, wh=person.womens[i]||null, sv=person.stress[i]||null;
+            o=person.o2[i]||null,   w=person.weight[i]||null, wh=person.womens[i]||null, sv=person.stress[i]||null,
+            ac=person.act[i]||null;
       // 대표 날짜: 있는 레코드 중 가장 이른 날짜
-      const date=[s,h,b,o,w,wh,sv].filter(Boolean).map(r=>r.date||'').sort()[0]||person.give||'';
+      const date=[s,h,b,o,w,wh,sv,ac].filter(Boolean).map(r=>r.date||'').sort()[0]||person.give||'';
       // 제공일자: 해당 행의 레코드에서 가져옴
-      const rowGive=[s,h,b,o,w,wh,sv].filter(Boolean).map(r=>r.give||'').filter(Boolean).sort()[0]||person.give||'';
+      const rowGive=[s,h,b,o,w,wh,sv,ac].filter(Boolean).map(r=>r.give||'').filter(Boolean).sort()[0]||person.give||'';
       const rowKey=`${i}||${person.name}||${person.age}||${person.gender}`;
       map.set(rowKey, { date, name:person.name, age:person.age, gender:person.gender,
         group:person.group, give:rowGive, collect:(s&&s.collect)||(h&&h.collect)||(b&&b.collect)||person.collect||'',
         cancer:(s&&s.cancer)||person.cancer||'', nurse:(s&&s.nurse)||person.nurse||'',
         stage:(s&&s.stage)||person.stage||'',
-        sleep:s, heart:h, bp:b, o2:o, weight:w, womens:wh, stress:sv });
+        sleep:s, heart:h, bp:b, o2:o, weight:w, womens:wh, stress:sv, act:ac });
     }
   });
 
@@ -5336,6 +5502,12 @@ function renderAllRecords(){
     const svVitalCell = sv && sv.vital ? `<span style="font-weight:800;color:${parseInt(sv.vital)>=80?'#1E9E5A':parseInt(sv.vital)>=50?'#0E8FA3':'#C07820'}">${sv.vital}</span>` : '-';
     const svFinalVitalCell = sv && sv.finalVital ? `<span style="font-weight:800;color:${parseInt(sv.finalVital)>=80?'#1E9E5A':parseInt(sv.finalVital)>=50?'#0E8FA3':'#C07820'};border:1.5px solid currentColor;border-radius:5px;padding:1px 5px">${sv.finalVital}</span>` : '-';
 
+    // 활동량
+    const ac = row.act;
+    const acCalCell   = ac && (ac.calActual||ac.calTarget)   ? `${ac.calActual||'-'} / ${ac.calTarget||'-'}`   : '-';
+    const acStepsCell = ac && (ac.stepsActual||ac.stepsTarget) ? `${ac.stepsActual||'-'} / ${ac.stepsTarget||'-'}` : '-';
+    const acHiCell    = ac && (ac.hiActual||ac.hiTarget)     ? `${ac.hiActual||'-'} / ${ac.hiTarget||'-'}`     : '-';
+
     return `<tr style="${_aIsGF?'cursor:pointer;border-top:2px solid rgba(92,200,184,.3)':'cursor:default'}" ${_aIsGF?`onclick="openAllReport('${escapedName}','${escapedAge}','${escapedGender}')" title="클릭하면 통합 건강 보고서가 열립니다 (첫째날 행)"`:''}>
       <td>${idx + 1}</td>
       <td>${_aDc}</td>
@@ -5369,6 +5541,9 @@ function renderAllRecords(){
       <td>${svStressCell}</td>
       <td>${svVitalCell}</td>
       <td>${svFinalVitalCell}</td>
+      <td>${acCalCell}</td>
+      <td>${acStepsCell}</td>
+      <td>${acHiCell}</td>
     </tr>`;
   }).join('');
   applyFreezeCols('all-table');
@@ -5376,7 +5551,7 @@ function renderAllRecords(){
 
 /* 전체 엑셀 내보내기 — 샤오미데이터 형식 v5.28 */
 async function exportAllExcel(){
-  const total = sleepRecords.length + heartRateRecords.length + bloodPressureRecords.length + weightRecords.length + womensHealthRecords.length + stressRecords.length;
+  const total = sleepRecords.length + heartRateRecords.length + bloodPressureRecords.length + weightRecords.length + womensHealthRecords.length + stressRecords.length + activityRecords.length;
   if(total === 0){ showToast('내보낼 데이터가 없습니다.', true); return; }
   if(typeof XLSX === 'undefined'){ showToast('XLSX 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.', true); return; }
   const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
@@ -5390,7 +5565,7 @@ async function exportAllExcel(){
   function _getPK(n,a,g){ return `${n||''}||${a||''}||${g||''}`; }
   function _getP(n,a,g,ex){
     const k=_getPK(n,a,g);
-    if(!_pm.has(k)) _pm.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',sleep:[],heart:[],bp:[],weight:[],womens:[],stress:[]},ex));
+    if(!_pm.has(k)) _pm.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',sleep:[],heart:[],bp:[],weight:[],womens:[],stress:[],act:[]},ex));
     const p=_pm.get(k);
     if(ex){ if(!p.give&&ex.give) p.give=ex.give; if(!p.collect&&ex.collect) p.collect=ex.collect; if(!p.cancer&&ex.cancer) p.cancer=ex.cancer; if(!p.stage&&ex.stage) p.stage=ex.stage; }
     return p;
@@ -5401,17 +5576,18 @@ async function exportAllExcel(){
   filt(weightRecords).forEach(r=>{ _getP(r.name,r.age,r.gender,{give:r.give}).weight.push(r); });
   filt(womensHealthRecords).forEach(r=>{ _getP(r.name,r.age,r.gender,{give:r.give}).womens.push(r); });
   filt(stressRecords).forEach(r=>{ _getP(r.name,r.age,r.gender,{give:r.give}).stress.push(r); });
-  const _TYPS=['sleep','heart','bp','weight','womens','stress'];
+  filt(activityRecords).forEach(r=>{ _getP(r.name,r.age,r.gender,{give:r.give}).act.push(r); });
+  const _TYPS=['sleep','heart','bp','weight','womens','stress','act'];
   const rows=[];
   _pm.forEach(p=>{
     _TYPS.forEach(t=>p[t].sort((a,b)=>(a.date||'')<(b.date||'')?-1:1));
     const mx=Math.max(..._TYPS.map(t=>p[t].length),0);
     for(let i=0;i<mx;i++){
-      const s=p.sleep[i]||null,h=p.heart[i]||null,b=p.bp[i]||null,wt=p.weight[i]||null,wh=p.womens[i]||null,sv=p.stress[i]||null;
-      const dt=[s,h,b,wt,wh,sv].filter(Boolean).map(r=>r.date||'').sort()[0]||'';
-      const rg=[s,h,b,wt,wh,sv].filter(Boolean).map(r=>r.give||'').filter(Boolean).sort()[0]||p.give||'';
+      const s=p.sleep[i]||null,h=p.heart[i]||null,b=p.bp[i]||null,wt=p.weight[i]||null,wh=p.womens[i]||null,sv=p.stress[i]||null,ac=p.act[i]||null;
+      const dt=[s,h,b,wt,wh,sv,ac].filter(Boolean).map(r=>r.date||'').sort()[0]||'';
+      const rg=[s,h,b,wt,wh,sv,ac].filter(Boolean).map(r=>r.give||'').filter(Boolean).sort()[0]||p.give||'';
       const rc=(s&&s.collect)||(h&&h.collect)||(b&&b.collect)||p.collect||'';
-      rows.push({date:dt,name:p.name,age:p.age,gender:p.gender,give:rg,collect:rc,cancer:(s&&s.cancer)||p.cancer||'',stage:(s&&s.stage)||p.stage||'',sleep:s,heart:h,bp:b,weight:wt,womens:wh,stress:sv});
+      rows.push({date:dt,name:p.name,age:p.age,gender:p.gender,give:rg,collect:rc,cancer:(s&&s.cancer)||p.cancer||'',stage:(s&&s.stage)||p.stage||'',sleep:s,heart:h,bp:b,weight:wt,womens:wh,stress:sv,act:ac});
     }
   });
 
@@ -5429,11 +5605,12 @@ async function exportAllExcel(){
     'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
     '수면시 평균 심박수 (BPM)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)','잠든시간','기상시간',
     '심박수범위','평균','휴식','평균 걷기 심박수',
-    '스트레스','활력점수','7일 최종 활력점수'
+    '스트레스','활력점수','7일 최종 활력점수',
+    '칼로리 실제(kcal)','칼로리 목표(kcal)','걸음수 실제','걸음수 목표','고강도활동 실제(분)','고강도활동 목표(분)'
   ];
 
   const data = rows.map(row=>{
-    const s=row.sleep, h=row.heart, sv=row.stress;
+    const s=row.sleep, h=row.heart, sv=row.stress, ac=row.act;
     return [
       row.date, row.name, row.age, row.gender,
       row.cancer||'', row.stage||'', row.give||'', row.collect||'',
@@ -5441,12 +5618,13 @@ async function exportAllExcel(){
       s?s.deepPct||'':'', s?s.deepTime||'':'', s?s.awake||'':'', s?s.eff||'':'', s?s.total||'':'', s?s.nap||'':'',
       s?s.sleepHr||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
       h?h.range||'':'', h?h.avg||'':'', h?h.rest||'':'', h?h.mean||'':'',
-      sv?sv.stress||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':''
+      sv?sv.stress||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':'',
+      ac?ac.calActual||'':'', ac?ac.calTarget||'':'', ac?ac.stepsActual||'':'', ac?ac.stepsTarget||'':'', ac?ac.hiActual||'':'', ac?ac.hiTarget||'':''
     ];
   });
 
   const ws = XLSX.utils.aoa_to_sheet([header,...data]);
-  const colWidths = [10,10,5,5,10,8,12,12,8,8,10,10,10,10,8,12,10,8,10,8,8,10,10,10,16,8,8,10,8,8,8,12,12,8,8];
+  const colWidths = [10,10,5,5,10,8,12,12,8,8,10,10,10,10,8,12,10,8,10,8,8,10,10,10,16,8,8,10,8,8,8,12,12,8,8,10,10,10,10,10,10];
   ws['!cols'] = colWidths.map(w=>({wch:w}));
   XLSX.utils.book_append_sheet(wb, ws, '샤오미데이터');
 
@@ -5801,6 +5979,139 @@ async function exportO2Excel(){
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url),1000);
     showToast('✅ 혈중산소 엑셀 다운로드 완료!');
+  } else {
+    showToast('SheetJS 라이브러리 로딩 중입니다. 잠시 후 다시 시도해 주세요.', true);
+  }
+}
+
+/* ═══════════════════════════════════════
+   활동량 (칼로리·걸음수·고강도활동)
+═══════════════════════════════════════ */
+function saveActivities(){
+  try{ localStorage.setItem('hilmaru_act', JSON.stringify(activityRecords)); }catch(e){}
+  if(_currentDataTab === 'all') renderAllRecords();
+  syncToSheet();
+}
+let _pendingDeleteAct = null;
+function deleteActivity(idx){
+  if(_pendingDeleteAct === idx){
+    _pendingDeleteAct = null;
+    if(activityRecords[idx]) activityRecords[idx].deleted = true;
+    saveActivities();
+    renderActivities();
+    renderDataManageTable();
+    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+  } else {
+    _pendingDeleteAct = idx;
+    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    setTimeout(()=>{ _pendingDeleteAct = null; }, 3000);
+  }
+}
+function restoreActivity(idx){
+  if(!activityRecords[idx]) return;
+  activityRecords[idx].deleted = false;
+  saveActivities();
+  renderActivities();
+  renderDataManageTable();
+  showToast('기록이 복구되었습니다.');
+}
+function clearActivityForm(){
+  ['act-date','act-name','act-age','act-give','act-collect','act-cal-actual','act-cal-target','act-steps-actual','act-steps-target','act-hi-actual','act-hi-target'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const g=document.getElementById('act-gender'); if(g) g.value='';
+  updateActivityGauge();
+}
+// 입력칸 값이 바뀔 때마다 상단 반달(半月) 게이지 그래프를 다시 그림
+function updateActivityGauge(){
+  const canvas = document.getElementById('act-gauge-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H - 30;
+  const rings = [
+    { actual:_gv('act-cal-actual'),   target:_gv('act-cal-target'),   r:88, color:'#FF6B35', bg:'#FCE0D2' },
+    { actual:_gv('act-steps-actual'), target:_gv('act-steps-target'), r:64, color:'#FFB300', bg:'#FCEBC4' },
+    { actual:_gv('act-hi-actual'),    target:_gv('act-hi-target'),    r:40, color:'#29B6F6', bg:'#D6EFFB' },
+  ];
+  const lw = 15;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = lw;
+  rings.forEach(g=>{
+    const target = parseFloat(g.target)||0;
+    const actual = parseFloat(g.actual)||0;
+    const ratio = target>0 ? Math.min(actual/target,1) : 0;
+    ctx.strokeStyle = g.bg;
+    ctx.beginPath();
+    ctx.arc(cx,cy,g.r,Math.PI,2*Math.PI);
+    ctx.stroke();
+    if(ratio>0){
+      ctx.strokeStyle = g.color;
+      ctx.beginPath();
+      ctx.arc(cx,cy,g.r,Math.PI,Math.PI+Math.PI*ratio);
+      ctx.stroke();
+    }
+  });
+  const calLbl = document.getElementById('act-cal-label');
+  const stepsLbl = document.getElementById('act-steps-label');
+  const hiLbl = document.getElementById('act-hi-label');
+  if(calLbl) calLbl.textContent = (_gv('act-cal-actual')||0)+'/'+(_gv('act-cal-target')||0);
+  if(stepsLbl) stepsLbl.textContent = (_gv('act-steps-actual')||0)+'/'+(_gv('act-steps-target')||0);
+  if(hiLbl) hiLbl.textContent = (_gv('act-hi-actual')||0)+'/'+(_gv('act-hi-target')||0);
+}
+function renderActivities(){
+  const tbody = document.getElementById('act-tbody');
+  if(!tbody) return;
+  const actFiltered = ((currentFilterGroup==='전체')
+    ? activityRecords.map((r,i)=>({r,i}))
+    : activityRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
+    .filter(({r})=>!r.deleted)
+    .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
+  if(actFiltered.length === 0){
+    tbody.innerHTML = `<tr id="empty-act-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🔥</div><div class="empty-msg">저장된 활동량 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면 하단 '운동'을 선택 후 입력해 보세요</div></div></td></tr>`;
+    return;
+  }
+  const _actSeen=new Set();
+  tbody.innerHTML = actFiltered.map(({r,i},fi)=>{
+    const _gk=(r.name||'')+'|'+(r.age||'')+'|'+(r.gender||'');
+    const _isGF=!_actSeen.has(_gk);if(_isGF)_actSeen.add(_gk);
+    const _dc=_isGF?`<span style="font-size:.7rem;font-weight:700;color:var(--teal);white-space:nowrap">${r.give||r.date||'-'}${r.collect?' ~ '+r.collect:''}</span>`:'';
+    const _pair = (a,b) => (a||b) ? ((a||0)+'/'+(b||0)) : '-';
+    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+      <td>${fi + 1}</td>
+      <td>${_dc}</td>
+      <td>${r.name||''}</td>
+      <td>${r.age||'-'}</td>
+      <td>${r.gender||'-'}</td>
+      <td style="color:#FF6B35;font-weight:600">${_pair(r.calActual,r.calTarget)}</td>
+      <td style="color:#C88A00;font-weight:600">${_pair(r.stepsActual,r.stepsTarget)}</td>
+      <td style="color:#1B90BD;font-weight:600">${_pair(r.hiActual,r.hiTarget)}</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" onclick="deleteActivity(${i})" title="삭제">×</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+async function exportActivityExcel(){
+  const actLive = activityRecords.filter(r=>!r.deleted);
+  if(!actLive.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
+  const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const headers = ['#','날짜','고객명','나이','성별','실제 칼로리(kcal)','목표 칼로리(kcal)','실제 걸음수','목표 걸음수','실제 고중강도활동(분)','목표 고중강도활동(분)'];
+  const rows = actLive.map((r,i)=>[
+    actLive.length-i, r.date||'', r.name||'', r.age||'', r.gender||'',
+    r.calActual||'', r.calTarget||'', r.stepsActual||'', r.stepsTarget||'', r.hiActual||'', r.hiTarget||''
+  ]);
+  if(typeof XLSX !== 'undefined'){
+    const ws = XLSX.utils.aoa_to_sheet([headers,...rows]);
+    ws['!cols'] = headers.map(()=>({wch:14}));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '활동량데이터');
+    const buf = XLSX.write(wb,{bookType:'xlsx',type:'array'});
+    const blob = new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=`힐마루케어_활동량_${stamp}.xlsx`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showToast('✅ 활동량 엑셀 다운로드 완료!');
   } else {
     showToast('SheetJS 라이브러리 로딩 중입니다. 잠시 후 다시 시도해 주세요.', true);
   }
@@ -8145,10 +8456,28 @@ async function exportO2Docx(){
   finally { if(btn){ btn.disabled=(oxygenRecords.length===0); btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
 }
 
+async function exportActivityDocx(){
+  if(!activityRecords.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
+  const btn = document.getElementById('btn-export-word');
+  if(btn){ btn.disabled=true; btn.textContent='생성 중…'; }
+  try {
+    const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const subtitle = `총 ${activityRecords.length}건  ·  출력일: ${new Date().toLocaleDateString('ko-KR')}`;
+    const headers = ['날짜','이름','나이','성별','실제 칼로리','목표 칼로리','실제 걸음수','목표 걸음수','실제 고강도(분)','목표 고강도(분)'];
+    const rows = activityRecords.map(r=>[
+      r.date||'', r.name||'', r.age||'', r.gender||'',
+      r.calActual||'-', r.calTarget||'-', r.stepsActual||'-', r.stepsTarget||'-', r.hiActual||'-', r.hiTarget||'-'
+    ]);
+    const blob = await _buildSimpleDocx('힐마루케어 · 활동량 기록', subtitle, headers, rows);
+    await _saveDocxBlob(blob, `힐마루케어_활동량_${stamp}.docx`);
+  } catch(e){ if(e?.code!=='declined') showToast(`워드 내보내기 실패: ${e?.message||e}`, true); }
+  finally { if(btn){ btn.disabled=(activityRecords.length===0); btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
+}
+
 async function exportWeightDocx(){ showToast('체중 워드 내보내기 기능이 제거되었습니다.', true); }
 
 async function exportAllDocx(){
-  const total = sleepRecords.length+heartRateRecords.length+bloodPressureRecords.length+weightRecords.length+womensHealthRecords.length+stressRecords.length;
+  const total = sleepRecords.length+heartRateRecords.length+bloodPressureRecords.length+weightRecords.length+womensHealthRecords.length+stressRecords.length+activityRecords.length;
   if(!total){ showToast('내보낼 데이터가 없습니다.', true); return; }
   const btn = document.getElementById('btn-export-word');
   if(btn){ btn.disabled=true; btn.textContent='생성 중…'; }
@@ -8162,7 +8491,7 @@ async function exportAllDocx(){
     function _getPK2(n,a,g){ return `${n||''}||${a||''}||${g||''}`; }
     function _getP2(n,a,g,ex){
       const k=_getPK2(n,a,g);
-      if(!_pm2.has(k)) _pm2.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',sleep:[],heart:[],bp:[],weight:[],womens:[],stress:[]},ex));
+      if(!_pm2.has(k)) _pm2.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',sleep:[],heart:[],bp:[],weight:[],womens:[],stress:[],act:[]},ex));
       const p=_pm2.get(k);
       if(ex){ if(!p.give&&ex.give) p.give=ex.give; if(!p.collect&&ex.collect) p.collect=ex.collect; if(!p.cancer&&ex.cancer) p.cancer=ex.cancer; if(!p.stage&&ex.stage) p.stage=ex.stage; }
       return p;
@@ -8173,17 +8502,18 @@ async function exportAllDocx(){
     filt2(weightRecords).forEach(r=>{ _getP2(r.name,r.age,r.gender,{give:r.give}).weight.push(r); });
     filt2(womensHealthRecords).forEach(r=>{ _getP2(r.name,r.age,r.gender,{give:r.give}).womens.push(r); });
     filt2(stressRecords).forEach(r=>{ _getP2(r.name,r.age,r.gender,{give:r.give}).stress.push(r); });
-    const _TYPS2=['sleep','heart','bp','weight','womens','stress'];
+    filt2(activityRecords).forEach(r=>{ _getP2(r.name,r.age,r.gender,{give:r.give}).act.push(r); });
+    const _TYPS2=['sleep','heart','bp','weight','womens','stress','act'];
     const allRows=[];
     _pm2.forEach(p=>{
       _TYPS2.forEach(t=>p[t].sort((a,b)=>(a.date||'')<(b.date||'')?-1:1));
       const mx=Math.max(..._TYPS2.map(t=>p[t].length),0);
       for(let i=0;i<mx;i++){
-        const s=p.sleep[i]||null,h=p.heart[i]||null,b=p.bp[i]||null,wt=p.weight[i]||null,wh=p.womens[i]||null,sv=p.stress[i]||null;
-        const dt=[s,h,b,wt,wh,sv].filter(Boolean).map(r=>r.date||'').sort()[0]||'';
-        const rg=[s,h,b,wt,wh,sv].filter(Boolean).map(r=>r.give||'').filter(Boolean).sort()[0]||p.give||'';
+        const s=p.sleep[i]||null,h=p.heart[i]||null,b=p.bp[i]||null,wt=p.weight[i]||null,wh=p.womens[i]||null,sv=p.stress[i]||null,ac=p.act[i]||null;
+        const dt=[s,h,b,wt,wh,sv,ac].filter(Boolean).map(r=>r.date||'').sort()[0]||'';
+        const rg=[s,h,b,wt,wh,sv,ac].filter(Boolean).map(r=>r.give||'').filter(Boolean).sort()[0]||p.give||'';
         const rc=(s&&s.collect)||(h&&h.collect)||(b&&b.collect)||p.collect||'';
-        allRows.push({date:dt,name:p.name,age:p.age,gender:p.gender,give:rg,collect:rc,cancer:(s&&s.cancer)||p.cancer||'',stage:(s&&s.stage)||p.stage||'',sleep:s,heart:h,bp:b,weight:wt,womens:wh,stress:sv});
+        allRows.push({date:dt,name:p.name,age:p.age,gender:p.gender,give:rg,collect:rc,cancer:(s&&s.cancer)||p.cancer||'',stage:(s&&s.stage)||p.stage||'',sleep:s,heart:h,bp:b,weight:wt,womens:wh,stress:sv,act:ac});
       }
     });
     if(!allRows.length){ showToast('내보낼 데이터가 없습니다.', true); return; }
@@ -8223,7 +8553,7 @@ async function exportAllDocx(){
     const blob = await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
     await _saveDocxBlob(blob, `힐마루케어_건강데이터_${stamp}.docx`);
   } catch(e){ if(e?.code!=='declined') showToast(`워드 내보내기 실패: ${e?.message||e}`, true); }
-  finally { const total2=sleepRecords.length+heartRateRecords.length+bloodPressureRecords.length+weightRecords.length+womensHealthRecords.length+stressRecords.length; if(btn){ btn.disabled=!total2; btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
+  finally { const total2=sleepRecords.length+heartRateRecords.length+bloodPressureRecords.length+weightRecords.length+womensHealthRecords.length+stressRecords.length+activityRecords.length; if(btn){ btn.disabled=!total2; btn.innerHTML=SVG_DL+' 워드 내보내기'; } }
 }
 
 function buildDocumentXml(imgEntries, recs){
@@ -8567,6 +8897,30 @@ function _buildAllDocXml(allRows, imgEntries){
       `</w:tr>`;
     }).join('');
     body += `<w:tbl><w:tblPr><w:tblW w:w="15398" w:type="dxa"/>${tblBdr()}<w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${s3Grid}</w:tblGrid>${s3hdr}${s3data}</w:tbl>`;
+
+    // ── 섹션 4: 활동량 기록 (7열) ──
+    if(dateRows.some(row=>row.act)){
+      body += para('', {}, {after:80});
+      body += para('4. 활동량 기록', {bold:true, sz:18, color:'1A2E3A'}, {after:40, before:0});
+      // 15398/7 ≈ 2200; 2200×6 + 2198 = 15398
+      const s4c = [2200,2200,2200,2200,2200,2200,2198];
+      const s4Grid = s4c.map(w=>`<w:gridCol w:w="${w}"/>`).join('');
+      const s4hdr = `<w:tr>`+
+        H('날짜',s4c[0])+ H('칼로리 실제(kcal)',s4c[1])+ H('칼로리 목표(kcal)',s4c[2])+
+        H('걸음수 실제',s4c[3])+ H('걸음수 목표',s4c[4])+
+        H('고강도활동 실제(분)',s4c[5])+ H('고강도활동 목표(분)',s4c[6])+
+      `</w:tr>`;
+      const s4data = dateRows.map(row=>{
+        const ac=row.act;
+        return `<w:tr>`+
+          V(row.date||'', s4c[0])+
+          V(ac?ac.calActual||'':'', s4c[1])+ V(ac?ac.calTarget||'':'', s4c[2])+
+          V(ac?ac.stepsActual||'':'', s4c[3])+ V(ac?ac.stepsTarget||'':'', s4c[4])+
+          V(ac?ac.hiActual||'':'', s4c[5])+ V(ac?ac.hiTarget||'':'', s4c[6])+
+        `</w:tr>`;
+      }).join('');
+      body += `<w:tbl><w:tblPr><w:tblW w:w="15398" w:type="dxa"/>${tblBdr()}<w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${s4Grid}</w:tblGrid>${s4hdr}${s4data}</w:tbl>`;
+    }
 
     body += para('※ 낮잠이 없는 날은 0분으로 기록합니다. BMI·정상여부·예측일 등 자동계산 항목은 엑셀에 표시된 결과를 옮겨 적으세요.', {sz:14, color:'9CA3AF'}, {before:60, after:60});
 
@@ -9067,6 +9421,7 @@ function changeRecordDate(recIdx, newDate){
       {arr:weightRecords,        save:saveWeights,        render:renderWeights},
       {arr:womensHealthRecords,  save:saveWomensHealth,   render:renderWomensHealth},
       {arr:stressRecords,        save:saveStressVital,    render:null},
+      {arr:activityRecords,      save:saveActivities,     render:renderActivities},
     ].forEach(function(t){
       const si=[];
       for(let i=0;i<t.arr.length;i++){
@@ -9103,6 +9458,7 @@ async function exportJSON(){
     weightRecords,
     womensHealthRecords,
     stressRecords,
+    activityRecords,
     participants,
     groups,
   };
@@ -9188,6 +9544,14 @@ function importJSON(input){
         const toAdd = data.stressRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         stressRecords = [...toAdd, ...stressRecords];
         try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
+      }
+      // 활동량 기록 병합
+      if(data.activityRecords && Array.isArray(data.activityRecords)){
+        const ex = new Set(activityRecords.map(r=>r.date+'|'+r.name));
+        const toAdd = data.activityRecords.filter(r=>!ex.has(r.date+'|'+r.name));
+        activityRecords = [...toAdd, ...activityRecords];
+        try{ localStorage.setItem('hilmaru_act', JSON.stringify(activityRecords)); }catch(e){}
+        renderActivities();
       }
       // 참여자 복원
       if(data.participants && Array.isArray(data.participants)){
@@ -9944,6 +10308,125 @@ function drawSleepScoreChart(canvasId, sr7, allDates){
       const hit = canvas._arBars.find(b=>sx>=b.x1&&sx<=b.x2&&sy>=b.y1&&sy<=b.y2);
       if(hit){
         tipVal.textContent = `수면점수: ${hit.valLabel.split('\n')[0].replace('수면점수: ','')}`;
+        tipDate.textContent = hit.label + ' (' + hit.date + ')';
+        tip.style.display='block';
+        tip.style.left=(e.clientX-36)+'px';
+        tip.style.top=(e.clientY-80)+'px';
+        canvas.style.cursor='pointer';
+      } else {
+        tip.style.display='none';
+        canvas.style.cursor='default';
+      }
+    });
+    canvas.addEventListener('mouseleave', ()=>{ if(tip) tip.style.display='none'; });
+  }
+}
+
+// 활동량(칼로리/걸음수/고강도활동) 7일 막대그래프 — drawSleepScoreChart와 동일 패턴, 값/색상만 파라미터화
+function drawActivityBarChart(canvasId, actRecs, allDates, field, opts){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const color = (opts && opts.color) || '#FF6B35';
+  const label = (opts && opts.label) || '';
+  const unit  = (opts && opts.unit) || '';
+
+  const data = allDates.map((date, i) => {
+    const rec = (actRecs||[]).find(r=>r.date===date)||null;
+    const val = rec ? (parseFloat(rec[field])||null) : null;
+    return { date, label:'Day'+(i+1), val };
+  });
+  const hasAny = data.some(d=>d.val!==null);
+  if(!hasAny){
+    ctx.fillStyle='#aaa'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(label+' 데이터 없음', W/2, H/2);
+    return;
+  }
+
+  const padL=36, padR=10, padT=14, padB=28;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const n = data.length;
+  const maxVal = Math.max(...data.map(d=>d.val||0)) * 1.2 || 1;
+
+  // 격자선
+  ctx.strokeStyle = 'rgba(0,0,0,.07)';
+  ctx.lineWidth = 1;
+  const steps = 4;
+  for(let s=0; s<=steps; s++){
+    const v = maxVal * s/steps;
+    const y = padT + chartH * (1 - s/steps);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+chartW,y); ctx.stroke();
+    ctx.fillStyle='rgba(0,0,0,.38)'; ctx.font='9px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(Math.round(v), padL-3, y+3);
+  }
+
+  // 막대 그리기
+  const radius = 5;
+  const barW = Math.max(12, Math.min(52, (chartW / n) * 0.6));
+  const step = chartW / n;
+
+  canvas._arBars = [];
+  data.forEach((d, i) => {
+    const cx = padL + step * i + step / 2;
+    if(d.val === null){
+      ctx.setLineDash([2,2]);
+      ctx.strokeStyle='rgba(0,0,0,.15)'; ctx.lineWidth=1;
+      const yBase = padT + chartH;
+      ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, yBase); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='rgba(0,0,0,.3)'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(d.label, cx, H-padB+11);
+      return;
+    }
+    const barH = Math.max(4, (d.val / maxVal) * chartH);
+    const x = cx - barW/2;
+    const y = padT + chartH - barH;
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + barW - radius, y);
+    ctx.quadraticCurveTo(x + barW, y, x + barW, y + radius);
+    ctx.lineTo(x + barW, y + barH);
+    ctx.lineTo(x, y + barH);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = color;
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.val+unit, cx, y - 3);
+
+    ctx.fillStyle = 'rgba(0,0,0,.5)';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText(d.label, cx, H - padB + 11);
+
+    canvas._arBars.push({
+      x1: x, x2: x + barW, y1: y, y2: y + barH,
+      date: d.date, label: d.label,
+      valLabel: `${label}: ${d.val}${unit}`
+    });
+  });
+
+  if(!canvas._actEvt){
+    canvas._actEvt = true;
+    const tip = document.getElementById('ar-bar-tooltip');
+    const tipVal = document.getElementById('ar-bar-tooltip-val');
+    const tipDate = document.getElementById('ar-bar-tooltip-date');
+    canvas.addEventListener('mousemove', e => {
+      if(!tip||!canvas._arBars) return;
+      const rect = canvas.getBoundingClientRect();
+      const sx = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const sy = (e.clientY - rect.top) * (canvas.height / rect.height);
+      const hit = canvas._arBars.find(b=>sx>=b.x1&&sx<=b.x2&&sy>=b.y1&&sy<=b.y2);
+      if(hit){
+        tipVal.textContent = hit.valLabel;
         tipDate.textContent = hit.label + ' (' + hit.date + ')';
         tip.style.display='block';
         tip.style.left=(e.clientX-36)+'px';
@@ -10949,13 +11432,14 @@ function openAllReport(name, age, gender){
   const wt7 = getPerson7(weightRecords);
   const wh7 = getPerson7(womensHealthRecords);
   const sv7 = getPerson7(stressRecords);
+  const act7 = getPerson7(activityRecords);
 
   const firstSr = sr7[0]||null;
-  const firstAny = firstSr || hr7[0] || bp7[0] || o27[0] || wt7[0] || wh7[0] || sv7[0] || null;
+  const firstAny = firstSr || hr7[0] || bp7[0] || o27[0] || wt7[0] || wh7[0] || sv7[0] || act7[0] || null;
 
   // 날짜 수집 — 모든 데이터 타입 날짜 UNION (데이터패널과 동일하게 7일 전체 표시)
   const srDates = [...new Set(sr7.map(r=>r.date||'').filter(Boolean))].sort();
-  const otherDatesAll = [...new Set([...hr7,...o27,...sv7].map(r=>r.date||'').filter(Boolean))];
+  const otherDatesAll = [...new Set([...hr7,...o27,...sv7,...act7].map(r=>r.date||'').filter(Boolean))];
   const allDates = [...new Set([...srDates, ...otherDatesAll])].sort();
 
   document.getElementById('ar-title').textContent = name+' 통합 건강 보고서';
@@ -10991,6 +11475,12 @@ function openAllReport(name, age, gender){
       ])}
       ${sr7.some(r=>r.score)?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:4px">🔮 수면점수 추이 ('+allDates.length+'일)</div>'+chartBox('ar-sr7-canvas',680,120):''}
       ${sr7.length>0?'<div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin:10px 0 4px">📊 수면 단계 분포 (7일)</div>'+chartBox('ar-sl7-canvas',680,130):''}
+      ${act7.length>0?`
+        <div style="font-size:.72rem;font-weight:700;color:var(--text-3);margin:10px 0 4px">🔥 활동량 추이 (${allDates.length}일)</div>
+        <div style="font-size:.65rem;color:var(--text-3);margin-bottom:2px">칼로리(kcal)</div>${chartBox('ar-act-cal-canvas',680,110)}
+        <div style="font-size:.65rem;color:var(--text-3);margin:8px 0 2px">걸음수</div>${chartBox('ar-act-steps-canvas',680,110)}
+        <div style="font-size:.65rem;color:var(--text-3);margin:8px 0 2px">고강도 활동(분)</div>${chartBox('ar-act-hi-canvas',680,110)}
+      `:''}
     </div>` : '';
 
   // ── Day별 섹션 ──
@@ -11193,6 +11683,12 @@ function openAllReport(name, age, gender){
     // 7일 수면 단계 스택 바 차트
     if(sr7.length>0){
       drawSleepStage7Chart('ar-sl7-canvas', sr7, allDates);
+    }
+    // 활동량 3종 막대 차트 (칼로리/걸음수/고강도활동)
+    if(act7.length>0){
+      drawActivityBarChart('ar-act-cal-canvas', act7, allDates, 'calActual', {color:'#FF6B35', label:'칼로리', unit:'kcal'});
+      drawActivityBarChart('ar-act-steps-canvas', act7, allDates, 'stepsActual', {color:'#FFB300', label:'걸음수', unit:'보'});
+      drawActivityBarChart('ar-act-hi-canvas', act7, allDates, 'hiActual', {color:'#29B6F6', label:'고강도활동', unit:'분'});
     }
   });
 }

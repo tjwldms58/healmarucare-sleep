@@ -976,6 +976,8 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .data-table th.freeze-col { z-index: 3; }
 .data-table td.freeze-col { background: var(--surface); }
 .data-table tbody tr:hover td.freeze-col { background: var(--surface-2); }
+/* 대상자(이름)가 바뀌는 첫 행 구분선 — td에 직접 적용해 틀고정(freeze-col) 열을 포함한 행 전체에 표시 */
+.data-table tr.row-divider > td { border-top: 3px solid var(--teal); }
 /* 수면 테이블 전용 컴팩트 */
 #records-table { font-size: .7rem; }
 #records-table th { padding: 7px 5px; font-size: .58rem; }
@@ -4579,7 +4581,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.77';
+const APP_VER = '6.80';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5212,7 +5214,7 @@ function renderHeartRates(){
     const _gk=(r.name||'')+'|'+(r.age||'')+'|'+(r.gender||'');
     const _isGF=!_hrSeen.has(_gk);if(_isGF)_hrSeen.add(_gk);
     const _dc=_isGF?`<span style="font-size:.7rem;font-weight:700;color:var(--teal);white-space:nowrap">${r.give||r.date||'-'}${r.collect?' ~ '+r.collect:''}</span>`:'';
-    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+    return `<tr${_isGF?' class="row-divider"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
       <td>${r.name||''}</td>
@@ -5578,7 +5580,7 @@ function renderAllRecords(){
     const acStepsCell = ac && (ac.stepsActual||ac.stepsTarget) ? `${ac.stepsActual||'-'} / ${ac.stepsTarget||'-'}` : '-';
     const acHiCell    = ac && (ac.hiActual||ac.hiTarget)     ? `${ac.hiActual||'-'} / ${ac.hiTarget||'-'}`     : '-';
 
-    return `<tr style="${_aIsGF?'cursor:pointer;border-top:2px solid rgba(92,200,184,.3)':'cursor:default'}" ${_aIsGF?`onclick="openAllReport('${escapedName}','${escapedAge}','${escapedGender}')" title="클릭하면 통합 건강 보고서가 열립니다 (첫째날 행)"`:''}>
+    return `<tr class="${_aIsGF?'row-divider':''}" style="${_aIsGF?'cursor:pointer':'cursor:default'}" ${_aIsGF?`onclick="openAllReport('${escapedName}','${escapedAge}','${escapedGender}')" title="클릭하면 통합 건강 보고서가 열립니다 (첫째날 행)"`:''}>
       <td>${idx + 1}</td>
       <td>${_aDc}</td>
       <td><strong>${row.name}</strong></td>
@@ -5853,7 +5855,7 @@ function renderBloodPressures(){
     const badge = st
       ? `<span style="display:inline-block;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700;background:${st.bg};color:${st.color}">${st.icon} ${st.label}</span>${st.recheck ? ' <span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.64rem;font-weight:700;background:#F0A930;color:#fff;margin-left:2px">⚠️ 재측정</span>' : ''}`
       : '-';
-    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+    return `<tr${_isGF?' class="row-divider"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
       <td>${r.name||''}</td>
@@ -6009,7 +6011,7 @@ function renderOxygens(){
       ? `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:.66rem;font-weight:700;background:${st.bg};color:${st.color}">${st.icon} ${st.label}</span>`
       : '-';
     const _pct = v => (v!==undefined && v!==null && v!=='') ? v+'%' : '-';
-    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+    return `<tr${_isGF?' class="row-divider"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
       <td>${r.name||''}</td>
@@ -6146,7 +6148,7 @@ function renderActivities(){
     const _isGF=!_actSeen.has(_gk);if(_isGF)_actSeen.add(_gk);
     const _dc=_isGF?`<span style="font-size:.7rem;font-weight:700;color:var(--teal);white-space:nowrap">${r.give||r.date||'-'}${r.collect?' ~ '+r.collect:''}</span>`:'';
     const _pair = (a,b) => (a||b) ? ((a||0)+'/'+(b||0)) : '-';
-    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+    return `<tr${_isGF?' class="row-divider"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
       <td>${r.name||''}</td>
@@ -6310,7 +6312,7 @@ function renderWeights(){
     const _dc=_isGF?`<span style="font-size:.7rem;font-weight:700;color:var(--teal);white-space:nowrap">${r.give||r.date||'-'}${r.collect?' ~ '+r.collect:''}</span>`:'';
     const st = r.bmi ? getBmiStatus(parseFloat(r.bmi)) : null;
     const bmiLabel = st ? `<span style="font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;background:${st.bg};color:${st.color}">${st.label}</span>` : '-';
-    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+    return `<tr${_isGF?' class="row-divider"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
       <td>${r.name||''}</td>
@@ -6436,7 +6438,7 @@ function renderWomensHealth(){
     const _gk=(r.name||'')+'|'+(r.age||'')+'|'+(r.gender||'');
     const _isGF=!_whSeen.has(_gk);if(_isGF)_whSeen.add(_gk);
     const _dc=_isGF?`<span style="font-size:.7rem;font-weight:700;color:var(--teal);white-space:nowrap">${r.give||r.date||'-'}${r.collect?' ~ '+r.collect:''}</span>`:'';
-    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+    return `<tr${_isGF?' class="row-divider"':''}>
     <td>${fi + 1}</td>
     <td>${_dc}</td>
     <td>${r.name||''}</td>
@@ -6539,7 +6541,7 @@ function renderStressVital(){
       : '<span style="color:var(--text-3);font-size:.75rem">—</span>';
     const vitalLabel = r.vital ? `<span style="font-size:.95rem;font-weight:800;color:${parseInt(r.vital)>=80?'#1E9E5A':parseInt(r.vital)>=50?'#0E8FA3':'#C07820'}">${r.vital}</span>` : '-';
     const finalVitalLabel = r.finalVital ? `<span style="font-size:.9rem;font-weight:800;color:${parseInt(r.finalVital)>=80?'#1E9E5A':parseInt(r.finalVital)>=50?'#0E8FA3':'#C07820'};border:1.5px solid currentColor;border-radius:6px;padding:1px 6px">${r.finalVital}</span>` : '-';
-    return `<tr${_isGF?' style="border-top:2px solid rgba(92,200,184,.3)"':''}>
+    return `<tr${_isGF?' class="row-divider"':''}>
       <td>${fi + 1}</td>
       <td>${_dc}</td>
       <td>${r.name||''}</td>
@@ -6726,7 +6728,7 @@ function renderSurveyTable(){
     const isFirstOfGroup = !seenGroups.has(r.groupId);
     seenGroups.add(r.groupId);
     // 전체 탭과 동일한 방식: 고객(그룹)이 바뀌는 첫 행 위에 구분선 표시
-    const trStyle = isFirstOfGroup ? ' style="border-top:2px solid rgba(92,200,184,.3)"' : '';
+    const trStyle = isFirstOfGroup ? ' class="row-divider"' : '';
     const nameCell = isFirstOfGroup
       ? `<div style="display:flex;align-items:center;gap:4px">
            <input type="text" value="${(r.name||'').replace(/"/g,'&quot;')}" onchange="updateSurveyName('${r.groupId}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:.78rem;width:78px;font-weight:700">
@@ -9417,7 +9419,7 @@ function renderRecords(){
       ? `<span style="font-size:.7rem;font-weight:700;color:var(--teal);white-space:nowrap">${r.give||r.date||'-'}${r.collect?' ~ '+r.collect:''}</span>`
       : '';
     return `
-    <tr style="${_isGF?'border-top:2px solid rgba(92,200,184,.3)':''}">
+    <tr class="${_isGF?'row-divider':''}">
       <td style="color:var(--text-3)">${j+1}</td>
       <td>${_dateCell}</td>
       <td><strong>${r.name}</strong></td>

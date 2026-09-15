@@ -4581,7 +4581,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.80';
+const APP_VER = '6.81';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5390,10 +5390,11 @@ function renderAllRecords(){
     return personMap.get(k);
   }
 
-  // 그룹 필터
-  const filteredSleep = (currentFilterGroup === '전체')
+  // 그룹 필터 (+ 소프트 삭제된 기록은 8개 도메인 전부 제외 — 개별 탭과 동일하게)
+  const filteredSleep = ((currentFilterGroup === '전체')
     ? sleepRecords
-    : sleepRecords.filter(r => (r.group||'') === currentFilterGroup);
+    : sleepRecords.filter(r => (r.group||'') === currentFilterGroup))
+    .filter(r => !r.deleted);
   const isFiltered = currentFilterGroup !== '전체';
 
   // 필터된 수면기록의 이름+나이+성별 키 집합
@@ -5404,37 +5405,37 @@ function renderAllRecords(){
       { group:r.group||'', cancer:r.cancer||'', nurse:r.nurse||'', stage:r.stage||'', give:r.give||r.date||'', collect:r.collect||'' });
     p.sleep.push(r);
   });
-  heartRateRecords.forEach(r => {
+  heartRateRecords.filter(r=>!r.deleted).forEach(r => {
     const pk = getPKey(r.name||'', r.age||'', r.gender||'');
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).heart.push(r);
   });
-  bloodPressureRecords.forEach(r => {
+  bloodPressureRecords.filter(r=>!r.deleted).forEach(r => {
     const pk = getPKey(r.name||'', r.age||'', r.gender||'');
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).bp.push(r);
   });
-  oxygenRecords.forEach(r => {
+  oxygenRecords.filter(r=>!r.deleted).forEach(r => {
     const pk = getPKey(r.name||'', r.age||'', r.gender||'');
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).o2.push(r);
   });
-  weightRecords.forEach(r => {
+  weightRecords.filter(r=>!r.deleted).forEach(r => {
     const pk = getPKey(r.name||'', r.age||'', r.gender||'');
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).weight.push(r);
   });
-  womensHealthRecords.forEach(r => {
+  womensHealthRecords.filter(r=>!r.deleted).forEach(r => {
     const pk = getPKey(r.name||'', r.age||'', r.gender||'');
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).womens.push(r);
   });
-  stressRecords.forEach(r => {
+  stressRecords.filter(r=>!r.deleted).forEach(r => {
     const pk = getPKey(r.name||'', r.age||'', r.gender||'');
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).stress.push(r);
   });
-  activityRecords.forEach(r => {
+  activityRecords.filter(r=>!r.deleted).forEach(r => {
     const pk = getPKey(r.name||'', r.age||'', r.gender||'');
     if(isFiltered && !activePKeys.has(pk)) return;
     getOrCreatePerson(r.name||'', r.age||'', r.gender||'', {}).act.push(r);

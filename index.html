@@ -512,6 +512,29 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   color: #ff8080; font-size: .76rem;
   margin: .6rem 0 0; display: none;
 }
+/* ── 읽기전용 모드 배너 & 잠금 스타일 (권한 기능) ── */
+#hm-readonly-banner {
+  display: none; position: sticky; top: 0; left: 0; right: 0; z-index: 500;
+  background: #B8860B; color: #fff; text-align: center;
+  padding: 7px 10px; font-size: .82rem; font-weight: 700;
+  align-items: center; justify-content: center; gap: 6px;
+}
+html.hm-readonly .del-btn,
+html.hm-readonly .row-action-btn,
+html.hm-readonly .restore-btn,
+html.hm-readonly .btn-add,
+html.hm-readonly .btn-submit,
+html.hm-readonly .btn-clear,
+html.hm-readonly #btn-add-group,
+html.hm-readonly #btn-survey-import,
+html.hm-readonly [onclick^="saveEdit"] {
+  display: none !important;
+}
+html.hm-readonly input:disabled,
+html.hm-readonly select:disabled,
+html.hm-readonly textarea:disabled {
+  opacity: .55; cursor: not-allowed;
+}
 #hm-login-box .lbox-hint {
   color: rgba(255,255,255,.2); font-size: .62rem;
   margin-top: 1.3rem;
@@ -1647,6 +1670,9 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
   button { display:none !important; }
 }
 </style>
+
+<!-- 읽기전용 모드 안내 배너 (권한 기능) -->
+<div id="hm-readonly-banner">👁 읽기모드 이용자입니다</div>
 
 <!-- ═══════════════════════════════════════
      LOGIN OVERLAY
@@ -4736,7 +4762,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.89';
+const APP_VER = '6.90';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4744,38 +4770,55 @@ const APP_VER = '6.89';
 (function(){
   const _KEY      = 'hm_login_v1';
   const _USER_KEY = 'hm_login_user';
+  const _ROLE_KEY = 'hm_login_role';
   const _PW       = 'healmarucare!';
   const _USERS_KEY = 'hm_login_users_v1';
   const _DEFAULT_USERS = ['이청용','허수빈','민경필','차규은','서지은','원선재','김철민'];
+
+  // 사용자 권한 데이터 정규화: 예전 형식(이름 문자열 배열)도 {name, role} 객체로 변환해 호환
+  function _normalizeUsers(arr){
+    return (arr||[]).map(function(u){
+      if(typeof u === 'string') return {name:u, role:'edit'};
+      return {name:(u&&u.name)||'', role:(u&&u.role==='readonly')?'readonly':'edit'};
+    }).filter(function(u){ return u.name; });
+  }
 
   // 로그인 가능한 사용자 목록: localStorage에 저장해 관리자모드(시스템 로그)에서 추가/삭제 가능하게 함
   function _loadUsers(){
     try{
       const saved = JSON.parse(localStorage.getItem(_USERS_KEY) || 'null');
-      if(Array.isArray(saved) && saved.length) return saved;
+      if(Array.isArray(saved) && saved.length) return _normalizeUsers(saved);
     }catch(e){}
-    return _DEFAULT_USERS.slice();
+    return _normalizeUsers(_DEFAULT_USERS);
   }
   let _USERS = _loadUsers();
   function _saveUsers(){
     try{ localStorage.setItem(_USERS_KEY, JSON.stringify(_USERS)); }catch(e){}
   }
 
-  // 관리자모드(시스템 로그)에서 사용 — 사용자 목록 조회/추가/삭제
-  window.hmGetUsers = function(){ return _USERS.slice(); };
+  // 관리자모드(시스템 로그)에서 사용 — 사용자 목록 조회/추가/삭제/권한변경
+  window.hmGetUsers = function(){ return _USERS.map(function(u){ return {name:u.name, role:u.role}; }); };
   window.hmAddUser = function(name){
     name = (name||'').trim();
     if(!name) return {ok:false, msg:'이름을 입력해 주세요.'};
-    if(_USERS.indexOf(name) !== -1) return {ok:false, msg:'이미 등록된 이름입니다.'};
-    _USERS.push(name);
+    if(_USERS.some(function(u){ return u.name === name; })) return {ok:false, msg:'이미 등록된 이름입니다.'};
+    _USERS.push({name:name, role:'edit'});
     _saveUsers();
     return {ok:true};
   };
   window.hmRemoveUser = function(name){
-    const i = _USERS.indexOf(name);
+    const i = _USERS.findIndex(function(u){ return u.name === name; });
     if(i === -1) return {ok:false, msg:'목록에 없는 이름입니다.'};
     if(_USERS.length <= 1) return {ok:false, msg:'최소 1명은 남아있어야 합니다.'};
     _USERS.splice(i, 1);
+    _saveUsers();
+    return {ok:true};
+  };
+  // 사용자 권한 변경: 'edit'(입력/수정 가능) 또는 'readonly'(읽기 전용)
+  window.hmSetUserRole = function(name, role){
+    const u = _USERS.find(function(x){ return x.name === name; });
+    if(!u) return {ok:false, msg:'목록에 없는 이름입니다.'};
+    u.role = (role === 'readonly') ? 'readonly' : 'edit';
     _saveUsers();
     return {ok:true};
   };
@@ -4795,11 +4838,20 @@ const APP_VER = '6.89';
     return sessionStorage.getItem(_USER_KEY) || '알수없음';
   };
 
+  // 현재 로그인한 사용자의 권한 반환 ('edit' 기본값, 'readonly'는 읽기 전용)
+  window.hmGetRole = function(){
+    return sessionStorage.getItem(_ROLE_KEY) || 'edit';
+  };
+  window.hmIsReadonly = function(){
+    return hmGetRole() === 'readonly';
+  };
+
   // 페이지 로드 시 로그인 상태 확인
   function _checkAuth(){
     _copyLogo();
     if(sessionStorage.getItem(_KEY) === '1'){
       _hide();
+      if(typeof _hmApplyReadonlyUI === 'function') _hmApplyReadonlyUI();
     } else {
       _show();
       setTimeout(function(){ document.getElementById('hm-login-id').focus(); }, 100);
@@ -4813,12 +4865,15 @@ const APP_VER = '6.89';
     const err   = document.getElementById('hm-login-err');
     const userId = idEl ? idEl.value.trim() : '';
     const pw     = pwEl ? pwEl.value : '';
+    const matched = _USERS.find(function(u){ return u.name === userId; });
 
-    if(_USERS.indexOf(userId) !== -1 && pw === _PW){
+    if(matched && pw === _PW){
       sessionStorage.setItem(_KEY, '1');
       sessionStorage.setItem(_USER_KEY, userId);
+      sessionStorage.setItem(_ROLE_KEY, matched.role || 'edit');
       err.style.display = 'none';
       _hide();
+      if(typeof _hmApplyReadonlyUI === 'function') _hmApplyReadonlyUI();
       // 로그인 성공 로그 + 직전 "페이지접속/알수없음" 항목 이름으로 소급 업데이트
       setTimeout(function(){
         _devLog('로그인', '사용자: ' + userId);
@@ -4854,6 +4909,10 @@ const APP_VER = '6.89';
     _devLog('로그아웃', '사용자: ' + user);
     sessionStorage.removeItem(_KEY);
     sessionStorage.removeItem(_USER_KEY);
+    sessionStorage.removeItem(_ROLE_KEY);
+    document.documentElement.classList.remove('hm-readonly');
+    const _roBanner = document.getElementById('hm-readonly-banner');
+    if(_roBanner) _roBanner.style.display = 'none';
     _show();
     const idEl = document.getElementById('hm-login-id');
     const pwEl = document.getElementById('hm-login-pw');
@@ -4864,6 +4923,45 @@ const APP_VER = '6.89';
 
   document.addEventListener('DOMContentLoaded', _checkAuth);
 })();
+
+/* ═══════════════════════════════════════
+   읽기전용 권한 적용 (권한 기능)
+   - 조회/필터용 항목은 제외하고, 데이터를 입력·수정·저장하는
+     모든 input/select/textarea를 비활성화하고 수정·삭제·저장·추가
+     버튼을 숨긴다. 참여자 관리표처럼 새로 렌더링되는 표에도
+     계속 적용되도록 MutationObserver로 감시한다.
+═══════════════════════════════════════ */
+const _HM_RO_INPUT_EXEMPT = ['group-filter','nurse-filter','hm-login-id','hm-login-pw','_hm_auth_pw','_hm_user_new'];
+let _hmReadonlyObserver = null, _hmReadonlyObsTimer = null;
+function _hmDisablePass(){
+  const ro = (typeof hmIsReadonly === 'function') && hmIsReadonly();
+  document.querySelectorAll('input, select, textarea').forEach(function(el){
+    if(_HM_RO_INPUT_EXEMPT.indexOf(el.id) !== -1) return;
+    if(ro){
+      if(!el.disabled){ el.dataset.hmAutoDisabled = '1'; el.disabled = true; }
+    } else if(el.dataset.hmAutoDisabled === '1'){
+      el.disabled = false;
+      delete el.dataset.hmAutoDisabled;
+    }
+  });
+}
+function _hmApplyReadonlyUI(){
+  const ro = (typeof hmIsReadonly === 'function') && hmIsReadonly();
+  document.documentElement.classList.toggle('hm-readonly', ro);
+  const banner = document.getElementById('hm-readonly-banner');
+  if(banner) banner.style.display = ro ? 'flex' : 'none';
+  _hmDisablePass();
+  if(ro && !_hmReadonlyObserver){
+    _hmReadonlyObserver = new MutationObserver(function(){
+      clearTimeout(_hmReadonlyObsTimer);
+      _hmReadonlyObsTimer = setTimeout(_hmDisablePass, 60);
+    });
+    _hmReadonlyObserver.observe(document.body, {childList:true, subtree:true});
+  } else if(!ro && _hmReadonlyObserver){
+    _hmReadonlyObserver.disconnect();
+    _hmReadonlyObserver = null;
+  }
+}
 
 // Set version badge
 (function(){ const el = document.getElementById('app-version-badge'); if(el) el.textContent = 'v' + APP_VER; })();
@@ -4960,12 +5058,25 @@ function _hmRenderUserList(){
   const wrap = document.getElementById('_hm_user_list');
   if(!wrap || typeof hmGetUsers !== 'function') return;
   const users = hmGetUsers();
-  wrap.innerHTML = users.map(function(name){
+  wrap.innerHTML = users.map(function(u){
+    const name = u.name, role = u.role || 'edit';
+    const nameEsc = name.replace(/'/g,"\\'");
     return '<span style="display:flex;align-items:center;gap:5px;background:rgba(92,200,184,.1);border:1px solid rgba(92,200,184,.25);color:#c8d8e8;border-radius:20px;padding:4px 6px 4px 12px;font-size:.75rem">'
       + name
-      + '<button onclick="_hmRemoveUserClick(\'' + name.replace(/'/g,"\\'") + '\')" title="삭제" style="background:rgba(255,100,100,.15);border:none;color:#ff8080;border-radius:50%;width:18px;height:18px;line-height:18px;text-align:center;cursor:pointer;font-size:.7rem;padding:0">×</button>'
+      + '<select onchange="_hmChangeUserRole(\'' + nameEsc + '\', this.value)" title="권한" style="background:#0e1520;border:1px solid rgba(255,255,255,.15);color:#c8d8e8;border-radius:10px;padding:2px 4px;font-size:.68rem;font-family:inherit">'
+      + '<option value="edit"' + (role==='edit'?' selected':'') + '>입력/수정 가능</option>'
+      + '<option value="readonly"' + (role==='readonly'?' selected':'') + '>읽기 전용</option>'
+      + '</select>'
+      + '<button onclick="_hmRemoveUserClick(\'' + nameEsc + '\')" title="삭제" style="background:rgba(255,100,100,.15);border:none;color:#ff8080;border-radius:50%;width:18px;height:18px;line-height:18px;text-align:center;cursor:pointer;font-size:.7rem;padding:0">×</button>'
       + '</span>';
   }).join('');
+}
+function _hmChangeUserRole(name, role){
+  if(typeof hmSetUserRole !== 'function') return;
+  hmSetUserRole(name, role);
+  _hmRenderUserList();
+  _devLog('로그인사용자권한변경', '이름: ' + name + ', 권한: ' + (role==='readonly'?'읽기전용':'입력/수정가능'));
+  showToast('권한이 변경되었습니다.');
 }
 function _hmAddUserClick(){
   const inp = document.getElementById('_hm_user_new');

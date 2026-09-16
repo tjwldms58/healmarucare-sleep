@@ -4736,7 +4736,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.85';
+const APP_VER = '6.88';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5107,9 +5107,100 @@ function setGsStatus(state, text){
   txt.textContent = text;
 }
 
+/* ═══════════════════════════════════════
+   수면 그래프 이미지 전용 저장소 — IndexedDB
+   (localStorage는 용량 한도가 작아 이미지가 쌓이면 저장이 실패할 수 있어,
+    용량이 큰 이미지 데이터만 IndexedDB로 분리 저장. 그 외 데이터/기능은 동일)
+═══════════════════════════════════════ */
+const _IMG_DB_NAME = 'hilmaru_sleep_img_db';
+const _IMG_DB_STORE = 'images';
+let _imgDBP = null;
+function _openImgDB(){
+  if(_imgDBP) return _imgDBP;
+  _imgDBP = new Promise((resolve, reject)=>{
+    if(!window.indexedDB){ reject(new Error('IndexedDB 미지원')); return; }
+    const req = indexedDB.open(_IMG_DB_NAME, 1);
+    req.onupgradeneeded = function(e){
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(_IMG_DB_STORE)) db.createObjectStore(_IMG_DB_STORE);
+    };
+    req.onsuccess = function(e){ resolve(e.target.result); };
+    req.onerror = function(e){ reject(e.target.error); };
+  });
+  return _imgDBP;
+}
+function _imgDbPut(key, value){
+  return _openImgDB().then(db=>new Promise((resolve,reject)=>{
+    const tx = db.transaction(_IMG_DB_STORE, 'readwrite');
+    tx.objectStore(_IMG_DB_STORE).put(value, key);
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = (e)=>reject(e.target.error);
+  }));
+}
+function _imgDbGet(key){
+  return _openImgDB().then(db=>new Promise((resolve,reject)=>{
+    const tx = db.transaction(_IMG_DB_STORE, 'readonly');
+    const req = tx.objectStore(_IMG_DB_STORE).get(key);
+    req.onsuccess = ()=>resolve(req.result || null);
+    req.onerror = (e)=>reject(e.target.error);
+  }));
+}
+function _imgDbDelete(key){
+  return _openImgDB().then(db=>new Promise((resolve,reject)=>{
+    const tx = db.transaction(_IMG_DB_STORE, 'readwrite');
+    tx.objectStore(_IMG_DB_STORE).delete(key);
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = (e)=>reject(e.target.error);
+  }));
+}
+function _ensureImgKey(r){
+  if(!r._imgKey) r._imgKey = 'img_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+  return r._imgKey;
+}
+// sleepRecords를 localStorage에 쓰기 전, 이미지 필드는 IndexedDB에 분리 저장하고
+// localStorage에는 이미지가 빠진 가벼운 사본만 저장(용량 한도 회피). 메모리 상의
+// sleepRecords 자체는 건드리지 않으므로 화면 표시·내보내기 등 다른 동작은 전부 그대로 동작함.
+function _persistSleepRecordsLocal(list){
+  const light = list.map(r=>{
+    const hasImg = !!(r.img || (r.imgs && r.imgs.length));
+    if(!hasImg){
+      if(r._imgKey){
+        const oldKey = r._imgKey;
+        delete r._imgKey;
+        _imgDbDelete(oldKey).catch(()=>{});
+      }
+      const {_imgKey, ...rest} = r;
+      return rest;
+    }
+    const key = _ensureImgKey(r);
+    _imgDbPut(key, {img:r.img||null, imgs:r.imgs||[], imgW:r.imgW||0, imgH:r.imgH||0})
+      .catch(e=>console.warn('[IMG-DB] 이미지 저장 실패:', e && e.message));
+    const {img, imgs, imgW, imgH, ...rest} = r;
+    return {...rest, _imgKey:key};
+  });
+  localStorage.setItem('hilmaru_records', JSON.stringify(light));
+}
+// localStorage 캐시에서 불러온 sleepRecords에 IndexedDB의 이미지를 다시 채워 넣음
+async function _hydrateSleepImages(list){
+  if(!Array.isArray(list)) return;
+  for(const r of list){
+    if(!r._imgKey) continue;
+    try{
+      const data = await _imgDbGet(r._imgKey);
+      if(data){
+        r.img = data.img || null;
+        r.imgs = data.imgs || [];
+        if(data.imgW) r.imgW = data.imgW;
+        if(data.imgH) r.imgH = data.imgH;
+      }
+    }catch(e){ console.warn('[IMG-DB] 이미지 불러오기 실패:', e && e.message); }
+  }
+}
+
 async function initStorage(){
   // 먼저 localStorage 캐시로 빠르게 렌더
   try{ const s=localStorage.getItem('hilmaru_records'); if(s) sleepRecords=JSON.parse(s); }catch(e){}
+  await _hydrateSleepImages(sleepRecords);
   try{ const h=localStorage.getItem('hilmaru_hr'); if(h) heartRateRecords=JSON.parse(h); }catch(e){}
   try{ const b=localStorage.getItem('hilmaru_bp'); if(b) bloodPressureRecords=JSON.parse(b); }catch(e){}
   try{ const o=localStorage.getItem('hilmaru_o2'); if(o) oxygenRecords=JSON.parse(o); }catch(e){}
@@ -5179,7 +5270,7 @@ async function initStorage(){
     if(data.groups && Array.isArray(data.groups) && data.groups.length > 0) groups = data.groups;
 
     // 캐시 갱신
-    try{ localStorage.setItem('hilmaru_records', JSON.stringify(sleepRecords)); }catch(e){}
+    try{ _persistSleepRecordsLocal(sleepRecords); }catch(e){}
     try{ localStorage.setItem('hilmaru_hr', JSON.stringify(heartRateRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_bp', JSON.stringify(bloodPressureRecords)); }catch(e){}
     try{ localStorage.setItem('hilmaru_o2', JSON.stringify(oxygenRecords)); }catch(e){}
@@ -5215,7 +5306,7 @@ async function syncToSheet(){
     setGsStatus('syncing', '저장 중…');
     try{
       // base64 이미지 제외, Drive URL(imgUrl/imgUrls)만 저장
-      const sleepNoImg = sleepRecords.map(r => { const {img, imgW, imgH, imgs, ...rest} = r; return rest; });
+      const sleepNoImg = sleepRecords.map(r => { const {img, imgW, imgH, imgs, _imgKey, ...rest} = r; return rest; });
       // 대상자 설문의 answerImg(PDF 인식 미리보기, base64)는 임시 참고용이라 시트에는 저장하지 않음
       const surveyNoImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
       const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, activityRecords, deviceRecords, surveyRecords: surveyNoImg, profileRecords, participants, groups });
@@ -5383,8 +5474,10 @@ document.addEventListener('click', function(e){
   }
 });
 function saveRecords(){
-  try{ localStorage.setItem('hilmaru_records', JSON.stringify(sleepRecords)); }catch(e){}
-  updateSaveStatus();
+  let _saveOk = true;
+  try{ _persistSleepRecordsLocal(sleepRecords); }catch(e){ _saveOk = false; }
+  updateSaveStatus(_saveOk);
+  if(!_saveOk) showToast('⚠ 저장 공간이 부족해 자동저장에 실패했습니다. 오래된 사진이 있는 기록을 삭제한 뒤 다시 저장해 주세요.', true);
   const hasData = sleepRecords.length > 0;
   const btn = document.getElementById('btn-export');
   if(btn) btn.disabled = !hasData;
@@ -7140,7 +7233,7 @@ function renderDataManageTable(){
 
 // 파일명에서 고객명 추정 (확장자/설문 관련 단어/날짜 패턴 제거)
 function guessSurveyCustomerName(filename){
-  let n = String(filename||'').replace(/\.(docx|pdf)$/i, '');
+  let n = String(filename||'').replace(/\.(docx|pdf|xlsx)$/i, '');
   n = n.replace(/\d{4}[-._]?\d{1,2}[-._]?\d{1,2}/g, '');
   n = n.replace(/(디바이스\s*수거\s*설문|수거\s*설문|설문지|설문|survey|questionnaire)/gi, '');
   n = n.replace(/[_\-.()\[\]]+/g, ' ').trim();
@@ -7353,11 +7446,23 @@ async function extractXlsxSurveyAnswers(file){
   const targetSheet = wb.SheetNames.find(n => n.includes('수거설문') || n.includes('설문')) || wb.SheetNames[0];
   const ws = wb.Sheets[targetSheet];
   const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-  const norm = s => String(s||'').replace(/\s/g,'');
+  // 번호매김(1./①), 공백, 문장부호 차이가 있어도 질문을 인식하도록 폭넓게 정규화
+  const norm = s => String(s||'')
+    .replace(/^[\s　]*[①-⑳0-9]+[.)\-\s]*/, '')
+    .replace(/[\s　?？:：,.()（）\[\]]/g, '');
   return SURVEY_TEMPLATE.map(item => {
     const qNorm = norm(item.q);
-    const hit = rows.find(r => norm(r[1]) === qNorm);
-    return hit ? String(hit[2]||'').trim() : '';
+    for(const r of rows){
+      const ci = r.findIndex(cell => norm(cell) === qNorm);
+      if(ci === -1) continue;
+      // 질문이 들어있는 칸 다음부터, 값이 있는 첫 칸을 답변으로 사용 (열 위치가 밀려 있어도 대응)
+      let answer = '';
+      for(let k = ci+1; k < r.length; k++){
+        if(String(r[k]||'').trim() !== ''){ answer = String(r[k]).trim(); break; }
+      }
+      return answer;
+    }
+    return '';
   });
 }
 
@@ -8491,13 +8596,18 @@ let downloadsApi = null;
 /* ═══════════════════════════════════════
    AUTO-SAVE STATUS
 ═══════════════════════════════════════ */
-function updateSaveStatus(){
+function updateSaveStatus(ok){
   const el = document.getElementById('save-status');
   const txt = document.getElementById('save-status-text');
   if(!el||!txt) return;
   if(sleepRecords.length === 0){
     txt.textContent = '저장 없음';
     el.classList.add('empty');
+    return;
+  }
+  if(ok === false){
+    txt.textContent = '⚠ 저장 실패 (용량 부족)';
+    el.classList.remove('empty');
     return;
   }
   const now = new Date();
@@ -9412,8 +9522,9 @@ function previewImg(input){
         const canvas = document.createElement('canvas');
         canvas.width=w; canvas.height=h;
         canvas.getContext('2d').drawImage(imgEl,0,0,w,h);
-        // PNG(무손실) 저장 — 수면 그래프처럼 선/텍스트가 있는 이미지에 JPEG 변환 시 화질 손상 방지
-        const b64data = canvas.toDataURL('image/png');
+        // JPEG(고화질) 저장 — 무손실 PNG는 용량이 너무 커서 localStorage 저장용량 초과로
+        // 저장이 조용히 실패하는 원인이 되므로, 화질 저하가 거의 없는 고품질 JPEG로 저장
+        const b64data = canvas.toDataURL('image/jpeg', 0.85);
         pendingImgs[idx] = b64data;
         pendingImgsDims[idx] = {w, h};
         _renderPendingThumbs();
@@ -9541,8 +9652,8 @@ async function addEditImages(input){
           if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
           const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
           canvas.getContext('2d').drawImage(imgEl,0,0,w,h);
-          // PNG(무손실) 저장
-          res(canvas.toDataURL('image/png'));
+          // JPEG(고화질) 저장 — 무손실 PNG는 localStorage 저장용량 초과로 저장이 조용히 실패하는 원인이 됨
+          res(canvas.toDataURL('image/jpeg', 0.85));
         };
         imgEl.src = dataUrl;
       });

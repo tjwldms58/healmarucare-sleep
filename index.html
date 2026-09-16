@@ -4736,7 +4736,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.88';
+const APP_VER = '6.89';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -7442,7 +7442,9 @@ let _surveyImporting = false;
 async function extractXlsxSurveyAnswers(file){
   if(typeof XLSX === 'undefined') throw new Error('엑셀 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
   const buf = await file.arrayBuffer();
-  const wb = XLSX.read(buf, {type:'array', raw:false});
+  // cellDates:true — 날짜 서식이 적용된 셀을 엑셀 내부 일련번호(예: 46276)가 아니라
+  // JS Date 객체로 읽어오도록 함 (그래야 "2026-09-16"처럼 사람이 보는 형태로 변환 가능)
+  const wb = XLSX.read(buf, {type:'array', cellDates:true});
   const targetSheet = wb.SheetNames.find(n => n.includes('수거설문') || n.includes('설문')) || wb.SheetNames[0];
   const ws = wb.Sheets[targetSheet];
   const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
@@ -7450,6 +7452,14 @@ async function extractXlsxSurveyAnswers(file){
   const norm = s => String(s||'')
     .replace(/^[\s　]*[①-⑳0-9]+[.)\-\s]*/, '')
     .replace(/[\s　?？:：,.()（）\[\]]/g, '');
+  // 날짜 셀(Date 객체)은 "YYYY-MM-DD" 형태의 문자열로, 그 외에는 그대로 문자열로 변환
+  const cellToText = v => {
+    if(v instanceof Date && !isNaN(v)){
+      const yy=v.getFullYear(), mm=String(v.getMonth()+1).padStart(2,'0'), dd=String(v.getDate()).padStart(2,'0');
+      return `${yy}-${mm}-${dd}`;
+    }
+    return String(v==null?'':v).trim();
+  };
   return SURVEY_TEMPLATE.map(item => {
     const qNorm = norm(item.q);
     for(const r of rows){
@@ -7458,7 +7468,8 @@ async function extractXlsxSurveyAnswers(file){
       // 질문이 들어있는 칸 다음부터, 값이 있는 첫 칸을 답변으로 사용 (열 위치가 밀려 있어도 대응)
       let answer = '';
       for(let k = ci+1; k < r.length; k++){
-        if(String(r[k]||'').trim() !== ''){ answer = String(r[k]).trim(); break; }
+        const t = cellToText(r[k]);
+        if(t !== ''){ answer = t; break; }
       }
       return answer;
     }

@@ -1839,6 +1839,20 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <tbody id="_hm_log_tbody"></tbody>
       </table>
     </div>
+    <!-- 로그인 사용자 관리 -->
+    <div style="padding:12px 20px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0">
+      <div style="color:#e8f0fe;font-weight:700;font-size:.82rem;margin-bottom:8px">👤 로그인 사용자 관리</div>
+      <div id="_hm_user_list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="_hm_user_new" placeholder="추가할 이름 입력" onkeydown="if(event.key==='Enter'){event.preventDefault();_hmAddUserClick();}"
+          style="flex:1;background:#0e1520;border:1px solid rgba(255,255,255,.15);color:#e8f0fe;border-radius:7px;padding:7px 10px;font-size:.78rem;font-family:inherit;outline:none">
+        <button onclick="_hmAddUserClick()"
+          style="background:#1E7A3E;border:none;color:#fff;border-radius:7px;padding:7px 14px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">
+          + 추가
+        </button>
+      </div>
+      <div id="_hm_user_err" style="display:none;color:#ff8080;font-size:.72rem;margin-top:6px"></div>
+    </div>
     <!-- 하단 버튼 -->
     <div style="display:flex;gap:8px;align-items:center;padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;flex-wrap:wrap">
       <button onclick="exportJSON()"
@@ -1960,6 +1974,16 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                   <div class="hs-card-sub">수면 기기 입출고 기록</div>
                 </div>
                 <span class="hs-card-arrow" style="color:#6B5CE7">›</span>
+              </div>
+
+              <!-- 수면 설문 (대상자 설문 18문항 직접 입력) -->
+              <div class="hs-card" onclick="openPhoneScreen('survey')" style="grid-column:span 2;flex-direction:row;align-items:center;gap:12px;min-height:70px;background:rgba(14,143,163,.07);border:1.5px solid rgba(14,143,163,.25)">
+                <div class="hs-card-icon-wrap" style="margin-bottom:0;flex-shrink:0;background:var(--teal)">📝</div>
+                <div style="flex:1;min-width:0">
+                  <div class="hs-card-name" style="color:var(--teal)">수면 설문</div>
+                  <div class="hs-card-sub">대상자 설문(디바이스 수거 설문) 18문항 입력</div>
+                </div>
+                <span class="hs-card-arrow" style="color:var(--teal)">›</span>
               </div>
 
             </div><!-- /hs-card-grid -->
@@ -2871,6 +2895,100 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
             <div style="height:8px"></div>
           </div>
 
+          <div class="phone-body" id="phone-survey-body" style="display:none">
+            <div class="form-section-head">대상자 정보</div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>고객명</label>
+                <input type="text" id="svy-name" placeholder="이름 입력">
+              </div>
+              <div class="form-field">
+                <label>날짜</label>
+                <input type="date" id="svy-date">
+              </div>
+            </div>
+            <div class="form-section-head">7일 종합</div>
+            <div class="form-field">
+              <label>지난 7일의 전반적인 수면 만족도</label>
+              <textarea id="svy-q1" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>아침 피로감</label>
+              <textarea id="svy-q2" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>잠들기 어려웠던 날</label>
+              <textarea id="svy-q3" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-section-head">증상</div>
+            <div class="form-field">
+              <label>잠을 방해한 증상</label>
+              <textarea id="svy-q4" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>통증이 있었던 날</label>
+              <textarea id="svy-q5" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>열감·야간발한이 있었던 날</label>
+              <textarea id="svy-q6" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>야간뇨가 있었던 날</label>
+              <textarea id="svy-q7" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-section-head">생활습관</div>
+            <div class="form-field">
+              <label>오후 카페인을 섭취한 날</label>
+              <textarea id="svy-q8" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>긴 낮잠을 잔 날</label>
+              <textarea id="svy-q9" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>음주·야식·늦은 운동·스마트폰 등</label>
+              <textarea id="svy-q10" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-section-head">치료·복약</div>
+            <div class="form-field">
+              <label>측정기간 중 치료 또는 복약 변화 여부</label>
+              <textarea id="svy-q11" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>변화가 있었다면 구체적인 내용</label>
+              <textarea id="svy-q12" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-section-head">개선목표</div>
+            <div class="form-field">
+              <label>가장 개선하고 싶은 수면 문제</label>
+              <textarea id="svy-q13" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-section-head">특정일</div>
+            <div class="form-field">
+              <label>가장 잘 잤다고 느낀 날짜</label>
+              <textarea id="svy-q14" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>잘 잤다고 느낀 이유</label>
+              <textarea id="svy-q15" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>가장 못 잤다고 느낀 날짜</label>
+              <textarea id="svy-q16" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-field">
+              <label>못 잤다고 느낀 이유</label>
+              <textarea id="svy-q17" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div class="form-section-head">기타</div>
+            <div class="form-field">
+              <label>고객이 추가로 말씀한 내용</label>
+              <textarea id="svy-q18" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            </div>
+            <div style="height:8px"></div>
+          </div>
+
           <!-- Footer Buttons -->
           <div class="phone-footer">
             <button class="btn-submit" id="phone-submit-btn" onclick="phoneSubmit()">7일치 저장</button>
@@ -2905,6 +3023,10 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
               </select>
               <button onclick="toggleGroupInput()" id="btn-add-group" title="새 폴더 추가"
                 style="background:var(--teal-light);border:none;color:var(--teal);border-radius:8px;padding:5px 9px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;line-height:1">+</button>
+              <select id="nurse-filter" onchange="setFilterNurse(this.value)" title="담당간호사별로 필터링합니다"
+                style="font-size:.72rem;font-weight:600;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 8px;cursor:pointer;font-family:inherit;max-width:140px">
+                <option value="전체">👥 전체 간호사</option>
+              </select>
               <div id="group-input-popup" style="display:none;position:absolute;top:38px;right:0;background:var(--surface);border:1.5px solid var(--teal);border-radius:10px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,.13);z-index:200;flex-direction:column;gap:6px;min-width:190px">
                 <input id="group-input-val" type="text" placeholder="폴더 이름 입력"
                   style="border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:.75rem;font-family:inherit;color:var(--text-1);outline:none;width:100%;box-sizing:border-box"
@@ -2936,9 +3058,9 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 워드
               </button>
             </div>
-            <!-- 대상자 설문 탭 전용: 불러오기(워드/PDF) · 내보내기(엑셀) -->
+            <!-- 대상자 설문 탭 전용: 불러오기(워드/PDF/엑셀) · 내보내기(엑셀) -->
             <div id="survey-tools" style="display:none;gap:4px">
-              <input type="file" id="survey-import-input" accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple style="display:none" onchange="handleSurveyImport(this.files)">
+              <input type="file" id="survey-import-input" accept=".docx,.pdf,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple style="display:none" onchange="handleSurveyImport(this.files)">
               <button class="btn-export" id="btn-survey-import" onclick="document.getElementById('survey-import-input').click()" style="background:#0E8FA3">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 9V2M3.5 4.5l3-3 3 3M2 11h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 불러오기
@@ -4095,8 +4217,9 @@ function openPhoneScreen(type){
   const deviceBody  = document.getElementById('phone-device-body');
   const profileBody = document.getElementById('phone-profile-body');
   const activityBody = document.getElementById('phone-activity-body');
+  const surveyBody  = document.getElementById('phone-survey-body');
   const titleEl     = document.getElementById('phone-form-title');
-  [sleepBody, hrBody, bpBody, o2Body, weightBody, womensBody, stressBody, deviceBody, profileBody, activityBody].forEach(el=>{ if(el) el.style.display='none'; });
+  [sleepBody, hrBody, bpBody, o2Body, weightBody, womensBody, stressBody, deviceBody, profileBody, activityBody, surveyBody].forEach(el=>{ if(el) el.style.display='none'; });
   const today = new Date().toISOString().slice(0,10);
   if(type === 'sleep'){
     sleepBody.style.display = '';
@@ -4142,8 +4265,17 @@ function openPhoneScreen(type){
     activityBody.style.display = '';
     titleEl.childNodes[titleEl.childNodes.length-1].textContent = ' 활동량 입력';
     updateActivityGauge();
+  } else if(type === 'survey'){
+    surveyBody.style.display = '';
+    titleEl.childNodes[titleEl.childNodes.length-1].textContent = ' 수면 설문 입력';
+    const svyDate = document.getElementById('svy-date');
+    if(svyDate && !svyDate.value) svyDate.value = today;
+    const submitBtn = document.getElementById('phone-submit-btn');
+    if(submitBtn) submitBtn.textContent = '저장';
+    const clearBtn = document.getElementById('phone-clear-btn');
+    if(clearBtn) clearBtn.textContent = '초기화';
   }
-  if(type !== 'device' && type !== 'profile'){
+  if(type !== 'device' && type !== 'profile' && type !== 'survey'){
     const submitBtn = document.getElementById('phone-submit-btn');
     if(submitBtn && submitBtn.textContent === '저장') submitBtn.textContent = '7일치 저장';
   }
@@ -4476,6 +4608,7 @@ const _PHONE_TO_BUF={sleep:'sleep',heart:'hr',bp:'bp',o2:'o2',weight:'wt',womens
 function phoneSubmit(){
   if(_currentPhoneType === 'device'){ saveDeviceRecord(); return; }
   if(_currentPhoneType === 'profile'){ saveProfileRecord(); return; }
+  if(_currentPhoneType === 'survey'){ saveSurveyFromPhone(); return; }
   const bufType=_PHONE_TO_BUF[_currentPhoneType];
   if(bufType) _submitAllDays(bufType);
 }
@@ -4492,6 +4625,7 @@ function phoneClear(){
   else if(_currentPhoneType==='profile') clearProfileForm();
   else if(_currentPhoneType==='device') clearDeviceForm();
   else if(_currentPhoneType==='activity') clearActivityForm();
+  else if(_currentPhoneType==='survey') clearSurveyForm();
 }
 
 /* ═══════════════════════════════════════
@@ -4581,7 +4715,21 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.81';
+// 레코드 자체에 nurse(담당간호사)가 없으면 수면 기록에서 동적으로 조회 (그룹 조회와 동일한 방식)
+function _getRecordNurse(r){
+  if(r.nurse) return r.nurse;
+  if(!r.name) return '';
+  let match = sleepRecords.find(s =>
+    s.name === r.name &&
+    (r.age    ? String(s.age)    === String(r.age)    : true) &&
+    (r.gender ? s.gender === r.gender : true) &&
+    s.nurse
+  );
+  if(!match) match = sleepRecords.find(s => s.name === r.name && s.nurse);
+  return match ? (match.nurse || '') : '';
+}
+
+const APP_VER = '6.84';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4590,7 +4738,40 @@ const APP_VER = '6.81';
   const _KEY      = 'hm_login_v1';
   const _USER_KEY = 'hm_login_user';
   const _PW       = 'healmarucare!';
-  const _USERS    = ['이청용','허수빈','민경필','차규은','서지은','원선재','김철민'];
+  const _USERS_KEY = 'hm_login_users_v1';
+  const _DEFAULT_USERS = ['이청용','허수빈','민경필','차규은','서지은','원선재','김철민'];
+
+  // 로그인 가능한 사용자 목록: localStorage에 저장해 관리자모드(시스템 로그)에서 추가/삭제 가능하게 함
+  function _loadUsers(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(_USERS_KEY) || 'null');
+      if(Array.isArray(saved) && saved.length) return saved;
+    }catch(e){}
+    return _DEFAULT_USERS.slice();
+  }
+  let _USERS = _loadUsers();
+  function _saveUsers(){
+    try{ localStorage.setItem(_USERS_KEY, JSON.stringify(_USERS)); }catch(e){}
+  }
+
+  // 관리자모드(시스템 로그)에서 사용 — 사용자 목록 조회/추가/삭제
+  window.hmGetUsers = function(){ return _USERS.slice(); };
+  window.hmAddUser = function(name){
+    name = (name||'').trim();
+    if(!name) return {ok:false, msg:'이름을 입력해 주세요.'};
+    if(_USERS.indexOf(name) !== -1) return {ok:false, msg:'이미 등록된 이름입니다.'};
+    _USERS.push(name);
+    _saveUsers();
+    return {ok:true};
+  };
+  window.hmRemoveUser = function(name){
+    const i = _USERS.indexOf(name);
+    if(i === -1) return {ok:false, msg:'목록에 없는 이름입니다.'};
+    if(_USERS.length <= 1) return {ok:false, msg:'최소 1명은 남아있어야 합니다.'};
+    _USERS.splice(i, 1);
+    _saveUsers();
+    return {ok:true};
+  };
 
   function _show(){ document.getElementById('hm-login-overlay').style.display='flex'; }
   function _hide(){ document.getElementById('hm-login-overlay').style.display='none'; }
@@ -4763,7 +4944,49 @@ function _hmOpenLog(){
   if(badge) badge.textContent = '내 IP: ' + _hmCachedIp;
   // 로그 렌더
   _hmRenderLog();
+  _hmRenderUserList();
   _devLog('시스템로그열기', '관리자 접속');
+}
+
+// 로그인 사용자 관리 (시스템 로그 모달 내) — 코드 수정 없이 로그인 가능한 이름을 직접 추가/삭제
+function _hmRenderUserList(){
+  const wrap = document.getElementById('_hm_user_list');
+  if(!wrap || typeof hmGetUsers !== 'function') return;
+  const users = hmGetUsers();
+  wrap.innerHTML = users.map(function(name){
+    return '<span style="display:flex;align-items:center;gap:5px;background:rgba(92,200,184,.1);border:1px solid rgba(92,200,184,.25);color:#c8d8e8;border-radius:20px;padding:4px 6px 4px 12px;font-size:.75rem">'
+      + name
+      + '<button onclick="_hmRemoveUserClick(\'' + name.replace(/'/g,"\\'") + '\')" title="삭제" style="background:rgba(255,100,100,.15);border:none;color:#ff8080;border-radius:50%;width:18px;height:18px;line-height:18px;text-align:center;cursor:pointer;font-size:.7rem;padding:0">×</button>'
+      + '</span>';
+  }).join('');
+}
+function _hmAddUserClick(){
+  const inp = document.getElementById('_hm_user_new');
+  const err = document.getElementById('_hm_user_err');
+  if(!inp || typeof hmAddUser !== 'function') return;
+  const newName = inp.value.trim();
+  const res = hmAddUser(inp.value);
+  if(err){ err.style.display = res.ok ? 'none' : 'block'; err.textContent = res.ok ? '' : (res.msg||'추가하지 못했습니다.'); }
+  if(res.ok){
+    inp.value = '';
+    _hmRenderUserList();
+    _devLog('로그인사용자추가', '이름: ' + newName);
+    showToast('로그인 사용자가 추가되었습니다.');
+  }
+}
+function _hmRemoveUserClick(name){
+  if(typeof hmRemoveUser !== 'function') return;
+  if(!confirm('"' + name + '" 님을 로그인 사용자 목록에서 삭제할까요?')) return;
+  const res = hmRemoveUser(name);
+  const err = document.getElementById('_hm_user_err');
+  if(!res.ok){
+    if(err){ err.style.display='block'; err.textContent = res.msg||'삭제하지 못했습니다.'; }
+    return;
+  }
+  if(err) err.style.display='none';
+  _hmRenderUserList();
+  _devLog('로그인사용자삭제', '이름: ' + name);
+  showToast('로그인 사용자가 삭제되었습니다.');
 }
 
 function _hmCloseLog(){
@@ -4861,6 +5084,8 @@ let profileRecords = []; // 대상자 인적사항(부대표님 엑셀 추가내
 /* ── Group / Folder state ── */
 let groups = ['삼성화재pilot1','삼성화재pilot2'];
 let currentFilterGroup = '전체';
+/* ── 담당간호사 필터 상태 (그룹 필터와 동일한 방식, 모든 데이터 탭에 적용) ── */
+let currentFilterNurse = '전체';
 
 /* ═══════════════════════════════════════
    STORAGE LAYER (Google Sheets + localStorage 캐시)
@@ -5068,6 +5293,32 @@ function setFilterGroup(val){
   else if(_currentDataTab === 'stress') renderStressVital();
 }
 
+// 담당간호사 필터 드롭다운: 현재 저장된 수면 기록에서 실제로 쓰인 간호사 이름만 모아 옵션으로 구성
+function rebuildNurseSelect(){
+  const sel = document.getElementById('nurse-filter');
+  if(!sel) return;
+  const cur = sel.value || '전체';
+  const nurseSet = new Set();
+  sleepRecords.forEach(r => { if(!r.deleted && r.nurse) nurseSet.add(r.nurse); });
+  const nurseList = [...nurseSet].sort((a,b)=>a.localeCompare(b,'ko'));
+  sel.innerHTML = '<option value="전체">👥 전체 간호사</option>' +
+    nurseList.map(n=>`<option value="${n}">👤 ${n}</option>`).join('');
+  sel.value = nurseList.includes(cur) ? cur : '전체';
+}
+
+function setFilterNurse(val){
+  currentFilterNurse = val || '전체';
+  renderRecords();
+  // 현재 열려 있는 탭도 즉시 갱신
+  if(_currentDataTab === 'all')    renderAllRecords();
+  else if(_currentDataTab === 'heart')  renderHeartRates();
+  else if(_currentDataTab === 'bp')     renderBloodPressures();
+  else if(_currentDataTab === 'o2')     renderOxygens();
+  else if(_currentDataTab === 'weight') renderWeights();
+  else if(_currentDataTab === 'womens') renderWomensHealth();
+  else if(_currentDataTab === 'stress') renderStressVital();
+}
+
 function toggleGroupInput(){
   const popup = document.getElementById('group-input-popup');
   if(!popup) return;
@@ -5204,6 +5455,7 @@ function renderHeartRates(){
     ? heartRateRecords.map((r,i)=>({r,i}))
     : heartRateRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(hrFiltered.length === 0){
     tbody.innerHTML = `<tr id="empty-hr-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">❤️</div><div class="empty-msg">저장된 심박수 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 심박수를 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -5390,12 +5642,13 @@ function renderAllRecords(){
     return personMap.get(k);
   }
 
-  // 그룹 필터 (+ 소프트 삭제된 기록은 8개 도메인 전부 제외 — 개별 탭과 동일하게)
+  // 그룹 필터 + 간호사 필터 (+ 소프트 삭제된 기록은 8개 도메인 전부 제외 — 개별 탭과 동일하게)
   const filteredSleep = ((currentFilterGroup === '전체')
     ? sleepRecords
     : sleepRecords.filter(r => (r.group||'') === currentFilterGroup))
-    .filter(r => !r.deleted);
-  const isFiltered = currentFilterGroup !== '전체';
+    .filter(r => !r.deleted)
+    .filter(r => currentFilterNurse==='전체' || (r.nurse||'')===currentFilterNurse);
+  const isFiltered = currentFilterGroup !== '전체' || currentFilterNurse !== '전체';
 
   // 필터된 수면기록의 이름+나이+성별 키 집합
   const activePKeys = new Set(filteredSleep.map(r => getPKey(r.name||'', r.age||'', r.gender||'')));
@@ -5842,6 +6095,7 @@ function renderBloodPressures(){
     ? bloodPressureRecords.map((r,i)=>({r,i}))
     : bloodPressureRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(bpFiltered.length === 0){
     tbody.innerHTML = `<tr id="empty-bp-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🩸</div><div class="empty-msg">저장된 혈압 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈압을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -5997,6 +6251,7 @@ function renderOxygens(){
     ? oxygenRecords.map((r,i)=>({r,i}))
     : oxygenRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(o2Filtered.length === 0){
     tbody.innerHTML = `<tr id="empty-o2-row"><td colspan="8"><div class="empty-state"><div class="empty-icon" style="font-size:1.4rem;font-weight:900">O₂</div><div class="empty-msg">저장된 혈중산소 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 혈중산소포화도를 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -6138,6 +6393,7 @@ function renderActivities(){
     ? activityRecords.map((r,i)=>({r,i}))
     : activityRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(actFiltered.length === 0){
     tbody.innerHTML = `<tr id="empty-act-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🔥</div><div class="empty-msg">저장된 활동량 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면 하단 '운동'을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -6301,6 +6557,7 @@ function renderWeights(){
     ? weightRecords.map((r,i)=>({r,i}))
     : weightRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(wtFiltered.length===0){
     tbody.innerHTML = `<tr id="empty-weight-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-msg">저장된 체중 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 체중을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -6429,6 +6686,7 @@ function renderWomensHealth(){
     ? womensHealthRecords.map((r,i)=>({r,i}))
     : womensHealthRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(whFiltered.length===0){
     tbody.innerHTML = `<tr id="empty-womens-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">🌸</div><div class="empty-msg">저장된 여성건강 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 여성건강을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -6523,6 +6781,7 @@ function renderStressVital(){
     ? stressRecords.map((r,i)=>({r,i}))
     : stressRecords.map((r,i)=>({r,i})).filter(({r})=>_getRecordGroup(r)===currentFilterGroup))
     .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(svFiltered.length===0){
     tbody.innerHTML = `<tr id="empty-stress-row"><td colspan="11"><div class="empty-state"><div class="empty-icon">🧠⚡</div><div class="empty-msg">저장된 스트레스·활력 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 스트레스·활력을 선택 후 입력해 보세요</div></div></td></tr>`;
@@ -6591,6 +6850,34 @@ function clearDeviceForm(){
     const el=document.getElementById(id); if(el) el.value='';
   });
   const sel=document.getElementById('dv-task'); if(sel) sel.value='';
+}
+
+// 데이터입력 폰화면 "수면 설문" — 대상자 설문 18문항을 파일 불러오기 없이 직접 입력해 저장
+function saveSurveyFromPhone(){
+  const name = ((document.getElementById('svy-name')||{}).value||'').trim();
+  const date = (document.getElementById('svy-date')||{}).value||'';
+  if(!name){ alert('고객명을 입력해 주세요.'); return; }
+  const today = new Date().toISOString().slice(0,10);
+  const groupId = 'SV-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,7);
+  SURVEY_TEMPLATE.forEach((item, i) => {
+    const el = document.getElementById('svy-q'+(i+1));
+    surveyRecords.push({
+      groupId, date: date||today, name, cat: item.cat, q: item.q,
+      answer: ((el&&el.value)||'').trim(), answerImg: null
+    });
+  });
+  saveSurveyRecords();
+  renderSurveyTable();
+  clearSurveyForm();
+  closePhoneScreen();
+  const svyTab = document.querySelector('.dt-tab[onclick*="survey"]');
+  if(svyTab) switchDataTab('survey', svyTab);
+  showToast('대상자 설문이 저장되었습니다.');
+}
+
+function clearSurveyForm(){
+  ['svy-name','svy-date'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  for(let i=1;i<=18;i++){ const el=document.getElementById('svy-q'+i); if(el) el.value=''; }
 }
 
 function deleteDeviceRecord(idx){
@@ -7048,14 +7335,31 @@ async function extractPdfSurveyMarks(file){
 }
 
 let _surveyImporting = false;
+// "설문지만.xlsx" 형식의 엑셀 파일에서 18문항 응답 추출 — B열(질문) 텍스트로 행을 찾아 C열(응답)을 읽음
+// (행 번호가 조금 달라도 안전하도록 질문 텍스트로 매칭)
+async function extractXlsxSurveyAnswers(file){
+  if(typeof XLSX === 'undefined') throw new Error('엑셀 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, {type:'array', raw:false});
+  const targetSheet = wb.SheetNames.find(n => n.includes('수거설문') || n.includes('설문')) || wb.SheetNames[0];
+  const ws = wb.Sheets[targetSheet];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+  const norm = s => String(s||'').replace(/\s/g,'');
+  return SURVEY_TEMPLATE.map(item => {
+    const qNorm = norm(item.q);
+    const hit = rows.find(r => norm(r[1]) === qNorm);
+    return hit ? String(hit[2]||'').trim() : '';
+  });
+}
+
 async function handleSurveyImport(fileList){
   const input = document.getElementById('survey-import-input');
   if(_surveyImporting) return;
   const files = Array.from(fileList||[]);
   if(!files.length){ if(input) input.value=''; return; }
-  const invalid = files.filter(f => !/\.(docx|pdf)$/i.test(f.name));
+  const invalid = files.filter(f => !/\.(docx|pdf|xlsx)$/i.test(f.name));
   if(invalid.length){
-    alert('Word(.docx) 또는 PDF 파일만 불러올 수 있습니다.\n허용되지 않은 파일: ' + invalid.map(f=>f.name).join(', '));
+    alert('Word(.docx), PDF, 엑셀(.xlsx) 파일만 불러올 수 있습니다.\n허용되지 않은 파일: ' + invalid.map(f=>f.name).join(', '));
     if(input) input.value='';
     return;
   }
@@ -7068,6 +7372,8 @@ async function handleSurveyImport(fileList){
         if(/\.docx$/i.test(file.name)){
           const text = await extractDocxText(file);
           answers = matchSurveyAnswers(text);
+        } else if(/\.xlsx$/i.test(file.name)){
+          answers = await extractXlsxSurveyAnswers(file);
         } else {
           marks = await extractPdfSurveyMarks(file);
           answers = marks.map(m => m.answer);
@@ -9387,13 +9693,15 @@ function restoreRecord(idx){
 
 function renderRecords(){
   rebuildGroupSelects();
+  rebuildNurseSelect();
   const tbody = document.getElementById('records-tbody');
   const badge = document.getElementById('record-count-badge');
   // Filter by group (+ 소프트 삭제된 기록은 숨김)
   const filtered = (currentFilterGroup === '전체'
     ? sleepRecords.map((r,i)=>({r,i}))
     : sleepRecords.map((r,i)=>({r,i})).filter(({r})=>(r.group||'') === currentFilterGroup))
-    .filter(({r})=>!r.deleted);
+    .filter(({r})=>!r.deleted)
+    .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse);
   badge.textContent = filtered.length+'건';
   if(filtered.length===0){
     tbody.innerHTML=`<tr id="empty-record-row"><td colspan="20">

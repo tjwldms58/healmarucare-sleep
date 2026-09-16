@@ -2175,6 +2175,10 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <input type="number" id="f-sleep-hr" placeholder="예) 58" min="20" max="250" step="1">
               </div>
               <div class="form-field">
+                <label>수면 중 평균 HRV (ms)</label>
+                <input type="number" id="f-sleep-hrv" placeholder="예) 45" min="0" max="300" step="1">
+              </div>
+              <div class="form-field">
                 <label>평균 혈중 산소포화도 (%)</label>
                 <input type="number" id="f-sleep-o2" placeholder="예) 97" min="0" max="100" step="0.1">
               </div>
@@ -3117,6 +3121,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <th>수면시간</th>
                 <th>낮잠(분)</th>
                 <th>수면심박수(BPM)</th>
+                <th>수면중HRV(ms)</th>
                 <th>산소포화도(%)</th>
                 <th>호흡수(BPM)</th>
                 <th>수면준비시간(분)</th>
@@ -3131,7 +3136,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
             </thead>
             <tbody id="all-tbody">
               <tr id="empty-all-row">
-                <td colspan="40" style="padding:0;border:none">
+                <td colspan="41" style="padding:0;border:none">
                   <div class="empty-state" style="position:sticky;left:0;width:600px">
                     <div class="empty-icon">📋</div>
                     <div class="empty-msg">저장된 건강 기록이 없습니다</div>
@@ -3174,6 +3179,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <th>수면</th>
                 <th>낮잠</th>
                 <th>심박수(BPM)</th>
+                <th>HRV(ms)</th>
                 <th>산소(%)</th>
                 <th>호흡수(BPM)</th>
                 <th>수면준비시간(분)</th>
@@ -3764,6 +3770,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
       <div style="font-size:.7rem;font-weight:700;color:var(--teal);letter-spacing:.05em;padding:4px 0 2px;border-top:1px solid var(--border-soft);margin-top:4px">수면 생체신호</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="form-field"><label>수면시 평균 심박수 (BPM)</label><input type="number" id="ef-sleep-hr" min="20" max="250" step="1" placeholder="예) 58"></div>
+        <div class="form-field"><label>수면 중 평균 HRV (ms)</label><input type="number" id="ef-sleep-hrv" min="0" max="300" step="1" placeholder="예) 45"></div>
         <div class="form-field"><label>평균 혈중 산소포화도 (%)</label><input type="number" id="ef-sleep-o2" min="0" max="100" step="0.1" placeholder="예) 97"></div>
         <div class="form-field"><label>평균 호흡수 (BPM)</label><input type="number" id="ef-sleep-rr" min="0" max="100" step="0.1" placeholder="예) 15"></div>
         <div class="form-field"><label>수면준비시간 (분)</label><input type="number" id="ef-sleep-onset" min="0" max="999" step="1" placeholder="예) 12"></div>
@@ -4292,7 +4299,7 @@ function closePhoneScreen(){
    7일치 DAY BUFFER SYSTEM  (v5.61)
 ═══════════════════════════════════════ */
 const _DAY_FIELDS = {
-  sleep: ['f-date','f-rem-pct','f-rem-h','f-rem-m','f-light-pct','f-light-h','f-light-m','f-deep-pct','f-deep-h','f-deep-m','f-awake-h','f-awake-m','f-awake-count','f-eff','f-total-h','f-total-m','f-nap-h','f-nap-m','f-sleep-hr','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time','f-sleep-score','f-xiaomi-guide'],
+  sleep: ['f-date','f-rem-pct','f-rem-h','f-rem-m','f-light-pct','f-light-h','f-light-m','f-deep-pct','f-deep-h','f-deep-m','f-awake-h','f-awake-m','f-awake-count','f-eff','f-total-h','f-total-m','f-nap-h','f-nap-m','f-sleep-hr','f-sleep-hrv','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time','f-sleep-score','f-xiaomi-guide'],
   hr:    ['hr-date','hr-range','hr-avg','hr-rest','hr-mean'],
   bp:    ['bp-date','bp-sys','bp-dia'],
   o2:    ['o2-date','o2-daily-max','o2-daily-min','o2-daily-avg'],
@@ -4525,7 +4532,7 @@ function _submitAllDays(bufType){
         deepPct:buf['f-deep-pct']||'', deepTime:_combineTotalHM(buf['f-deep-h'],buf['f-deep-m']),
         awake:_combineTotalMin(buf['f-awake-h'],buf['f-awake-m']), awakeCount:buf['f-awake-count']||'', eff:buf['f-eff']||'',
         total:_combineTotalHM(buf['f-total-h'],buf['f-total-m']), nap:_combineTotalMin(buf['f-nap-h'],buf['f-nap-m']),
-        sleepHr:buf['f-sleep-hr']||'', sleepO2:buf['f-sleep-o2']||'', sleepRr:buf['f-sleep-rr']||'', sleepOnset:buf['f-sleep-onset']||'',
+        sleepHr:buf['f-sleep-hr']||'', sleepHrv:buf['f-sleep-hrv']||'', sleepO2:buf['f-sleep-o2']||'', sleepRr:buf['f-sleep-rr']||'', sleepOnset:buf['f-sleep-onset']||'',
         sleepTime:buf['f-sleep-time']||'', wakeTime:buf['f-wake-time']||'', xiaomiGuide:buf['f-xiaomi-guide']||'',
         score:buf['f-sleep-score']||'', scoreLabel:_calcScoreLabel(buf['f-sleep-score']||''),
         imgUrls: ((_dayImgBuf.sleep[i]||{}).urls||[]).filter(Boolean),
@@ -4729,7 +4736,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.84';
+const APP_VER = '6.85';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5768,6 +5775,7 @@ function renderAllRecords(){
     const durCell       = s && s.total     ? s.total          : '-';
     const napCell       = s && s.nap       ? s.nap + '분'     : '-';
     const sleepHrCell   = s && s.sleepHr   ? s.sleepHr + ' bpm' : '-';
+    const sleepHrvCell  = s && s.sleepHrv  ? s.sleepHrv + ' ms' : '-';
     const sleepO2Cell   = s && s.sleepO2   ? s.sleepO2 + '%'    : '-';
     const sleepRrCell   = s && s.sleepRr   ? s.sleepRr + ' bpm' : '-';
     const sleepOnsetCell= s && s.sleepOnset? s.sleepOnset + '분' : '-';
@@ -5856,6 +5864,7 @@ function renderAllRecords(){
       <td>${durCell}</td>
       <td>${napCell}</td>
       <td>${sleepHrCell}</td>
+      <td>${sleepHrvCell}</td>
       <td>${sleepO2Cell}</td>
       <td>${sleepRrCell}</td>
       <td>${sleepOnsetCell}</td>
@@ -5929,7 +5938,7 @@ async function exportAllExcel(){
   const header = [
     '날짜','고객명','나이','성별','암종','병기','제공일자','수거일자',
     'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
-    '수면시 평균 심박수 (BPM)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)','잠든시간','기상시간',
+    '수면시 평균 심박수 (BPM)','수면 중 평균 HRV (ms)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)','잠든시간','기상시간',
     '심박수범위','평균','휴식','평균 걷기 심박수',
     '스트레스','활력점수','7일 최종 활력점수',
     '칼로리 실제(kcal)','칼로리 목표(kcal)','걸음수 실제','걸음수 목표','고강도활동 실제(분)','고강도활동 목표(분)'
@@ -5942,7 +5951,7 @@ async function exportAllExcel(){
       row.cancer||'', row.stage||'', row.give||'', row.collect||'',
       s?s.remPct||'':'', s?s.remTime||'':'', s?s.lightPct||'':'', s?s.lightTime||'':'',
       s?s.deepPct||'':'', s?s.deepTime||'':'', s?s.awake||'':'', s?s.eff||'':'', s?s.total||'':'', s?s.nap||'':'',
-      s?s.sleepHr||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
+      s?s.sleepHr||'':'', s?s.sleepHrv||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
       h?h.range||'':'', h?h.avg||'':'', h?h.rest||'':'', h?h.mean||'':'',
       sv?sv.stress||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':'',
       ac?ac.calActual||'':'', ac?ac.calTarget||'':'', ac?ac.stepsActual||'':'', ac?ac.stepsTarget||'':'', ac?ac.hiActual||'':'', ac?ac.hiTarget||'':''
@@ -5950,7 +5959,7 @@ async function exportAllExcel(){
   });
 
   const ws = XLSX.utils.aoa_to_sheet([header,...data]);
-  const colWidths = [10,10,5,5,10,8,12,12,8,8,10,10,10,10,8,12,10,8,10,8,8,10,10,10,16,8,8,10,8,8,8,12,12,8,8,10,10,10,10,10,10];
+  const colWidths = [10,10,5,5,10,8,12,12,8,8,10,10,10,10,8,12,10,8,10,10,8,8,10,10,10,16,8,8,10,8,8,8,12,12,8,8,10,10,10,10,10,10];
   ws['!cols'] = colWidths.map(w=>({wch:w}));
   XLSX.utils.book_append_sheet(wb, ws, '샤오미데이터');
 
@@ -8573,7 +8582,7 @@ async function exportExcel(){
     const headers = [
       '날짜','고객명','나이','성별','암종','병기','제공일자','수거일자',
       'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
-      '수면시 평균 심박수 (BPM)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)',
+      '수면시 평균 심박수 (BPM)','수면 중 평균 HRV (ms)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)',
       '심박수범위','평균','휴식','평균 걷기 심박수',
       '수축기혈압','이완기혈압','정상여부',
       '체중(KG)','키(CM)','추천체중','BMI',
@@ -8588,7 +8597,7 @@ async function exportExcel(){
         row.cancer||'', row.stage||'', row.give||'', row.collect||'',
         s?s.remPct||'':'', s?s.remTime||'':'', s?s.lightPct||'':'', s?s.lightTime||'':'',
         s?s.deepPct||'':'', s?s.deepTime||'':'', s?s.awake||'':'', s?s.eff||'':'', s?s.total||'':'', s?s.nap||'':'',
-        s?s.sleepHr||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
+        s?s.sleepHr||'':'', s?s.sleepHrv||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
         h?h.range||'':'', h?h.avg||'':'', h?h.rest||'':'', h?h.mean||'':'',
         b?b.sys||'':'', b?b.dia||'':'', b?_bpTxt(b.sys,b.dia):'',
         wt?wt.kg||'':'', wt?wt.height||'':'', '',
@@ -8997,21 +9006,21 @@ function buildDocumentXml(imgEntries, recs){
 
   /* ── TABLE 2: Sleep Metrics (two-row header matching template) ── */
   function table2(r){
-    // 17 columns: 날짜|REM%|REM시간|얕%|얕시간|깊%|깊시간|각성|효율|수면|낮잠|심박수|산소|호흡수|입면|잠든시간|기상시간
-    const colW = 951;  // 951×17 = 16167 ≈ 페이지 폭
-    const grid = `<w:tblGrid>${Array(17).fill(`<w:gridCol w:w="${colW}"/>`).join('')}</w:tblGrid>`;
+    // 18 columns: 날짜|REM%|REM시간|얕%|얕시간|깊%|깊시간|각성|효율|수면|낮잠|심박수|HRV|산소|호흡수|입면|잠든시간|기상시간
+    const colW = 898;  // 898×18 = 16164 ≈ 페이지 폭
+    const grid = `<w:tblGrid>${Array(18).fill(`<w:gridCol w:w="${colW}"/>`).join('')}</w:tblGrid>`;
     // Header row 1: category headers (dark navy & blue fills)
     const DN = (t,opts={})=>tcell(t,{fill:'17324D',bold:true,color:'FFFFFF',sz:14,...opts});
     const BL = (t,opts={})=>tcell(t,{fill:'2F6B87',bold:true,color:'FFFFFF',sz:14,...opts});
-    const hrow1 = `<w:tr><w:trPr><w:trHeight w:hRule="exact" w:val="351"/><w:tblHeader/><w:jc w:val="center"/></w:trPr>${DN('날짜',{vMerge:'restart'})}${BL('REM 수면',{gridSpan:2})}${BL('얕은수면',{gridSpan:2})}${BL('깊은수면',{gridSpan:2})}${DN('각성(분)',{vMerge:'restart'})}${DN('수면효율성(%)',{vMerge:'restart'})}${DN('수면시간',{vMerge:'restart'})}${DN('낮잠(분)',{vMerge:'restart'})}${DN('심박수(BPM)',{vMerge:'restart'})}${DN('산소포화도(%)',{vMerge:'restart'})}${DN('호흡수(BPM)',{vMerge:'restart'})}${DN('수면준비시간(분)',{vMerge:'restart'})}${DN('잠든시간',{vMerge:'restart'})}${DN('기상시간',{vMerge:'restart'})}</w:tr>`;
+    const hrow1 = `<w:tr><w:trPr><w:trHeight w:hRule="exact" w:val="351"/><w:tblHeader/><w:jc w:val="center"/></w:trPr>${DN('날짜',{vMerge:'restart'})}${BL('REM 수면',{gridSpan:2})}${BL('얕은수면',{gridSpan:2})}${BL('깊은수면',{gridSpan:2})}${DN('각성(분)',{vMerge:'restart'})}${DN('수면효율성(%)',{vMerge:'restart'})}${DN('수면시간',{vMerge:'restart'})}${DN('낮잠(분)',{vMerge:'restart'})}${DN('심박수(BPM)',{vMerge:'restart'})}${DN('HRV(ms)',{vMerge:'restart'})}${DN('산소포화도(%)',{vMerge:'restart'})}${DN('호흡수(BPM)',{vMerge:'restart'})}${DN('수면준비시간(분)',{vMerge:'restart'})}${DN('잠든시간',{vMerge:'restart'})}${DN('기상시간',{vMerge:'restart'})}</w:tr>`;
     // Header row 2: sub-headers
     const BLS=(t)=>tcell(t,{fill:'2F6B87',bold:true,color:'FFFFFF',sz:13});
     const DNS=()=>tcell('',{fill:'17324D',vMerge:'continue'});
-    const hrow2 = `<w:tr><w:trPr><w:trHeight w:hRule="exact" w:val="351"/><w:tblHeader/><w:jc w:val="center"/></w:trPr>${DNS()}${BLS('비율 (%)')}${BLS('시간')}${BLS('비율 (%)')}${BLS('시간')}${BLS('비율 (%)')}${BLS('시간')}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}</w:tr>`;
+    const hrow2 = `<w:tr><w:trPr><w:trHeight w:hRule="exact" w:val="351"/><w:tblHeader/><w:jc w:val="center"/></w:trPr>${DNS()}${BLS('비율 (%)')}${BLS('시간')}${BLS('비율 (%)')}${BLS('시간')}${BLS('비율 (%)')}${BLS('시간')}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}${DNS()}</w:tr>`;
     // Data row
     const DV = (t)=>tcell(t,{fill:'',bold:false,color:'17324D',sz:15,jc:'center'});
-    const drow = `<w:tr><w:trPr><w:trHeight w:hRule="exact" w:val="357"/><w:jc w:val="center"/></w:trPr>${DV(r.date||'')}${DV(r.remPct||'')}${DV(r.remTime||'')}${DV(r.lightPct||'')}${DV(r.lightTime||'')}${DV(r.deepPct||'')}${DV(r.deepTime||'')}${DV(r.awake||'')}${DV(r.eff||'')}${DV(r.total||'')}${DV(r.nap||'')}${DV(r.sleepHr||'')}${DV(r.sleepO2||'')}${DV(r.sleepRr||'')}${DV(r.sleepOnset||'')}${DV(r.sleepTime||'')}${DV(r.wakeTime||'')}</w:tr>`;
-    const totalW = colW * 17;
+    const drow = `<w:tr><w:trPr><w:trHeight w:hRule="exact" w:val="357"/><w:jc w:val="center"/></w:trPr>${DV(r.date||'')}${DV(r.remPct||'')}${DV(r.remTime||'')}${DV(r.lightPct||'')}${DV(r.lightTime||'')}${DV(r.deepPct||'')}${DV(r.deepTime||'')}${DV(r.awake||'')}${DV(r.eff||'')}${DV(r.total||'')}${DV(r.nap||'')}${DV(r.sleepHr||'')}${DV(r.sleepHrv||'')}${DV(r.sleepO2||'')}${DV(r.sleepRr||'')}${DV(r.sleepOnset||'')}${DV(r.sleepTime||'')}${DV(r.wakeTime||'')}</w:tr>`;
+    const totalW = colW * 18;
     return `<w:tbl><w:tblPr><w:tblW w:w="${totalW}" w:type="dxa"/><w:jc w:val="center"/><w:tblLayout w:type="fixed"/>${tbl2Bdr()}</w:tblPr>${grid}${hrow1}${hrow2}${drow}</w:tbl>`;
   }
 
@@ -9164,9 +9173,9 @@ function _buildAllDocXml(allRows, imgEntries){
 
     // ── 섹션 1: 수면 단계 및 수면시간 (15열) ──
     body += para('1. 수면 단계 및 수면시간', {bold:true, sz:18, color:'1A2E3A'}, {after:40, before:0});
-    // 열: 날짜|REM%|REM시간|얕%|얕시간|깊%|깊시간|각성|수면효율|수면시간|낮잠|심박수|산소|호흡수|입면|잠든시간|기상시간
-    // 17열: 15398/17 ≈ 905; 905×16 + 918 = 15398
-    const s1c = [905,905,905,905,905,905,905,905,905,905,905,905,905,905,905,905,918];
+    // 열: 날짜|REM%|REM시간|얕%|얕시간|깊%|깊시간|각성|수면효율|수면시간|낮잠|심박수|HRV|산소|호흡수|입면|잠든시간|기상시간
+    // 18열: 15398/18 ≈ 855; 855×17 + 863 = 15398
+    const s1c = [855,855,855,855,855,855,855,855,855,855,855,855,855,855,855,855,855,863];
     const s1Grid = s1c.map(w=>`<w:gridCol w:w="${w}"/>`).join('');
     const s1h1 = `<w:tr>`+
       H('날짜', s1c[0], {vMergeRestart:true})+
@@ -9178,11 +9187,12 @@ function _buildAllDocXml(allRows, imgEntries){
       H('수면시간', s1c[9], {vMergeRestart:true})+
       H('낮잠(분)', s1c[10], {vMergeRestart:true})+
       H('심박수(BPM)', s1c[11], {vMergeRestart:true})+
-      H('산소포화도(%)', s1c[12], {vMergeRestart:true})+
-      H('호흡수(BPM)', s1c[13], {vMergeRestart:true})+
-      H('수면준비시간(분)', s1c[14], {vMergeRestart:true})+
-      H('잠든시간', s1c[15], {vMergeRestart:true})+
-      H('기상시간', s1c[16], {vMergeRestart:true})+
+      H('HRV(ms)', s1c[12], {vMergeRestart:true})+
+      H('산소포화도(%)', s1c[13], {vMergeRestart:true})+
+      H('호흡수(BPM)', s1c[14], {vMergeRestart:true})+
+      H('수면준비시간(분)', s1c[15], {vMergeRestart:true})+
+      H('잠든시간', s1c[16], {vMergeRestart:true})+
+      H('기상시간', s1c[17], {vMergeRestart:true})+
     `</w:tr>`;
     const s1h2 = `<w:tr>`+
       H('', s1c[0], {vMerge:true})+
@@ -9199,6 +9209,7 @@ function _buildAllDocXml(allRows, imgEntries){
       H('', s1c[14], {vMerge:true})+
       H('', s1c[15], {vMerge:true})+
       H('', s1c[16], {vMerge:true})+
+      H('', s1c[17], {vMerge:true})+
     `</w:tr>`;
     const s1data = dateRows.map(row=>{
       const s=row.sleep;
@@ -9212,11 +9223,12 @@ function _buildAllDocXml(allRows, imgEntries){
         V(s?s.total||'':'', s1c[9])+
         V(s?s.nap||'':'', s1c[10])+
         V(s?s.sleepHr||'':'', s1c[11])+
-        V(s?s.sleepO2||'':'', s1c[12])+
-        V(s?s.sleepRr||'':'', s1c[13])+
-        V(s?s.sleepOnset||'':'', s1c[14])+
-        V(s?s.sleepTime||'':'', s1c[15])+
-        V(s?s.wakeTime||'':'', s1c[16])+
+        V(s?s.sleepHrv||'':'', s1c[12])+
+        V(s?s.sleepO2||'':'', s1c[13])+
+        V(s?s.sleepRr||'':'', s1c[14])+
+        V(s?s.sleepOnset||'':'', s1c[15])+
+        V(s?s.sleepTime||'':'', s1c[16])+
+        V(s?s.wakeTime||'':'', s1c[17])+
       `</w:tr>`;
     }).join('');
     body += `<w:tbl><w:tblPr><w:tblW w:w="15398" w:type="dxa"/>${tblBdr()}<w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${s1Grid}</w:tblGrid>${s1h1}${s1h2}${s1data}</w:tbl>`;
@@ -9465,7 +9477,7 @@ function clearForm(){
   ['f-date','f-name','f-age','f-gender','f-cancer','f-nurse','f-stage','f-give','f-collect','f-group','f-xiaomi-guide',
    'f-rem-pct','f-rem-h','f-rem-m','f-light-pct','f-light-h','f-light-m','f-deep-pct','f-deep-h','f-deep-m',
    'f-awake-h','f-awake-m','f-awake-count','f-eff','f-total-h','f-total-m','f-nap-h','f-nap-m',
-   'f-sleep-hr','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time'].forEach(id=>{
+   'f-sleep-hr','f-sleep-hrv','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
     if(el.tagName==='SELECT') el.value='';
@@ -9590,6 +9602,7 @@ function openEditRecord(idx) {
   const _napSplit = _splitMin(parseInt(r.nap)||0);
   _setSelect('ef-nap-h', _napSplit.h); _setSelect('ef-nap-m', _napSplit.m);
   fv('ef-sleep-hr',    r.sleepHr);
+  fv('ef-sleep-hrv',   r.sleepHrv);
   fv('ef-sleep-o2',    r.sleepO2);
   fv('ef-sleep-rr',    r.sleepRr);
   fv('ef-sleep-onset', r.sleepOnset);
@@ -9637,6 +9650,7 @@ function saveEditRecord() {
     total:    _combineTotalHM(gvn('ef-total-h'), gvn('ef-total-m')),
     nap:      _combineTotalMin(gvn('ef-nap-h'), gvn('ef-nap-m')),
     sleepHr:    gv('ef-sleep-hr'),
+    sleepHrv:   gv('ef-sleep-hrv'),
     sleepO2:    gv('ef-sleep-o2'),
     sleepRr:    gv('ef-sleep-rr'),
     sleepOnset: gv('ef-sleep-onset'),
@@ -9750,6 +9764,7 @@ function renderRecords(){
       <td>${r.total||'-'}</td>
       <td>${r.nap||'-'}</td>
       <td>${r.sleepHr||'-'}${r.sleepHr?'bpm':''}</td>
+      <td>${r.sleepHrv||'-'}${r.sleepHrv?'ms':''}</td>
       <td>${r.sleepO2||'-'}${r.sleepO2?'%':''}</td>
       <td>${r.sleepRr||'-'}${r.sleepRr?'bpm':''}</td>
       <td>${r.sleepOnset||'-'}${r.sleepOnset?'분':''}</td>

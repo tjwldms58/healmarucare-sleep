@@ -2632,6 +2632,16 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 </select>
               </div>
             </div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label>제공일자</label>
+                <input type="date" id="pf-give">
+              </div>
+              <div class="form-field">
+                <label>수거일자</label>
+                <input type="date" id="pf-collect">
+              </div>
+            </div>
             <div class="form-section-head">대상자 인적사항</div>
             <div class="form-grid-2">
               <div class="form-field">
@@ -3159,6 +3169,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
         <button class="dt-tab" onclick="switchDataTab('survey',this)" style="color:#0E8FA3">📝 대상자 설문</button>
+        <button class="dt-tab" onclick="switchDataTab('profile',this)" style="color:#B23F8C">📋 대상자 인적사항</button>
         <button id="dt-tab-manage" class="dt-tab" onclick="switchDataTab('manage',this)" style="color:#8A6D1D">🗂️ 관리</button>
       </div>
 
@@ -3424,6 +3435,30 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                   <div class="empty-icon">📝</div>
                   <div class="empty-msg">불러온 대상자 설문이 없습니다</div>
                   <div class="empty-hint">우측 상단 "불러오기" 버튼으로 Word(.docx) 또는 PDF 설문 파일을 불러와 보세요</div>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── 대상자 인적사항 패널 ── -->
+      <div id="data-panel-profile" style="display:none">
+        <div class="table-scroll">
+          <table class="data-table" id="profile-table">
+            <thead>
+              <tr>
+                <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th>
+                <th>생년월일</th><th>직업유무</th><th>근무형태</th><th>진단일</th><th>수술일</th>
+                <th>현재치료</th><th>처방약</th><th>동반질환</th><th>수면치료이력</th><th>주요증상</th><th>분석·제언</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="profile-tbody">
+              <tr id="empty-profile-row">
+                <td colspan="17"><div class="empty-state">
+                  <div class="empty-icon">📋</div>
+                  <div class="empty-msg">저장된 대상자 인적사항이 없습니다</div>
+                  <div class="empty-hint">왼쪽 폰 화면에서 대상자 인적사항을 선택 후 입력해 보세요</div>
                 </div></td>
               </tr>
             </tbody>
@@ -4147,6 +4182,42 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 </div>
 
 <!-- ═══════════════════════════════════════
+     대상자 인적사항 EDIT MODAL
+═══════════════════════════════════════ -->
+<div id="edit-profile-modal" style="display:none;position:fixed;inset:0;background:rgba(7,20,42,.72);z-index:8001;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeEditProfile()">
+  <div style="background:var(--surface);border-radius:18px;width:100%;max-width:480px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(7,20,42,.5)">
+    <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#B23F8C;border-radius:18px 18px 0 0">
+      <div style="color:#fff;font-size:.9rem;font-weight:700">📋 대상자 인적사항 수정</div>
+      <button onclick="closeEditProfile()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div style="overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-field"><label>고객명</label><input type="text" id="epf-name" placeholder="성명"></div>
+        <div class="form-field"><label>나이</label><input type="number" id="epf-age" placeholder="세"></div>
+        <div class="form-field"><label>성별</label><select id="epf-gender"><option value="">선택</option><option>여</option><option>남</option></select></div>
+        <div class="form-field"><label>제공일자</label><input type="date" id="epf-give"></div>
+        <div class="form-field"><label>수거일자</label><input type="date" id="epf-collect"></div>
+        <div class="form-field"><label>생년월일</label><input type="date" id="epf-birth"></div>
+        <div class="form-field"><label>직업유무</label><select id="epf-job"><option value="">선택</option><option>유</option><option>무</option></select></div>
+        <div class="form-field"><label>근무형태</label><input type="text" id="epf-worktype" placeholder="예) 상근·교대근무 등"></div>
+        <div class="form-field"><label>진단일</label><input type="date" id="epf-diagdate"></div>
+        <div class="form-field"><label>수술일</label><input type="date" id="epf-surgdate"></div>
+      </div>
+      <div class="form-field"><label>현재치료</label><textarea id="epf-treatment" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea></div>
+      <div class="form-field"><label>처방약 및 복용시간</label><textarea id="epf-meds" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea></div>
+      <div class="form-field"><label>주요 동반질환</label><textarea id="epf-comorbid" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea></div>
+      <div class="form-field"><label>기존 수면질환치료</label><textarea id="epf-sleeptx" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea></div>
+      <div class="form-field"><label>현재 주요 증상</label><textarea id="epf-symptoms" rows="2" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea></div>
+      <div class="form-field"><label>분석 및 제언(고객)</label><textarea id="epf-analysis" rows="4" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text-1);font-size:.82rem;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea></div>
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface-2)">
+      <button onclick="closeEditProfile()" style="background:var(--border);color:var(--text-2);border:none;border-radius:10px;padding:8px 18px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="saveEditProfile()" style="background:#B23F8C;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
      STRESS·VITAL (스트레스·활력) EDIT MODAL
 ═══════════════════════════════════════ -->
 <div id="edit-stress-modal" style="display:none;position:fixed;inset:0;background:rgba(7,20,42,.72);z-index:8001;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeEditStressVital()">
@@ -4807,7 +4878,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.94';
+const APP_VER = '6.96';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5314,6 +5385,27 @@ function _hmLocalSave(key, data, label){
   }
 }
 
+// 묶음(같은 고객) 단위 삭제/복구 공통 헬퍼 — 이름+나이+성별이 같으면 한 고객의 데이터 묶음으로 간주.
+// (각 렌더 함수의 그룹 구분선(_isGF)·changeRecordDate의 이름 매칭과 동일한 기준을 사용함)
+// 2026-09-18: 수면/심박수/혈중산소/활동량/스트레스·활력 탭 — 묶음 삭제·복구 기능 추가.
+function _hmBatchKeyOf(r){
+  return (r.name||'')+'|'+(r.age||'')+'|'+(r.gender||'');
+}
+function _hmDeleteBatch(arr, idx){
+  if(!arr[idx]) return 0;
+  const key = _hmBatchKeyOf(arr[idx]);
+  let n = 0;
+  arr.forEach(r=>{ if(r && !r.deleted && _hmBatchKeyOf(r)===key){ r.deleted = true; n++; } });
+  return n;
+}
+function _hmRestoreBatch(arr, idx){
+  if(!arr[idx]) return 0;
+  const key = _hmBatchKeyOf(arr[idx]);
+  let n = 0;
+  arr.forEach(r=>{ if(r && r.deleted && _hmBatchKeyOf(r)===key){ r.deleted = false; n++; } });
+  return n;
+}
+
 // 용량 경고: 콘솔에만 남기지 않고 화면에도 표시(사용자가 직접 확인해야 다시 숨겨짐, 자동으로 안 사라짐)
 let _capacityWarnShown = false;
 function showCapacityWarnBanner(len){
@@ -5737,24 +5829,25 @@ function deleteHeartRate(idx){
   if(_pendingDeleteHr === idx){
     _pendingDeleteHr = null;
     // 소프트 삭제: 배열에서 제거하지 않고 deleted 플래그만 표시 → '관리' 탭에서 복구 가능
-    if(heartRateRecords[idx]) heartRateRecords[idx].deleted = true;
+    // 묶음(같은 고객) 삭제: 이 고객의 심박수 기록 전체가 함께 삭제됨
+    const n = _hmDeleteBatch(heartRateRecords, idx);
     saveHeartRates();
     renderHeartRates();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteHr = idx;
-    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteHr = null; }, 3000);
   }
 }
 function restoreHeartRate(idx){
-  if(!heartRateRecords[idx]) return;
-  heartRateRecords[idx].deleted = false;
+  const n = _hmRestoreBatch(heartRateRecords, idx);
+  if(!n) return;
   saveHeartRates();
   renderHeartRates();
   renderDataManageTable();
-  showToast('기록이 복구되었습니다.');
+  showToast((n>1?n+'건이':'기록이')+' 복구되었습니다.');
 }
 function clearHrForm(){
   ['hr-date','hr-name','hr-age','hr-range','hr-avg','hr-rest','hr-mean','hr-give','hr-collect'].forEach(id=>{
@@ -5793,7 +5886,7 @@ function renderHeartRates(){
       <td>${r.mean ? r.mean+' BPM' : '-'}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" title="수정" onclick="openEditHR(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteHeartRate(${i})" title="삭제">×</button>
+        ${_isGF?`<button class="del-btn" onclick="deleteHeartRate(${i})" title="삭제">×</button>`:''}
       </td>
     </tr>`; }).join('');
 }
@@ -5804,7 +5897,7 @@ function renderHeartRates(){
 let _currentDataTab = 'sleep';
 function switchDataTab(type, btn){
   _currentDataTab = type;
-  const _tabNames = {all:'전체',sleep:'수면',heart:'심박수',bp:'혈압',o2:'혈중산소',weight:'체중',womens:'여성건강',stress:'스트레스·활력',device:'기기관리'};
+  const _tabNames = {all:'전체',sleep:'수면',heart:'심박수',bp:'혈압',o2:'혈중산소',weight:'체중',womens:'여성건강',stress:'스트레스·활력',device:'기기관리',survey:'대상자 설문',profile:'대상자 인적사항'};
   // 탭 active
   document.querySelectorAll('.dt-tab:not(.dt-tab-soon)').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
@@ -5822,8 +5915,9 @@ function switchDataTab(type, btn){
   const actPanel     = document.getElementById('data-panel-activity');
   const dvPanel      = document.getElementById('data-panel-device');
   const svyPanel     = document.getElementById('data-panel-survey');
+  const pfPanel      = document.getElementById('data-panel-profile');
   const mgPanel      = document.getElementById('data-panel-manage');
-  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,actPanel,dvPanel,svyPanel,mgPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
+  [allPanel,sleepPanel,heartPanel,bpPanel,o2Panel,wtPanel,whPanel,svPanel,actPanel,dvPanel,svyPanel,pfPanel,mgPanel,soonPanel].forEach(p=>{if(p)p.style.display='none';});
   // 그룹 필터 / 폴더 컨트롤: 항상 표시
   if(sleepTools) sleepTools.style.display='flex';
   const badge = document.getElementById('record-count-badge');
@@ -5885,6 +5979,10 @@ function switchDataTab(type, btn){
     if(svyPanel) svyPanel.style.display='';
     if(badge) badge.textContent = surveyRecords.filter(r=>!r.deleted).length + '건';
     renderSurveyTable();
+  } else if(type==='profile'){
+    if(pfPanel) pfPanel.style.display='';
+    if(badge) badge.textContent = profileRecords.filter(r=>!r.deleted).length + '건';
+    renderProfileRecords();
   } else if(type==='manage'){
     if(mgPanel) mgPanel.style.display='';
     if(badge) badge.textContent = '';
@@ -6533,24 +6631,25 @@ let _pendingDeleteO2 = null;
 function deleteOxygen(idx){
   if(_pendingDeleteO2 === idx){
     _pendingDeleteO2 = null;
-    if(oxygenRecords[idx]) oxygenRecords[idx].deleted = true;
+    // 묶음(같은 고객) 삭제: 이 고객의 혈중산소 기록 전체가 함께 삭제됨
+    const n = _hmDeleteBatch(oxygenRecords, idx);
     saveOxygens();
     renderOxygens();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteO2 = idx;
-    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteO2 = null; }, 3000);
   }
 }
 function restoreOxygen(idx){
-  if(!oxygenRecords[idx]) return;
-  oxygenRecords[idx].deleted = false;
+  const n = _hmRestoreBatch(oxygenRecords, idx);
+  if(!n) return;
   saveOxygens();
   renderOxygens();
   renderDataManageTable();
-  showToast('기록이 복구되었습니다.');
+  showToast((n>1?n+'건이':'기록이')+' 복구되었습니다.');
 }
 function clearO2Form(){
   ['o2-date','o2-name','o2-age','o2-daily-max','o2-daily-min','o2-daily-avg','o2-give','o2-collect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -6596,7 +6695,7 @@ function renderOxygens(){
       <td>${dailyBadge}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" title="수정" onclick="openEditO2(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteOxygen(${i})" title="삭제">×</button>
+        ${_isGF?`<button class="del-btn" onclick="deleteOxygen(${i})" title="삭제">×</button>`:''}
       </td>
     </tr>`;
   }).join('');
@@ -6641,24 +6740,25 @@ let _pendingDeleteAct = null;
 function deleteActivity(idx){
   if(_pendingDeleteAct === idx){
     _pendingDeleteAct = null;
-    if(activityRecords[idx]) activityRecords[idx].deleted = true;
+    // 묶음(같은 고객) 삭제: 이 고객의 활동량 기록 전체가 함께 삭제됨
+    const n = _hmDeleteBatch(activityRecords, idx);
     saveActivities();
     renderActivities();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteAct = idx;
-    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteAct = null; }, 3000);
   }
 }
 function restoreActivity(idx){
-  if(!activityRecords[idx]) return;
-  activityRecords[idx].deleted = false;
+  const n = _hmRestoreBatch(activityRecords, idx);
+  if(!n) return;
   saveActivities();
   renderActivities();
   renderDataManageTable();
-  showToast('기록이 복구되었습니다.');
+  showToast((n>1?n+'건이':'기록이')+' 복구되었습니다.');
 }
 function clearActivityForm(){
   ['act-date','act-name','act-age','act-give','act-collect','act-cal-actual','act-cal-target','act-steps-actual','act-steps-target','act-hi-actual','act-hi-target'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -6733,7 +6833,7 @@ function renderActivities(){
       <td style="color:#1B90BD;font-weight:600">${_pair(r.hiActual,r.hiTarget)}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" title="수정" onclick="openEditActivity(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteActivity(${i})" title="삭제">×</button>
+        ${_isGF?`<button class="del-btn" onclick="deleteActivity(${i})" title="삭제">×</button>`:''}
       </td>
     </tr>`;
   }).join('');
@@ -7066,24 +7166,25 @@ let _pendingDeleteSv = null;
 function deleteStressVital(idx){
   if(_pendingDeleteSv === idx){
     _pendingDeleteSv = null;
-    if(stressRecords[idx]) stressRecords[idx].deleted = true;
+    // 묶음(같은 고객) 삭제: 이 고객의 스트레스·활력 기록 전체가 함께 삭제됨
+    const n = _hmDeleteBatch(stressRecords, idx);
     saveStressVital();
     renderStressVital();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     _pendingDeleteSv = idx;
-    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteSv = null; }, 3000);
   }
 }
 function restoreStressVital(idx){
-  if(!stressRecords[idx]) return;
-  stressRecords[idx].deleted = false;
+  const n = _hmRestoreBatch(stressRecords, idx);
+  if(!n) return;
   saveStressVital();
   renderStressVital();
   renderDataManageTable();
-  showToast('기록이 복구되었습니다.');
+  showToast((n>1?n+'건이':'기록이')+' 복구되었습니다.');
 }
 function clearStressForm(){
   ['sv-date','sv-name','sv-age','sv-vital','sv-final-vital','sv-give','sv-collect','sv-score','sv-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -7131,7 +7232,7 @@ function renderStressVital(){
       <td>${finalVitalLabel}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" title="수정" onclick="openEditStressVital(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteStressVital(${i})" title="삭제">×</button>
+        ${_isGF?`<button class="del-btn" onclick="deleteStressVital(${i})" title="삭제">×</button>`:''}
       </td>
     </tr>`;
   }).join('');
@@ -7222,6 +7323,8 @@ function saveProfileRecord(){
   const name       = (document.getElementById('pf-name')||{}).value||'';
   const age        = (document.getElementById('pf-age')||{}).value||'';
   const gender     = (document.getElementById('pf-gender')||{}).value||'';
+  const give       = (document.getElementById('pf-give')||{}).value||'';
+  const collect    = (document.getElementById('pf-collect')||{}).value||'';
   const birth      = (document.getElementById('pf-birth')||{}).value||'';
   const job        = (document.getElementById('pf-job')||{}).value||'';
   const workType   = (document.getElementById('pf-worktype')||{}).value||'';
@@ -7234,20 +7337,151 @@ function saveProfileRecord(){
   const symptoms   = (document.getElementById('pf-symptoms')||{}).value||'';
   const analysis   = (document.getElementById('pf-analysis')||{}).value||'';
   if(!name){ alert('고객명을 입력해 주세요.'); return; }
-  profileRecords.unshift({name,age,gender,birth,job,workType,diagDate,surgDate,treatment,meds,comorbid,sleepTxHistory,symptoms,analysis});
+  profileRecords.unshift({name,age,gender,give,collect,birth,job,workType,diagDate,surgDate,treatment,meds,comorbid,sleepTxHistory,symptoms,analysis});
   _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
   syncToSheet();
+  renderProfileRecords();
   clearProfileForm();
   closePhoneScreen();
   showToast('✅ 대상자 인적사항이 저장되었습니다!');
 }
 
 function clearProfileForm(){
-  ['pf-name','pf-age','pf-birth','pf-worktype','pf-diagdate','pf-surgdate','pf-treatment','pf-meds','pf-comorbid','pf-sleeptx','pf-symptoms','pf-analysis'].forEach(id=>{
+  ['pf-name','pf-age','pf-give','pf-collect','pf-birth','pf-worktype','pf-diagdate','pf-surgdate','pf-treatment','pf-meds','pf-comorbid','pf-sleeptx','pf-symptoms','pf-analysis'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   const g=document.getElementById('pf-gender'); if(g) g.value='';
   const j=document.getElementById('pf-job'); if(j) j.value='';
+}
+
+let _pendingDeleteProfile = null;
+function deleteProfileRecord(idx){
+  if(_pendingDeleteProfile === idx){
+    _pendingDeleteProfile = null;
+    // 묶음(같은 고객) 삭제: 이 고객의 인적사항 기록 전체가 함께 삭제됨
+    const n = _hmDeleteBatch(profileRecords, idx);
+    _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
+    syncToSheet();
+    renderProfileRecords();
+    renderDataManageTable();
+    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
+  } else {
+    _pendingDeleteProfile = idx;
+    showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
+    setTimeout(()=>{ _pendingDeleteProfile = null; }, 3000);
+  }
+}
+function restoreProfileRecord(idx){
+  const n = _hmRestoreBatch(profileRecords, idx);
+  if(!n) return;
+  _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
+  syncToSheet();
+  renderProfileRecords();
+  renderDataManageTable();
+  showToast((n>1?n+'건이':'기록이')+' 복구되었습니다.');
+}
+
+function renderProfileRecords(){
+  const tbody = document.getElementById('profile-tbody');
+  if(!tbody) return;
+  const pfFiltered = profileRecords.map((r,i)=>({r,i}))
+    .filter(({r})=>!r.deleted)
+    .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return 0;});
+  const badge = document.getElementById('record-count-badge');
+  if(pfFiltered.length === 0){
+    tbody.innerHTML = `<tr id="empty-profile-row"><td colspan="17"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">저장된 대상자 인적사항이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 대상자 인적사항을 선택 후 입력해 보세요</div></div></td></tr>`;
+    if(badge) badge.textContent = '0건';
+    return;
+  }
+  const _pfSeen = new Set();
+  const _ell = (v) => v ? `<span style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:bottom" title="${String(v).replace(/"/g,'&quot;')}">${v}</span>` : '-';
+  tbody.innerHTML = pfFiltered.map(({r,i},fi)=>{
+    const _gk=(r.name||'')+'|'+(r.age||'')+'|'+(r.gender||'');
+    const _isGF=!_pfSeen.has(_gk);if(_isGF)_pfSeen.add(_gk);
+    const _dc=_isGF?`<span style="font-size:.7rem;font-weight:700;color:var(--teal);white-space:nowrap">${r.give||'-'}${r.collect?' ~ '+r.collect:''}</span>`:'';
+    return `<tr${_isGF?' class="row-divider"':''}>
+      <td>${fi + 1}</td>
+      <td>${_dc}</td>
+      <td>${r.name||''}</td>
+      <td>${r.age||'-'}</td>
+      <td>${r.gender||'-'}</td>
+      <td>${r.birth||'-'}</td>
+      <td>${r.job||'-'}</td>
+      <td>${_ell(r.workType)}</td>
+      <td>${r.diagDate||'-'}</td>
+      <td>${r.surgDate||'-'}</td>
+      <td>${_ell(r.treatment)}</td>
+      <td>${_ell(r.meds)}</td>
+      <td>${_ell(r.comorbid)}</td>
+      <td>${_ell(r.sleepTxHistory)}</td>
+      <td>${_ell(r.symptoms)}</td>
+      <td>${_ell(r.analysis)}</td>
+      <td style="display:flex;gap:4px;justify-content:center;align-items:center">
+        <button class="del-btn" title="수정" onclick="openEditProfile(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
+        ${_isGF?`<button class="del-btn" onclick="deleteProfileRecord(${i})" title="삭제">×</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+  if(badge) badge.textContent = pfFiltered.length + '건';
+}
+
+let _editingProfileIdx = null;
+function openEditProfile(idx){
+  _editingProfileIdx = idx;
+  const r = profileRecords[idx];
+  if(!r) return;
+  const fv = (id,v) => { const el=document.getElementById(id); if(el) el.value = v||''; };
+  fv('epf-name',       r.name);
+  fv('epf-age',        r.age);
+  fv('epf-give',       r.give);
+  fv('epf-collect',    r.collect);
+  fv('epf-birth',      r.birth);
+  fv('epf-worktype',   r.workType);
+  fv('epf-diagdate',   r.diagDate);
+  fv('epf-surgdate',   r.surgDate);
+  fv('epf-treatment',  r.treatment);
+  fv('epf-meds',       r.meds);
+  fv('epf-comorbid',   r.comorbid);
+  fv('epf-sleeptx',    r.sleepTxHistory);
+  fv('epf-symptoms',   r.symptoms);
+  fv('epf-analysis',   r.analysis);
+  const g = document.getElementById('epf-gender'); if(g) g.value = r.gender||'';
+  const j = document.getElementById('epf-job'); if(j) j.value = r.job||'';
+  document.getElementById('edit-profile-modal').style.display='flex';
+}
+function closeEditProfile(){
+  _editingProfileIdx = null;
+  document.getElementById('edit-profile-modal').style.display='none';
+}
+function saveEditProfile(){
+  if(_editingProfileIdx === null) return;
+  const gv = id => { const el=document.getElementById(id); return el ? el.value.trim() : ''; };
+  const updated = {
+    ...profileRecords[_editingProfileIdx],
+    name:          gv('epf-name'),
+    age:           gv('epf-age'),
+    gender:        document.getElementById('epf-gender').value,
+    give:          gv('epf-give'),
+    collect:       gv('epf-collect'),
+    birth:         gv('epf-birth'),
+    job:           document.getElementById('epf-job').value,
+    workType:      gv('epf-worktype'),
+    diagDate:      gv('epf-diagdate'),
+    surgDate:      gv('epf-surgdate'),
+    treatment:     gv('epf-treatment'),
+    meds:          gv('epf-meds'),
+    comorbid:      gv('epf-comorbid'),
+    sleepTxHistory:gv('epf-sleeptx'),
+    symptoms:      gv('epf-symptoms'),
+    analysis:      gv('epf-analysis'),
+  };
+  if(!updated.name){ showToast('고객명은 필수입니다.', true); return; }
+  profileRecords[_editingProfileIdx] = updated;
+  _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
+  syncToSheet();
+  renderProfileRecords();
+  closeEditProfile();
+  showToast('대상자 인적사항이 수정되었습니다. ✅');
 }
 
 function renderDeviceRecords(){
@@ -7369,6 +7603,19 @@ function saveSurveyGroupAnswers(groupId){
 
 function updateSurveyField(idx, key, val){
   if(!surveyRecords[idx]) return;
+  // 2026-09-18: 날짜는 한 고객의 설문 18개 행이 모두 같은 날 진행된 것이므로,
+  // 맨 윗 행(그 묶음의 첫 행)의 날짜를 바꾸면 같은 groupId 전체를 동일한 날짜로 맞춤.
+  if(key === 'date'){
+    const groupId = surveyRecords[idx].groupId;
+    const firstIdx = surveyRecords.findIndex(r => r && !r.deleted && r.groupId === groupId);
+    if(firstIdx === idx){
+      surveyRecords.forEach(r => { if(r && r.groupId === groupId) r.date = val; });
+      saveSurveyRecords();
+      renderSurveyTable();
+      showToast('📅 설문 18개 행의 날짜가 모두 '+val+'(으)로 맞춰졌습니다.');
+      return;
+    }
+  }
   surveyRecords[idx][key] = val;
   saveSurveyRecords();
 }
@@ -7420,12 +7667,13 @@ function renderDataManageTable(){
     { label:'스트레스·활력', arr: stressRecords,          restoreFnName:'restoreStressVital',    extra:r=>'' },
     { label:'기기관리',      arr: deviceRecords,          restoreFnName:'restoreDeviceRecord',   extra:r=>r.device||'' },
     { label:'대상자 설문',   arr: surveyRecords,          restoreFnName:'restoreSurveyRecord',   extra:r=>r.q||'' },
+    { label:'대상자 인적사항', arr: profileRecords,       restoreFnName:'restoreProfileRecord',  extra:r=>r.birth||'' },
   ];
   const rows = [];
   domains.forEach(d => {
     (d.arr||[]).forEach((r,i) => {
       if(r && r.deleted){
-        rows.push({ label:d.label, name:r.name||'-', date:r.date||'-', extra:d.extra(r)||'-', idx:i, restoreFnName:d.restoreFnName });
+        rows.push({ label:d.label, name:r.name||'-', date:r.date||r.give||'-', extra:d.extra(r)||'-', idx:i, restoreFnName:d.restoreFnName });
       }
     });
   });
@@ -10020,26 +10268,27 @@ let _pendingDelete = null;
 function deleteRecord(idx){
   if(_pendingDelete === idx){
     // 두 번째 클릭 → 실제 삭제 (소프트 삭제: deleted 플래그만 표시 → '관리' 탭에서 복구 가능)
+    // 묶음(같은 고객) 삭제: 이 고객의 수면기록 전체가 함께 삭제됨
     _pendingDelete = null;
-    if(sleepRecords[idx]) sleepRecords[idx].deleted = true;
+    const n = _hmDeleteBatch(sleepRecords, idx);
     saveRecords();
     renderRecords();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
   } else {
     // 첫 번째 클릭 → 확인 요청
     _pendingDelete = idx;
-    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDelete = null; }, 3000);
   }
 }
 function restoreRecord(idx){
-  if(!sleepRecords[idx]) return;
-  sleepRecords[idx].deleted = false;
+  const n = _hmRestoreBatch(sleepRecords, idx);
+  if(!n) return;
   saveRecords();
   renderRecords();
   renderDataManageTable();
-  showToast('기록이 복구되었습니다.');
+  showToast((n>1?n+'건이':'기록이')+' 복구되었습니다.');
 }
 
 function renderRecords(){
@@ -10110,7 +10359,7 @@ function renderRecords(){
       <td>${(()=>{const srcs=[...(r.imgUrls&&r.imgUrls.length?r.imgUrls:[]),...(r.imgs&&r.imgs.length?r.imgs:[])].filter(Boolean);if(!srcs.length&&(r.imgUrl||r.img))srcs.push(r.imgUrl||r.img);return srcs.length?`<div style="display:flex;gap:2px;flex-wrap:wrap">${srcs.map(s=>`<img src="${s}" style="width:30px;height:24px;object-fit:cover;border-radius:3px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)" onclick="viewImg('${s}')" title="이미지 보기">`).join('')}</div>`:'-';})()}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" title="수정" onclick="openEditRecord(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" title="삭제" onclick="deleteRecord(${i});event.stopPropagation()">×</button>
+        ${_isGF?`<button class="del-btn" title="삭제" onclick="deleteRecord(${i});event.stopPropagation()">×</button>`:''}
       </td>
     </tr>
   `; }).join('');

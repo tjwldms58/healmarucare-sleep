@@ -1802,6 +1802,10 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
     <span id="sync-warn-banner-text">⚠ 데이터 용량이 한도에 가까워지고 있습니다. 관리자에게 알려주세요.</span>
     <button onclick="document.getElementById('sync-warn-banner').classList.remove('show')">확인함</button>
   </div>
+  <div id="local-save-fail-banner" class="sync-fail-banner">
+    <span id="local-save-fail-banner-text">❌ 저장 실패 — 이 기기의 저장공간이 가득 찼을 수 있습니다. 관리자에게 문의해 주세요.</span>
+    <button onclick="hideLocalSaveFailBanner()">확인함</button>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════
@@ -4803,7 +4807,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.93';
+const APP_VER = '6.94';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5284,6 +5288,32 @@ function hideSyncFailBanner(){
 }
 function retrySyncToSheet(){ syncToSheet(); }
 
+// 로컬 저장(localStorage) 실패 배너 — 성공할 때까지 자동으로 사라지지 않음.
+// 예전에는 각 저장 함수가 실패를 조용히 무시(try{}catch(e){})해서, 실제로는 저장이 안 됐는데도
+// "저장되었습니다" 메시지만 뜨는 문제가 있었음(2026-09-18 발견). 이제는 실패 시 이 배너로 명확히 알림.
+function showLocalSaveFailBanner(label){
+  const banner = document.getElementById('local-save-fail-banner');
+  const txt = document.getElementById('local-save-fail-banner-text');
+  if(txt) txt.textContent = '❌ ' + (label||'데이터') + ' 저장 실패 — 이 기기의 저장공간이 가득 찼을 수 있습니다. 관리자에게 문의해 주세요.';
+  if(banner) banner.classList.add('show');
+}
+function hideLocalSaveFailBanner(){
+  const banner = document.getElementById('local-save-fail-banner');
+  if(banner) banner.classList.remove('show');
+}
+// 공통 로컬 저장 헬퍼 — 성공 시 true, 실패 시 배너를 띄우고 false 반환
+function _hmLocalSave(key, data, label){
+  try{
+    localStorage.setItem(key, JSON.stringify(data));
+    hideLocalSaveFailBanner();
+    return true;
+  }catch(e){
+    console.error('[로컬 저장 실패]', key, e);
+    showLocalSaveFailBanner(label);
+    return false;
+  }
+}
+
 // 용량 경고: 콘솔에만 남기지 않고 화면에도 표시(사용자가 직접 확인해야 다시 숨겨짐, 자동으로 안 사라짐)
 let _capacityWarnShown = false;
 function showCapacityWarnBanner(len){
@@ -5364,7 +5394,7 @@ function _persistSleepRecordsLocal(list){
     const {img, imgs, imgW, imgH, ...rest} = r;
     return {...rest, _imgKey:key};
   });
-  localStorage.setItem('hilmaru_records', JSON.stringify(light));
+  return _hmLocalSave('hilmaru_records', light, '수면기록');
 }
 // localStorage 캐시에서 불러온 sleepRecords에 IndexedDB의 이미지를 다시 채워 넣음
 async function _hydrateSleepImages(list){
@@ -5457,18 +5487,18 @@ async function initStorage(){
 
     // 캐시 갱신
     try{ _persistSleepRecordsLocal(sleepRecords); }catch(e){}
-    try{ localStorage.setItem('hilmaru_hr', JSON.stringify(heartRateRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_bp', JSON.stringify(bloodPressureRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_o2', JSON.stringify(oxygenRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_weight', JSON.stringify(weightRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_wh', JSON.stringify(womensHealthRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_act', JSON.stringify(activityRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_survey', JSON.stringify(surveyRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_profile', JSON.stringify(profileRecords)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_participants', JSON.stringify(participants)); }catch(e){}
-    try{ localStorage.setItem('hilmaru_groups', JSON.stringify(groups)); }catch(e){}
+    _hmLocalSave('hilmaru_hr', heartRateRecords, '심박수');
+    _hmLocalSave('hilmaru_bp', bloodPressureRecords, '혈압');
+    _hmLocalSave('hilmaru_o2', oxygenRecords, '혈중산소');
+    _hmLocalSave('hilmaru_weight', weightRecords, '체중');
+    _hmLocalSave('hilmaru_wh', womensHealthRecords, '여성건강');
+    _hmLocalSave('hilmaru_sv', stressRecords, '스트레스·활력점수');
+    _hmLocalSave('hilmaru_act', activityRecords, '활동량');
+    _hmLocalSave('hilmaru_dv', deviceRecords, '기기 제공·수거');
+    _hmLocalSave('hilmaru_survey', surveyRecords, '대상자 설문');
+    _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
+    _hmLocalSave('hilmaru_participants', participants, '참가자 정보');
+    _hmLocalSave('hilmaru_groups', groups, '그룹 정보');
     setGsStatus('ok', '시트 연결됨');
     setTimeout(()=>setGsStatus('idle','☁ Google Sheets'), 3000);
   }catch(err){
@@ -5526,20 +5556,18 @@ async function syncToSheet(){
 
 function saveSurveyRecords(){
   // answerImg(PDF 인식 미리보기, base64)는 용량이 커서 로컬 캐시에는 저장하지 않음 (현재 세션 참고용)
-  try{
-    const noImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
-    localStorage.setItem('hilmaru_survey', JSON.stringify(noImg));
-  }catch(e){}
+  const noImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
+  _hmLocalSave('hilmaru_survey', noImg, '대상자 설문');
   syncToSheet();
 }
 
 function saveParticipants(){
-  try{ localStorage.setItem('hilmaru_participants', JSON.stringify(participants)); }catch(e){}
+  _hmLocalSave('hilmaru_participants', participants, '참가자 정보');
   syncToSheet();
 }
 
 function saveGroups(){
-  try{ localStorage.setItem('hilmaru_groups', JSON.stringify(groups)); }catch(e){}
+  _hmLocalSave('hilmaru_groups', groups, '그룹 정보');
   syncToSheet();
 }
 
@@ -5662,7 +5690,7 @@ document.addEventListener('click', function(e){
 });
 function saveRecords(){
   let _saveOk = true;
-  try{ _persistSleepRecordsLocal(sleepRecords); }catch(e){ _saveOk = false; }
+  try{ _saveOk = _persistSleepRecordsLocal(sleepRecords); }catch(e){ _saveOk = false; }
   updateSaveStatus(_saveOk);
   if(!_saveOk) showToast('⚠ 저장 공간이 부족해 자동저장에 실패했습니다. 오래된 사진이 있는 기록을 삭제한 뒤 다시 저장해 주세요.', true);
   const hasData = sleepRecords.length > 0;
@@ -5700,7 +5728,7 @@ function addHeartRate(){
   if(hrTab) switchDataTab('heart', hrTab);
 }
 function saveHeartRates(){
-  try{ localStorage.setItem('hilmaru_hr', JSON.stringify(heartRateRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_hr', heartRateRecords, '심박수');
   if(_currentDataTab === 'all') renderAllRecords();
   syncToSheet();
 }
@@ -6342,7 +6370,7 @@ function addBloodPressure(){
   if(bpTab) switchDataTab('bp', bpTab);
 }
 function saveBloodPressures(){
-  try{ localStorage.setItem('hilmaru_bp', JSON.stringify(bloodPressureRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_bp', bloodPressureRecords, '혈압');
   if(_currentDataTab === 'all') renderAllRecords();
   syncToSheet();
 }
@@ -6497,7 +6525,7 @@ function addOxygen(){
   if(o2Tab) switchDataTab('o2', o2Tab);
 }
 function saveOxygens(){
-  try{ localStorage.setItem('hilmaru_o2', JSON.stringify(oxygenRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_o2', oxygenRecords, '혈중산소');
   if(_currentDataTab === 'all') renderAllRecords();
   syncToSheet();
 }
@@ -6605,7 +6633,7 @@ async function exportO2Excel(){
    활동량 (칼로리·걸음수·고강도활동)
 ═══════════════════════════════════════ */
 function saveActivities(){
-  try{ localStorage.setItem('hilmaru_act', JSON.stringify(activityRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_act', activityRecords, '활동량');
   if(_currentDataTab === 'all') renderAllRecords();
   syncToSheet();
 }
@@ -6807,7 +6835,7 @@ function addWeight(){
   if(wtTab) switchDataTab('weight', wtTab);
 }
 function saveWeights(){
-  try{ localStorage.setItem('hilmaru_weight', JSON.stringify(weightRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_weight', weightRecords, '체중');
   if(_currentDataTab === 'all') renderAllRecords();
   syncToSheet();
 }
@@ -6935,7 +6963,7 @@ function addWomensHealth(){
   if(whTab) switchDataTab('womens', whTab);
 }
 function saveWomensHealth(){
-  try{ localStorage.setItem('hilmaru_wh', JSON.stringify(womensHealthRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_wh', womensHealthRecords, '여성건강');
   if(_currentDataTab === 'all') renderAllRecords();
   syncToSheet();
 }
@@ -7030,7 +7058,7 @@ function addStressVital(){
   if(svTab) switchDataTab('stress', svTab);
 }
 function saveStressVital(){
-  try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_sv', stressRecords, '스트레스·활력점수');
   if(_currentDataTab === 'all') renderAllRecords();
   syncToSheet();
 }
@@ -7125,7 +7153,7 @@ function saveDeviceRecord(){
   const note   = (document.getElementById('dv-note')||{}).value||'';
   if(!date && !name){ alert('날짜 또는 고객명을 입력해 주세요.'); return; }
   deviceRecords.unshift({nurse,date,duration:dur,place,name,phone,task,device,sn,note});
-  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_dv', deviceRecords, '기기 제공·수거');
   syncToSheet();
   renderDeviceRecords();
   clearDeviceForm();
@@ -7173,7 +7201,7 @@ function deleteDeviceRecord(idx){
   if(!confirm('이 기록을 삭제할까요?')) return;
   // 소프트 삭제: 배열에서 제거하지 않고 deleted 플래그만 표시 → '관리' 탭에서 복구 가능
   if(deviceRecords[idx]) deviceRecords[idx].deleted = true;
-  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_dv', deviceRecords, '기기 제공·수거');
   syncToSheet();
   renderDeviceRecords();
   renderDataManageTable();
@@ -7182,7 +7210,7 @@ function deleteDeviceRecord(idx){
 function restoreDeviceRecord(idx){
   if(!deviceRecords[idx]) return;
   deviceRecords[idx].deleted = false;
-  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_dv', deviceRecords, '기기 제공·수거');
   syncToSheet();
   renderDeviceRecords();
   renderDataManageTable();
@@ -7207,7 +7235,7 @@ function saveProfileRecord(){
   const analysis   = (document.getElementById('pf-analysis')||{}).value||'';
   if(!name){ alert('고객명을 입력해 주세요.'); return; }
   profileRecords.unshift({name,age,gender,birth,job,workType,diagDate,surgDate,treatment,meds,comorbid,sleepTxHistory,symptoms,analysis});
-  try{ localStorage.setItem('hilmaru_profile', JSON.stringify(profileRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
   syncToSheet();
   clearProfileForm();
   closePhoneScreen();
@@ -12268,7 +12296,7 @@ function saveEditDV(){
   };
   if(!updated.date && !updated.name){ showToast('날짜 또는 고객명을 입력해 주세요.', true); return; }
   deviceRecords[_editingDvIdx] = updated;
-  try{ localStorage.setItem('hilmaru_dv', JSON.stringify(deviceRecords)); }catch(e){}
+  _hmLocalSave('hilmaru_dv', deviceRecords, '기기 제공·수거');
   syncToSheet();
   renderDeviceRecords();
   closeEditDV();

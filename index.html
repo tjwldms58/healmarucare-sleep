@@ -150,6 +150,33 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .gs-sync-badge.ok      .gs-sync-dot { background: #6de8a8; }
 .gs-sync-badge.fail    .gs-sync-dot { background: #f08080; }
 .gs-sync-badge.idle    .gs-sync-dot { background: rgba(255,255,255,.25); }
+/* 저장 실패 / 용량 경고 알림 배너 — 절대 자동으로 사라지지 않음, 모바일에서도 텍스트 항상 노출 */
+#sync-banner-stack {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+  display: flex; flex-direction: column;
+}
+.sync-fail-banner {
+  display: none; width: 100%;
+  background: #c83535; color: #fff; padding: 10px 14px; font-size: .82rem; font-weight: 700;
+  align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,.35);
+}
+.sync-fail-banner.show { display: flex; }
+.sync-fail-banner button {
+  background: #fff; color: #c83535; border: none; border-radius: 6px; padding: 5px 12px;
+  font-weight: 800; font-size: .8rem; cursor: pointer; font-family: inherit;
+}
+.sync-warn-banner {
+  display: none; width: 100%;
+  background: #b5790a; color: #fff; padding: 8px 14px; font-size: .78rem; font-weight: 700;
+  align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+.sync-warn-banner.show { display: flex; }
+.sync-warn-banner button {
+  background: rgba(255,255,255,.9); color: #b5790a; border: none; border-radius: 6px; padding: 4px 10px;
+  font-weight: 800; font-size: .74rem; cursor: pointer; font-family: inherit;
+}
 @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
 @keyframes loginFadeIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
 @keyframes mbFloat   { 0%,100%{transform:perspective(500px) rotateY(-18deg) rotateX(8deg) translateY(0)} 50%{transform:perspective(500px) rotateY(-18deg) rotateX(8deg) translateY(-10px)} }
@@ -1760,6 +1787,20 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
       <div class="lbox-hint">힐마루케어 관계자 전용 시스템입니다.</div>
     </div>
 
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     저장 실패 / 용량 경고 알림 배너 (자동으로 사라지지 않음)
+═══════════════════════════════════════ -->
+<div id="sync-banner-stack">
+  <div id="sync-fail-banner" class="sync-fail-banner">
+    <span id="sync-fail-banner-text">⚠ 저장 실패 — 서버에 저장되지 못했습니다. 다른 기기로 넘어가지 마세요.</span>
+    <button onclick="retrySyncToSheet()">다시 저장 시도</button>
+  </div>
+  <div id="sync-warn-banner" class="sync-warn-banner">
+    <span id="sync-warn-banner-text">⚠ 데이터 용량이 한도에 가까워지고 있습니다. 관리자에게 알려주세요.</span>
+    <button onclick="document.getElementById('sync-warn-banner').classList.remove('show')">확인함</button>
   </div>
 </div>
 
@@ -4762,7 +4803,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.90';
+const APP_VER = '6.91';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5218,6 +5259,28 @@ function setGsStatus(state, text){
   txt.textContent = text;
 }
 
+// 저장 실패 배너: 성공할 때까지 절대 자동으로 사라지지 않음(모바일 포함)
+function showSyncFailBanner(msg){
+  const banner = document.getElementById('sync-fail-banner');
+  const txt = document.getElementById('sync-fail-banner-text');
+  if(txt) txt.textContent = '⚠ 저장 실패 — 서버에 저장되지 못했습니다. 다른 기기로 넘어가지 마세요.' + (msg ? ' (' + msg + ')' : '');
+  if(banner) banner.classList.add('show');
+}
+function hideSyncFailBanner(){
+  const banner = document.getElementById('sync-fail-banner');
+  if(banner) banner.classList.remove('show');
+}
+function retrySyncToSheet(){ syncToSheet(); }
+
+// 용량 경고: 콘솔에만 남기지 않고 화면에도 표시(사용자가 직접 확인해야 다시 숨겨짐, 자동으로 안 사라짐)
+let _capacityWarnShown = false;
+function showCapacityWarnBanner(len){
+  const banner = document.getElementById('sync-warn-banner');
+  const txt = document.getElementById('sync-warn-banner-text');
+  if(txt) txt.textContent = `⚠ 데이터 용량이 한도(약 5만자)에 근접했습니다 (현재 ${len.toLocaleString()}자). 계속 늘어나면 저장이 실패할 수 있으니 관리자에게 알려주세요.`;
+  if(banner) banner.classList.add('show');
+}
+
 /* ═══════════════════════════════════════
    수면 그래프 이미지 전용 저장소 — IndexedDB
    (localStorage는 용량 한도가 작아 이미지가 쌓이면 저장이 실패할 수 있어,
@@ -5421,6 +5484,13 @@ async function syncToSheet(){
       // 대상자 설문의 answerImg(PDF 인식 미리보기, base64)는 임시 참고용이라 시트에는 저장하지 않음
       const surveyNoImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
       const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, activityRecords, deviceRecords, surveyRecords: surveyNoImg, profileRecords, participants, groups });
+      // 구글 시트는 셀 하나당 약 5만자 한도. sleepRecords가 각자 별도 셀에 저장되므로 그 자체 길이를 확인
+      // (예전엔 console.warn만 하고 화면엔 안 보여줘서 용량 문제를 아무도 몰랐음 — 이제 화면에도 경고)
+      const sleepJson = JSON.stringify(sleepNoImg);
+      if(sleepJson.length > 45000){
+        console.warn(`syncToSheet: sleepRecords ${sleepJson.length}자 — 구글 시트 셀 한도(약 5만자)에 근접`);
+        showCapacityWarnBanner(sleepJson.length);
+      }
       if(payload.length > 45000){
         console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
       }
@@ -5436,6 +5506,7 @@ async function syncToSheet(){
         const hh=String(now.getHours()).padStart(2,'0');
         const mi=String(now.getMinutes()).padStart(2,'0');
         setGsStatus('ok', `☁ 저장됨 ${hh}:${mi}`);
+        hideSyncFailBanner();
         setTimeout(()=>setGsStatus('idle','☁ Google Sheets'), 4000);
       } else {
         throw new Error('GAS 응답 오류: ' + JSON.stringify(postData));
@@ -5443,7 +5514,8 @@ async function syncToSheet(){
     }catch(err){
       console.warn('구글 시트 저장 실패:', err.message);
       setGsStatus('fail', '저장 실패 — 로컬만 저장됨');
-      setTimeout(()=>setGsStatus('idle','☁ Google Sheets'), 6000);
+      // 실패 배너는 저장이 실제로 성공할 때까지 화면에서 사라지지 않음(모바일 포함, 6초 후 자동 숨김 안 함)
+      showSyncFailBanner(err.message);
     }
   }, 500);
 }

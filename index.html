@@ -3155,7 +3155,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
         <button class="dt-tab" onclick="switchDataTab('survey',this)" style="color:#0E8FA3">📝 대상자 설문</button>
-        <button class="dt-tab" onclick="switchDataTab('manage',this)" style="color:#8A6D1D">🗂️ 관리</button>
+        <button id="dt-tab-manage" class="dt-tab" onclick="switchDataTab('manage',this)" style="color:#8A6D1D">🗂️ 관리</button>
       </div>
 
       <!-- ── 전체 테이블 ── -->
@@ -4803,7 +4803,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.92';
+const APP_VER = '6.93';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -4893,6 +4893,7 @@ const APP_VER = '6.92';
     if(sessionStorage.getItem(_KEY) === '1'){
       _hide();
       if(typeof _hmApplyReadonlyUI === 'function') _hmApplyReadonlyUI();
+      if(typeof _hmApplyManageTabVisibility === 'function') _hmApplyManageTabVisibility();
     } else {
       _show();
       setTimeout(function(){ document.getElementById('hm-login-id').focus(); }, 100);
@@ -4915,6 +4916,7 @@ const APP_VER = '6.92';
       err.style.display = 'none';
       _hide();
       if(typeof _hmApplyReadonlyUI === 'function') _hmApplyReadonlyUI();
+      if(typeof _hmApplyManageTabVisibility === 'function') _hmApplyManageTabVisibility();
       // 로그인 성공 로그 + 직전 "페이지접속/알수없음" 항목 이름으로 소급 업데이트
       setTimeout(function(){
         _devLog('로그인', '사용자: ' + userId);
@@ -5002,6 +5004,16 @@ function _hmApplyReadonlyUI(){
     _hmReadonlyObserver.disconnect();
     _hmReadonlyObserver = null;
   }
+}
+
+// 데이터패널의 "관리"(삭제기록 복구) 탭은 서지은 로그인 계정에만 노출
+const _HM_MANAGE_TAB_USERS = ['서지은'];
+function _hmApplyManageTabVisibility(){
+  const btn = document.getElementById('dt-tab-manage');
+  if(!btn) return;
+  const user = (typeof hmGetUser === 'function') ? hmGetUser() : '';
+  const allowed = _HM_MANAGE_TAB_USERS.indexOf(user) !== -1;
+  btn.style.display = allowed ? '' : 'none';
 }
 
 // Set version badge

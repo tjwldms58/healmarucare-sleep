@@ -4803,7 +4803,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.91';
+const APP_VER = '6.92';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5484,16 +5484,8 @@ async function syncToSheet(){
       // 대상자 설문의 answerImg(PDF 인식 미리보기, base64)는 임시 참고용이라 시트에는 저장하지 않음
       const surveyNoImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
       const payload = JSON.stringify({ sleepRecords: sleepNoImg, heartRateRecords, bloodPressureRecords, oxygenRecords, weightRecords, womensHealthRecords, stressRecords, activityRecords, deviceRecords, surveyRecords: surveyNoImg, profileRecords, participants, groups });
-      // 구글 시트는 셀 하나당 약 5만자 한도. sleepRecords가 각자 별도 셀에 저장되므로 그 자체 길이를 확인
-      // (예전엔 console.warn만 하고 화면엔 안 보여줘서 용량 문제를 아무도 몰랐음 — 이제 화면에도 경고)
-      const sleepJson = JSON.stringify(sleepNoImg);
-      if(sleepJson.length > 45000){
-        console.warn(`syncToSheet: sleepRecords ${sleepJson.length}자 — 구글 시트 셀 한도(약 5만자)에 근접`);
-        showCapacityWarnBanner(sleepJson.length);
-      }
-      if(payload.length > 45000){
-        console.warn(`syncToSheet: 페이로드 ${payload.length}자 — 구글 시트 셀 한도에 근접`);
-      }
+      // 2026-09-18: 백엔드(Code.gs)를 "셀 하나에 배열 전체" → "레코드당 한 행" 방식으로 마이그레이션함에 따라
+      // 5만자 셀 한도 자체가 더 이상 적용되지 않음. 예전 용량 경고 체크(45,000자 기준)는 삭제함 — 이제 뜨면 오작동임.
       // POST — GAS simple request(urlencoded)는 CORS preflight 불필요, 응답 직접 확인
       const postRes = await fetch(GS_URL, {
         method : 'POST',

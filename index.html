@@ -177,6 +177,14 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   background: rgba(255,255,255,.9); color: #b5790a; border: none; border-radius: 6px; padding: 4px 10px;
   font-weight: 800; font-size: .74rem; cursor: pointer; font-family: inherit;
 }
+/* 삭제 확인 알림 — 상단, 밝은 색으로 눈에 띄게. 몇 초 후 자동으로 사라짐 */
+.delete-toast-banner {
+  display: none; width: 100%;
+  background: #FFCB3D; color: #1a2a3a; padding: 12px 14px; font-size: .92rem; font-weight: 800;
+  align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+.delete-toast-banner.show { display: flex; }
 @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
 @keyframes loginFadeIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
 @keyframes mbFloat   { 0%,100%{transform:perspective(500px) rotateY(-18deg) rotateX(8deg) translateY(0)} 50%{transform:perspective(500px) rotateY(-18deg) rotateX(8deg) translateY(-10px)} }
@@ -1821,6 +1829,9 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
   <div id="local-save-fail-banner" class="sync-fail-banner">
     <span id="local-save-fail-banner-text">❌ 저장 실패 — 이 기기의 저장공간이 가득 찼을 수 있습니다. 관리자에게 문의해 주세요.</span>
     <button onclick="hideLocalSaveFailBanner()">확인함</button>
+  </div>
+  <div id="delete-toast-banner" class="delete-toast-banner">
+    <span id="delete-toast-banner-text"></span>
   </div>
 </div>
 
@@ -4894,7 +4905,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.97';
+const APP_VER = '6.98';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5850,7 +5861,7 @@ function deleteHeartRate(idx){
     saveHeartRates();
     renderHeartRates();
     renderDataManageTable();
-    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteHr = idx;
     showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
@@ -6496,7 +6507,7 @@ function deleteBloodPressure(idx){
     saveBloodPressures();
     renderBloodPressures();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast('기록이 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteBp = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
@@ -6652,7 +6663,7 @@ function deleteOxygen(idx){
     saveOxygens();
     renderOxygens();
     renderDataManageTable();
-    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteO2 = idx;
     showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
@@ -6761,7 +6772,7 @@ function deleteActivity(idx){
     saveActivities();
     renderActivities();
     renderDataManageTable();
-    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteAct = idx;
     showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
@@ -6963,7 +6974,7 @@ function deleteWeight(idx){
     saveWeights();
     renderWeights();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast('기록이 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteWt = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
@@ -7091,7 +7102,7 @@ function deleteWomensHealth(idx){
     saveWomensHealth();
     renderWomensHealth();
     renderDataManageTable();
-    showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast('기록이 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteWh = idx;
     showToast('한 번 더 클릭하면 삭제됩니다.', true);
@@ -7187,7 +7198,7 @@ function deleteStressVital(idx){
     saveStressVital();
     renderStressVital();
     renderDataManageTable();
-    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteSv = idx;
     showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
@@ -7322,7 +7333,7 @@ function deleteDeviceRecord(idx){
   syncToSheet();
   renderDeviceRecords();
   renderDataManageTable();
-  showToast('기록이 삭제되었습니다. (관리 탭에서 복구 가능)');
+  showDeleteToast('기록이 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
 }
 function restoreDeviceRecord(idx){
   if(!deviceRecords[idx]) return;
@@ -7380,7 +7391,7 @@ function deleteProfileRecord(idx){
     syncToSheet();
     renderProfileRecords();
     renderDataManageTable();
-    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteProfile = idx;
     showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
@@ -7651,7 +7662,7 @@ function deleteSurveyGroup(groupId){
     saveSurveyRecords();
     renderSurveyTable();
     renderDataManageTable();
-    showToast('설문 18개 행이 모두 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast('설문 18개 행이 모두 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteSurveyGroup = groupId;
     showToast('한 번 더 클릭하면 이 고객의 설문 전체가 삭제됩니다.', true);
@@ -8521,7 +8532,7 @@ function deleteParticipant(idx){
   buildParticipantTable();
   buildManageTable();
   if(document.getElementById('sub-gantt').classList.contains('active')) buildGantt();
-  showToast('참여자가 삭제되었습니다. (관리 탭에서 복구 가능)');
+  showDeleteToast('참여자가 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
 }
 
 /* '관리' 탭에서 소프트 삭제된 참여자 복구 */
@@ -9127,6 +9138,16 @@ function showToast(msg, isErr){
   t.style.opacity = '1';
   clearTimeout(t._tmr);
   t._tmr = setTimeout(()=>{ t.style.opacity='0'; }, 3500);
+}
+
+// 삭제 확인 알림 — 상단 배너, 밝은 색으로 표시 후 자동으로 사라짐
+function showDeleteToast(msg){
+  const el = document.getElementById('delete-toast-banner');
+  if(!el) return;
+  document.getElementById('delete-toast-banner-text').textContent = '🗑️ ' + msg;
+  el.classList.add('show');
+  clearTimeout(el._tmr);
+  el._tmr = setTimeout(()=>{ el.classList.remove('show'); }, 4000);
 }
 
 /* ═══════════════════════════════════════
@@ -10290,7 +10311,7 @@ function deleteRecord(idx){
     saveRecords();
     renderRecords();
     renderDataManageTable();
-    showToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. (관리 탭에서 복구 가능)');
+    showDeleteToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     // 첫 번째 클릭 → 확인 요청
     _pendingDelete = idx;

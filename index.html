@@ -1158,7 +1158,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 /* Data type tabs (수면/심박수/...) */
 .data-type-tabs {
   display: flex; gap: 2px; overflow-x: auto; padding: 0 1.4rem 0;
-  scrollbar-width: none;
+  scrollbar-width: none; align-items: center;
   border-top: 1px solid var(--border);
   border-bottom: 1.5px solid var(--border);
   background: var(--surface);
@@ -1174,6 +1174,22 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 .dt-tab:hover:not(.dt-tab-soon) { color: var(--text-1); }
 .dt-tab.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 700; }
 .dt-tab-soon { opacity: .4; cursor: default; }
+
+/* 전체/수면/심박수/혈중산소/활동량/스트레스·활력 — 알약형 세그먼트 탭 (파스텔, 그라데이션·투명도 없음) */
+.dt-tab.dt-tab-pill {
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  margin: 3px 1px -1.5px;
+  padding: 6px 13px;
+  background: var(--surface);
+  color: var(--text-3);
+  transition: background .15s, border-color .15s, color .15s;
+}
+.dt-tab.dt-tab-pill:hover:not(.active) { border-color: var(--teal); background: var(--surface-2); color: var(--text-1); }
+.dt-tab.dt-tab-pill.active { background: var(--teal-light); border-color: var(--teal-light); color: var(--teal); font-weight: 700; }
+.dt-tab.dt-tab-pill.dt-tab-accent-warn { color: var(--warn); }
+.dt-tab.dt-tab-pill.dt-tab-accent-warn:hover:not(.active) { border-color: var(--warn); color: var(--warn); }
+.dt-tab.dt-tab-pill.dt-tab-accent-warn.active { background: var(--warn-bg); border-color: var(--warn-bg); color: var(--warn); }
 
 .sub-tab {
   background: none; border: none;
@@ -3161,12 +3177,12 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 
       <!-- 데이터 유형 탭 바 — 헤더 아래 독립 행 -->
       <div class="data-type-tabs" id="data-type-tabs">
-        <button class="dt-tab" onclick="switchDataTab('all',this)">📋 전체</button>
-        <button class="dt-tab active" onclick="switchDataTab('sleep',this)">🌙 수면</button>
-        <button class="dt-tab" onclick="switchDataTab('heart',this)">❤️ 심박수</button>
-        <button class="dt-tab" onclick="switchDataTab('o2',this)">O₂ 혈중산소</button>
-        <button class="dt-tab" onclick="switchDataTab('activity',this)" style="color:#FF6B35">🔥 활동량</button>
-        <button class="dt-tab" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
+        <button class="dt-tab dt-tab-pill" onclick="switchDataTab('all',this)">📋 전체</button>
+        <button class="dt-tab dt-tab-pill active" onclick="switchDataTab('sleep',this)">🌙 수면</button>
+        <button class="dt-tab dt-tab-pill" onclick="switchDataTab('heart',this)">❤️ 심박수</button>
+        <button class="dt-tab dt-tab-pill" onclick="switchDataTab('o2',this)">O₂ 혈중산소</button>
+        <button class="dt-tab dt-tab-pill dt-tab-accent-warn" onclick="switchDataTab('activity',this)">🔥 활동량</button>
+        <button class="dt-tab dt-tab-pill" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
         <button class="dt-tab" onclick="switchDataTab('survey',this)" style="color:#0E8FA3">📝 대상자 설문</button>
         <button class="dt-tab" onclick="switchDataTab('profile',this)" style="color:#B23F8C">📋 대상자 인적사항</button>
@@ -4878,7 +4894,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.96';
+const APP_VER = '6.97';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM

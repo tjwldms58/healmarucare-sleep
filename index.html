@@ -695,94 +695,110 @@ html.hm-readonly textarea:disabled {
   background: var(--surface-2); color: var(--text-1); font-size: .8rem; font-weight: 700; cursor: pointer;
 }
 .slr-action-btn:hover { border-color: var(--teal); color: var(--teal); }
-.slr-report { display: flex; flex-direction: column; gap: 1.1rem; }
-.slr-page { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; page-break-inside: avoid; }
-.slr-page-num {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px; border-radius: 50%; background: var(--navy);
-  color: #fff; font-size: .72rem; font-weight: 800; margin-bottom: .5rem;
+/* ── 수면레포트 산출물 전용 팔레트 (앱 네이비 테마와 무관하게 항상 고정) ── */
+.slr-report {
+  --slrc-bg:#F5F1E7; --slrc-card:#FFFFFF; --slrc-border:#E7E2D3;
+  --slrc-ink:#20282A; --slrc-ink2:#52605C; --slrc-ink3:#8B948E;
+  --slrc-teal:#17393E; --slrc-teal-soft:#25545A; --slrc-mint:#DCEAE6;
+  --slrc-terracotta:#C97B53; --slrc-terracotta-dk:#8B5238; --slrc-peach:#F4E3D7;
+  --slrc-rose:#A14E42; --slrc-rose-bg:#FBDCD4; --slrc-gold:#DAA44C;
+  --slrc-mauve:#8C7BA7; --slrc-light-teal:#6FA49E;
+  display: flex; flex-direction: column; gap: 1.1rem;
+  font-family: 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
 }
-.slr-page-title { font-size: 1.05rem; font-weight: 800; color: var(--text-1); margin-bottom: .2rem; }
-.slr-page-desc { font-size: .8rem; color: var(--text-3); margin-bottom: .8rem; line-height: 1.5; }
-.slr-hero { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
-.slr-hero-label { font-size: .78rem; color: var(--text-3); font-weight: 600; }
-.slr-hero-value { font-size: 1.7rem; font-weight: 800; color: var(--text-1); }
-.slr-range-note { font-size: .76rem; color: var(--text-3); margin: .2rem 0 .8rem; }
-.slr-chart-box { background: var(--surface); border-radius: 10px; padding: 8px; margin-bottom: .8rem; }
+.slr-page { position:relative; background: var(--slrc-bg); border: 1px solid var(--slrc-border); border-radius: 14px; padding: 1.9rem 1.7rem 1.6rem; page-break-inside: avoid; }
+.slr-page-num { display: none; }
+.slr-page-head { display:flex; align-items:baseline; justify-content:space-between; gap:.6rem; padding-bottom:.7rem; margin-bottom:1.1rem; border-bottom:1px solid var(--slrc-border); font-size:.7rem; color:var(--slrc-ink3); }
+.slr-page-head-left { font-weight:700; }
+.slr-page-head-brand { font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.64rem; white-space:nowrap; }
+.slr-page-foot { display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin-top:1.6rem; padding-top:.8rem; border-top:1px solid var(--slrc-border); font-size:.66rem; color:var(--slrc-ink3); }
+.slr-page-foot-onDark { border-top-color: rgba(255,255,255,.16); color: rgba(255,255,255,.55); }
+.slr-page-title { font-size: 1.32rem; font-weight: 800; color: var(--slrc-ink); margin-bottom: .3rem; letter-spacing:-.01em; }
+.slr-page-desc { font-size: .82rem; color: var(--slrc-ink2); margin-bottom: .9rem; line-height: 1.6; }
+.slr-hero { display: flex; align-items: center; gap: .8rem; background:var(--slrc-card); border:1px solid var(--slrc-border); border-radius:12px; padding: .9rem 1.1rem; margin-bottom:.7rem; }
+.slr-hero-icon { flex-shrink:0; width:26px; height:26px; display:flex; align-items:center; justify-content:center; color:var(--slrc-teal); }
+.slr-hero-icon.tc { color: var(--slrc-terracotta-dk); }
+.slr-hero-text { display:flex; flex-direction:column; gap:.15rem; }
+.slr-hero-label { font-size: .74rem; color: var(--slrc-ink3); font-weight: 600; }
+.slr-hero-value { font-size: 1.9rem; font-weight: 800; color: var(--slrc-ink); line-height:1.15; }
+.slr-range-note { font-size: .76rem; color: var(--slrc-ink3); margin: .2rem 0 .9rem; }
+.slr-chart-box { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: 12px; margin-bottom: .8rem; }
 .slr-chart-box canvas { width: 100%; height: auto; display: block; }
-.slr-insight-box { background: var(--teal-light); color: var(--text-1); border-radius: 9px; padding: .8rem .9rem; font-size: .82rem; line-height: 1.6; margin-bottom: .6rem; }
-.slr-suggest-box { background: var(--warn-bg); color: var(--text-1); border-radius: 9px; padding: .8rem .9rem; font-size: .82rem; line-height: 1.6; }
-.slr-combo-title { font-size: .82rem; font-weight: 800; color: var(--text-1); margin-bottom: .3rem; }
-.slr-combo-subtitle { font-size: .7rem; font-weight: 600; color: var(--text-3); }
-.slr-combo-legend { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .68rem; color: var(--text-2); margin-bottom: .5rem; }
+.slr-insight-box { background: var(--slrc-mint); color: var(--slrc-ink); border-radius: 12px; padding: .85rem 1rem; font-size: .82rem; line-height: 1.65; margin-bottom: .6rem; }
+.slr-suggest-box { background: var(--slrc-peach); color: var(--slrc-ink); border-radius: 12px; padding: .85rem 1rem; font-size: .82rem; line-height: 1.65; }
+.slr-combo-title { font-size: .82rem; font-weight: 800; color: var(--slrc-ink); margin-bottom: .3rem; }
+.slr-combo-subtitle { font-size: .7rem; font-weight: 600; color: var(--slrc-ink3); }
+.slr-combo-legend { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .68rem; color: var(--slrc-ink2); margin-bottom: .5rem; }
 .slr-combo-legend span { display: inline-flex; align-items: center; gap: .3rem; }
 .slr-legend-chip { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; }
 .slr-legend-line { display: inline-block; width: .9rem; height: 2px; }
-.slr-legend-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: #C83535; }
+.slr-legend-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--slrc-rose); }
 .slr-16-insights { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: .8rem 0; }
-.slr-16-insights .slr-insight-box { margin-bottom: 0; border-left: 3px solid var(--teal); }
-.slr-insight-warn { background: var(--warn-bg) !important; border-left: 3px solid var(--warn); }
+.slr-16-insights .slr-insight-box { background:var(--slrc-card); margin-bottom: 0; border:1px solid var(--slrc-border); border-left: 3px solid var(--slrc-teal); }
+.slr-insight-warn { background: var(--slrc-rose-bg) !important; border-left: 3px solid var(--slrc-rose); }
 .slr-page-title-row { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
 .slr-page-title-row .slr-page-title { margin-bottom: 0; }
-.slr-badge-pill { flex-shrink: 0; background: var(--err-bg); color: var(--err); font-size: .68rem; font-weight: 700; padding: .3rem .6rem; border-radius: 20px; white-space: nowrap; }
+.slr-badge-pill { flex-shrink: 0; background: var(--slrc-rose-bg); color: var(--slrc-rose); font-size: .68rem; font-weight: 700; padding: .3rem .7rem; border-radius: 20px; white-space: nowrap; }
 .slr-anomaly-card .slr-def-icon, .slr-anomaly-card svg { display: block; margin: .5rem auto 0; }
-.slr-integrated-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .9rem 1rem; }
-.slr-integrated-title { font-weight: 800; font-size: .8rem; color: var(--text-2); margin-bottom: .6rem; }
+.slr-integrated-card { background: var(--slrc-card); border: 1px solid var(--slrc-border); border-radius: 12px; padding: .9rem 1rem; }
+.slr-integrated-title { font-weight: 800; font-size: .8rem; color: var(--slrc-ink2); margin-bottom: .6rem; }
 .slr-integrated-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 1rem; }
-.slr-integrated-label { font-size: .7rem; color: var(--text-3); margin-bottom: .25rem; }
-.slr-integrated-value { font-size: 1.1rem; font-weight: 800; color: var(--text-1); }
+.slr-integrated-label { font-size: .7rem; color: var(--slrc-ink3); margin-bottom: .25rem; }
+.slr-integrated-value { font-size: 1.1rem; font-weight: 800; color: var(--slrc-ink); }
 .slr-tierbar-row { display: flex; align-items: center; gap: .4rem; margin-top: .3rem; }
-.slr-tierbar-label { font-size: .68rem; color: var(--text-3); width: 2.6rem; flex-shrink: 0; }
-.slr-tierbar-track { flex: 1; height: .5rem; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
-.slr-tierbar-fill { height: 100%; background: var(--teal); border-radius: 6px; }
-.slr-tierbar-val { font-size: .68rem; font-weight: 700; color: var(--text-2); width: 2.4rem; text-align: right; flex-shrink: 0; }
+.slr-tierbar-label { font-size: .68rem; color: var(--slrc-ink3); width: 2.6rem; flex-shrink: 0; }
+.slr-tierbar-track { flex: 1; height: .5rem; background: var(--slrc-mint); border-radius: 6px; overflow: hidden; }
+.slr-tierbar-fill { height: 100%; background: var(--slrc-teal); border-radius: 6px; }
+.slr-tierbar-val { font-size: .68rem; font-weight: 700; color: var(--slrc-ink2); width: 2.4rem; text-align: right; flex-shrink: 0; }
 .slr-def-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: .7rem; margin-bottom: .9rem; }
-.slr-def-card { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: .7rem .8rem; position: relative; }
-.slr-def-num { display:inline-flex; align-items:center; justify-content:center; width:1.15rem; height:1.15rem; border-radius:50%; background:var(--teal); color:#fff; font-size:.62rem; font-weight:800; margin-bottom:.3rem; }
-.slr-def-title { font-weight: 800; font-size: .85rem; color: var(--text-1); }
-.slr-def-eng { font-size: .68rem; color: var(--text-3); margin-bottom: .3rem; }
+.slr-def-card { background: var(--slrc-card); border: 1px solid var(--slrc-border); border-radius: 10px; padding: .7rem .8rem; position: relative; }
+.slr-def-num { display:inline-flex; align-items:center; justify-content:center; width:1.15rem; height:1.15rem; border-radius:50%; background:var(--slrc-teal-soft); color:#fff; font-size:.62rem; font-weight:800; margin-bottom:.3rem; }
+.slr-def-card.cardio .slr-def-num { background: var(--slrc-terracotta); }
+.slr-def-title { font-weight: 800; font-size: .85rem; color: var(--slrc-ink); }
+.slr-def-eng { font-size: .68rem; color: var(--slrc-ink3); margin-bottom: .3rem; }
 .slr-def-icon-wrap { display:flex; align-items:center; justify-content:center; margin: .35rem 0; min-height: 40px; }
-.slr-def-desc { font-size: .76rem; color: var(--text-2); line-height: 1.5; }
-.slr-def-section { font-size: .74rem; font-weight: 700; color: var(--text-3); margin: .3rem 0 .5rem; }
-.slr-def-summary { display:flex; align-items:center; font-size: .74rem; color: var(--text-2); line-height: 1.5; background: var(--surface-2); word-break: keep-all; }
-.slr-cover { background: var(--navy); color: #fff; border-radius: 12px; padding: 2rem 1.6rem; }
-.slr-cover-eyebrow { font-size: .7rem; letter-spacing: .1em; color: var(--mint); font-weight: 700; margin-bottom: .6rem; }
-.slr-cover-title { font-size: 1.5rem; font-weight: 800; line-height: 1.4; margin-bottom: .8rem; }
-.slr-cover-period { font-size: .8rem; color: rgba(255,255,255,.65); margin-bottom: 1.1rem; }
-.slr-cover-chips { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; }
-.slr-chip { background: rgba(255,255,255,.08); border-radius: 9px; padding: .6rem .8rem; min-width: 120px; }
+.slr-def-desc { font-size: .76rem; color: var(--slrc-ink2); line-height: 1.5; }
+.slr-def-section { font-size: .74rem; font-weight: 700; color: var(--slrc-ink3); margin: .3rem 0 .5rem; }
+.slr-def-summary { display:flex; align-items:center; font-size: .74rem; color: var(--slrc-ink2); line-height: 1.5; background: var(--slrc-card); word-break: keep-all; }
+.slr-cover { background: var(--slrc-teal); color: #fff; border-radius: 14px; padding: 2.1rem 1.7rem; }
+.slr-cover-eyebrow { font-size: .7rem; letter-spacing: .12em; color: var(--slrc-terracotta); font-weight: 700; margin-bottom: .7rem; }
+.slr-cover-title { font-size: 1.65rem; font-weight: 800; line-height: 1.4; margin-bottom: .9rem; }
+.slr-cover-divider { width: 46px; height: 3px; background: var(--slrc-terracotta); border-radius: 2px; margin-bottom: 1rem; }
+.slr-cover-period { font-size: .8rem; color: rgba(255,255,255,.6); margin-bottom: 1.1rem; }
+.slr-cover-chips { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.3rem; }
+.slr-chip { background: rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius: 10px; padding: .6rem .8rem; min-width: 120px; }
 .slr-chip-label { font-size: .68rem; color: rgba(255,255,255,.55); margin-bottom: .15rem; }
 .slr-chip-value { font-size: .88rem; font-weight: 700; }
 .slr-cover-indicators { display: flex; flex-wrap: wrap; gap: .4rem; }
-.slr-indicator-pill { background: rgba(255,255,255,.1); border-radius: 999px; padding: .3rem .8rem; font-size: .72rem; color: rgba(255,255,255,.85); }
+.slr-indicator-pill { background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.18); border-radius: 8px; padding: .35rem .85rem; font-size: .72rem; color: rgba(255,255,255,.9); }
 .slr-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
-.slr-table th, .slr-table td { border-bottom: 1px solid var(--border); padding: .5rem .6rem; text-align: left; }
-.slr-table th { color: var(--text-3); font-weight: 700; font-size: .72rem; }
+.slr-table th, .slr-table td { border-bottom: 1px solid var(--slrc-border); padding: .6rem .6rem; text-align: left; color: var(--slrc-ink); }
+.slr-table th { color: var(--slrc-ink3); font-weight: 700; font-size: .72rem; }
 .slr-nightcards { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
-.slr-nightcard { background: var(--surface); border-radius: 10px; padding: .9rem 1rem; border-left: 4px solid var(--teal); }
-.slr-nightcard.worst { border-left-color: var(--err); }
-.slr-nightcard-head { font-weight: 800; font-size: .85rem; margin-bottom: .4rem; }
+.slr-nightcard { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: .9rem 1rem; border-left: 4px solid var(--slrc-teal); color: var(--slrc-ink2); }
+.slr-nightcard.worst { border-left-color: var(--slrc-rose); }
+.slr-nightcard-head { font-weight: 800; font-size: .85rem; margin-bottom: .4rem; color: var(--slrc-ink); }
 .slr-nightcard-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
-.slr-nightcard-tag { background: var(--surface-2); border-radius: 6px; padding: .25rem .55rem; font-size: .72rem; color: var(--text-2); }
+.slr-nightcard-tag { background: var(--slrc-bg); border-radius: 6px; padding: .25rem .55rem; font-size: .72rem; color: var(--slrc-ink2); }
 .slr-anomaly-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: .7rem; }
-.slr-anomaly-card { background: var(--surface); border-radius: 10px; padding: .8rem; text-align: center; }
-.slr-anomaly-metric { font-size: .74rem; color: var(--text-3); }
-.slr-anomaly-value { font-size: 1.3rem; font-weight: 800; color: var(--text-1); }
+.slr-anomaly-card { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: .8rem; text-align: center; }
+.slr-anomaly-metric { font-size: .74rem; color: var(--slrc-ink3); }
+.slr-anomaly-value { font-size: 1.3rem; font-weight: 800; color: var(--slrc-rose); }
 .slr-stat-tiles { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .7rem; margin-bottom: .8rem; }
-.slr-stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .7rem .9rem; }
-.slr-stat-tile-label { font-size: .68rem; color: var(--text-3); margin-bottom: .25rem; }
-.slr-stat-tile-value { font-size: 1rem; font-weight: 800; color: var(--text-1); }
-.slr-manager-box { background: var(--teal-light); border-radius: 10px; padding: .8rem .9rem; margin-bottom: .9rem; }
-.slr-manager-label { font-size: .68rem; font-weight: 700; color: var(--teal); margin-bottom: .3rem; }
-.slr-manager-text { font-size: .82rem; color: var(--text-1); line-height: 1.6; font-style: italic; }
+.slr-stat-tile { background: var(--slrc-card); border: 1px solid var(--slrc-border); border-radius: 12px; padding: .7rem .9rem; }
+.slr-stat-tile-label { font-size: .68rem; color: var(--slrc-ink3); margin-bottom: .25rem; }
+.slr-stat-tile-value { font-size: 1rem; font-weight: 800; color: var(--slrc-ink); }
+.slr-manager-box { background: var(--slrc-mint); border-radius: 12px; padding: .8rem .9rem; margin-bottom: .9rem; }
+.slr-manager-label { font-size: .68rem; font-weight: 700; color: var(--slrc-teal-soft); margin-bottom: .3rem; }
+.slr-manager-text { font-size: .82rem; color: var(--slrc-ink); line-height: 1.6; font-style: italic; }
 .slr-routine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-bottom: .9rem; }
-.slr-routine-card { background: var(--surface); border-radius: 10px; padding: .8rem 1rem; }
-.slr-routine-num { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--warn); color: #fff; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; margin-right: .4rem; }
-.slr-routine-title { font-weight: 700; font-size: .85rem; }
-.slr-routine-desc { font-size: .77rem; color: var(--text-2); line-height: 1.5; margin-top: .35rem; }
+.slr-routine-card { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: .8rem 1rem; }
+.slr-routine-num { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--slrc-terracotta); color: #fff; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; margin-right: .4rem; }
+.slr-routine-title { font-weight: 700; font-size: .85rem; color: var(--slrc-ink); }
+.slr-routine-desc { font-size: .77rem; color: var(--slrc-ink2); line-height: 1.5; margin-top: .35rem; }
 .slr-checklist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .4rem; }
-.slr-checklist li { font-size: .8rem; color: var(--text-2); display: flex; align-items: center; gap: .5rem; }
-.slr-checklist li::before { content: '☐'; color: var(--teal); }
+.slr-checklist li { font-size: .8rem; color: var(--slrc-ink2); display: flex; align-items: center; gap: .5rem; }
+.slr-checklist li::before { content: '☐'; color: var(--slrc-teal); }
 @media (max-width: 900px) {
   .slr-layout { grid-template-columns: 1fr; }
   .slr-upload-box { position: static; }
@@ -5116,7 +5132,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.07';
+const APP_VER = '7.08';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -13293,6 +13309,33 @@ const SLR_REF = {
   spo2:  {label:'SpO2',           min:95,  max:null, unit:'%',    dir:'higher'}
 };
 
+/* 페이지 상단 헤드/카드용 짧은 주제 라벨 + 히어로 아이콘 색상 계열 */
+const SLR_TOPIC = {
+  '02':'개념 — 무엇을 보는가', '03':'수면시간 & 수면단계 구성', '04':'수면효율', '05':'입면잠복기',
+  '06':'각성횟수', '07':'입면잠복기・수면효율・각성 함께보기', '08':'수면 중 심박수', '09':'호흡수',
+  '10':'SpO2 (혈중 산소포화도)', '11':'취침・기상 시각 규칙성', '12':'좋았던 밤 vs 나빴던 밤',
+  '13':'활동량 (걸음수・활동시간)', '14':'소모 칼로리', '15':'활력점수 (Vitality Score)',
+  '16':'종합진단 — 참고범위 대비', '17':'이상신호 스크리닝', '18':'루틴 제안'
+};
+const SLR_BRAND = 'SLEEP RHYTHM DIAGNOSIS REPORT';
+function _slrPageHead(num){ return '<div class="slr-page-head"><span class="slr-page-head-left">'+num+' · '+(SLR_TOPIC[num]||'')+'</span><span class="slr-page-head-brand">'+SLR_BRAND+'</span></div>'; }
+function _slrPageFoot(num){ return '<div class="slr-page-foot"><span>healmarucare VIP Care</span><span>'+num+' / 18</span></div>'; }
+function _slrHeroIcon(kind, tc){
+  const cls = 'slr-hero-icon'+(tc?' tc':'');
+  const M = {
+    moon:'<path d="M15 3a7 7 0 1 0 6 10.5A8.5 8.5 0 0 1 12 3c1 0 2 .17 3 0z" fill="currentColor"/>',
+    clock:'<circle cx="12" cy="12" r="8.3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3.3 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+    bell:'<path d="M6 17h12l-1.6-2.2a2 2 0 0 1-.4-1.2V9.5a4.9 4.9 0 0 0-4-4.8V4a1 1 0 1 0-2 0v.7a4.9 4.9 0 0 0-4 4.8v4.1a2 2 0 0 1-.4 1.2L6 17Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 19.5a2.5 2.5 0 0 0 5 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    heart:'<path d="M12 20s-7.2-4.6-9.4-9A5 5 0 0 1 12 6a5 5 0 0 1 9.4 5c-2.2 4.4-9.4 9-9.4 9Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 12.5h3l1.6-3 2 5 1.4-2.5h3.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/>',
+    wave:'<path d="M2.5 12.5c1.8 0 1.8-5 3.6-5s1.8 5 3.6 5 1.8-5 3.6-5 1.8 5 3.6 5 1.8-5 3.6-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+    drop:'<path d="M12 3.5S6 11 6 15a6 6 0 0 0 12 0c0-4-6-11.5-6-11.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+    walk:'<circle cx="14" cy="4.3" r="1.7" fill="currentColor"/><path d="M12.5 8 9 10l1 4-3 5.5M12.5 8l3 1.5 2 3.5-2.5 1M12 12l2.5 2.5-1 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    flame:'<path d="M12 3c1 3-3 4-3 7.5A3.5 3.5 0 0 0 12 14a3 3 0 0 0 3-3c1.4 1 2 2.6 2 4.2a5 5 0 0 1-10 0C7 10.5 10 8.5 12 3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+    bolt:'<path d="M13 2 5 13.5h5.3L11 22l8-12.5h-5.3L13 2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>'
+  };
+  return '<span class="'+cls+'"><svg width="22" height="22" viewBox="0 0 24 24">'+(M[kind]||'')+'</svg></span>';
+}
+
 /* ── 전체 탭 데이터로부터 수면레포트 불러오기 ──
    "전체 탭 → 엑셀 내보내기"(exportAllExcel)와 동일한 고객별·요일별 병합 로직을
    파일로 내보내지 않고 그대로 재사용해, 앱에 저장된 데이터로 바로 레포트를 만든다. */
@@ -13575,40 +13618,40 @@ function _slrDefIcon(kind, s, c){
     const tot = (d+l+r)||1;
     const dw=(d/tot)*(W-8), lw=(l/tot)*(W-8), rw=(r/tot)*(W-8);
     return svg(
-      '<rect x="4" y="15" width="'+(W-8)+'" height="10" rx="3" fill="#EEF3F6"/>'+
-      '<rect x="4" y="15" width="'+dw.toFixed(1)+'" height="10" fill="#0D2246"/>'+
-      '<rect x="'+(4+dw).toFixed(1)+'" y="15" width="'+lw.toFixed(1)+'" height="10" fill="#5CC8B8"/>'+
-      '<rect x="'+(4+dw+lw).toFixed(1)+'" y="15" width="'+rw.toFixed(1)+'" height="10" rx="3" fill="#B892D9"/>'
+      '<rect x="4" y="15" width="'+(W-8)+'" height="10" rx="3" fill="#DCEAE6"/>'+
+      '<rect x="4" y="15" width="'+dw.toFixed(1)+'" height="10" fill="#17393E"/>'+
+      '<rect x="'+(4+dw).toFixed(1)+'" y="15" width="'+lw.toFixed(1)+'" height="10" fill="#6FA49E"/>'+
+      '<rect x="'+(4+dw+lw).toFixed(1)+'" y="15" width="'+rw.toFixed(1)+'" height="10" rx="3" fill="#8C7BA7"/>'
     );
   }
   if(kind==='eff'){
     const pct = Math.max(0,Math.min(100, s.eff.avg||0));
     return svg(
-      '<rect x="4" y="17" width="'+(W-8)+'" height="8" rx="4" fill="#EEF3F6"/>'+
-      '<rect x="4" y="17" width="'+((pct/100)*(W-8)).toFixed(1)+'" height="8" rx="4" fill="#0E8FA3"/>'
+      '<rect x="4" y="17" width="'+(W-8)+'" height="8" rx="4" fill="#DCEAE6"/>'+
+      '<rect x="4" y="17" width="'+((pct/100)*(W-8)).toFixed(1)+'" height="8" rx="4" fill="#25545A"/>'
     );
   }
   if(kind==='sol'){
     return svg(
-      '<circle cx="13" cy="20" r="9" fill="none" stroke="#3A5A78" stroke-width="1.6"/>'+
-      '<line x1="13" y1="20" x2="13" y2="14" stroke="#3A5A78" stroke-width="1.4" stroke-linecap="round"/>'+
-      '<line x1="13" y1="20" x2="17" y2="21" stroke="#3A5A78" stroke-width="1.4" stroke-linecap="round"/>'+
-      '<line x1="25" y1="20" x2="70" y2="20" stroke="#9BB4C4" stroke-width="1.2" stroke-dasharray="2,3"/>'+
-      '<text x="78" y="24" font-size="11" fill="#3A5A78" font-weight="700">Z</text>'
+      '<circle cx="13" cy="20" r="9" fill="none" stroke="#52605C" stroke-width="1.6"/>'+
+      '<line x1="13" y1="20" x2="13" y2="14" stroke="#52605C" stroke-width="1.4" stroke-linecap="round"/>'+
+      '<line x1="13" y1="20" x2="17" y2="21" stroke="#52605C" stroke-width="1.4" stroke-linecap="round"/>'+
+      '<line x1="25" y1="20" x2="70" y2="20" stroke="#8B948E" stroke-width="1.2" stroke-dasharray="2,3"/>'+
+      '<text x="78" y="24" font-size="11" fill="#52605C" font-weight="700">Z</text>'
     );
   }
-  if(kind==='awake'){ return svg(poly((c.days||[]).map(d=>d.awakeCount), '#B8860B')); }
-  if(kind==='hr'){ return svg(poly((c.days||[]).map(d=>d.hr), '#C83535')); }
-  if(kind==='rr'){ return svg(poly((c.days||[]).map(d=>d.rr), '#5B8DEF')); }
+  if(kind==='awake'){ return svg(poly((c.days||[]).map(d=>d.awakeCount), '#25545A')); }
+  if(kind==='hr'){ return svg(poly((c.days||[]).map(d=>d.hr), '#8B5238')); }
+  if(kind==='rr'){ return svg(poly((c.days||[]).map(d=>d.rr), '#8B5238')); }
   if(kind==='spo2'){
     const pct = Math.max(0,Math.min(100, s.spo2.avg||0));
     const r=14, circ=2*Math.PI*r;
     return svg(
       '<g transform="translate(20,20)">'+
-      '<circle r="'+r+'" fill="none" stroke="#EEF3F6" stroke-width="4"/>'+
-      '<circle r="'+r+'" fill="none" stroke="#29B6F6" stroke-width="4" stroke-linecap="round" '+
+      '<circle r="'+r+'" fill="none" stroke="#DCEAE6" stroke-width="4"/>'+
+      '<circle r="'+r+'" fill="none" stroke="#8B5238" stroke-width="4" stroke-linecap="round" '+
         'stroke-dasharray="'+((pct/100)*circ).toFixed(1)+' '+circ.toFixed(1)+'" transform="rotate(-90)"/>'+
-      '<text x="0" y="4" font-size="9" font-weight="700" fill="#3A5A78" text-anchor="middle">'+Math.round(pct)+'%</text>'+
+      '<text x="0" y="4" font-size="9" font-weight="700" fill="#52605C" text-anchor="middle">'+Math.round(pct)+'%</text>'+
       '</g>'
     );
   }
@@ -13627,21 +13670,28 @@ function _slrMiniWeekBars(arr, labels, hiIdx, color){
     const h = (v==null||isNaN(v)) ? 2 : Math.max(2, ((v-mn)/rng)*(H-14));
     const x = 4+i*gap+(gap-bw)/2;
     const y = H-12-h;
-    bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="1.5" fill="'+(i===hiIdx?color:'#E3EEF3')+'"/>';
+    bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="1.5" fill="'+(i===hiIdx?color:'#DCEAE6')+'"/>';
   });
-  const lbls = (labels||[]).map(function(lb,i){ return '<text x="'+(4+i*gap+gap/2).toFixed(1)+'" y="'+(H-2)+'" font-size="6" text-anchor="middle" fill="#9BB4C4">'+lb+'</text>'; }).join('');
+  const lbls = (labels||[]).map(function(lb,i){ return '<text x="'+(4+i*gap+gap/2).toFixed(1)+'" y="'+(H-2)+'" font-size="6" text-anchor="middle" fill="#8B948E">'+lb+'</text>'; }).join('');
   return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'+bars+lbls+'</svg>';
 }
 
+const SLR_METRIC_ICON = {
+  '04':['moon',false], '05':['clock',false], '06':['bell',false], '07':['bell',false],
+  '08':['heart',true], '09':['wave',true], '10':['drop',true],
+  '13':['walk',false], '14':['flame',true], '15':['bolt',true]
+};
 function _slrMetricPage(num,title,desc,heroLabel,heroVal,rangeNote,canvasId,insightHtml,suggestHtml){
-  return '<div class="slr-page"><div class="slr-page-num">'+num+'</div>'+
+  const ic = SLR_METRIC_ICON[num] || ['moon',false];
+  return '<div class="slr-page">'+_slrPageHead(num)+
     '<div class="slr-page-title">'+title+'</div>'+
     (desc?'<div class="slr-page-desc">'+desc+'</div>':'')+
-    '<div class="slr-hero"><span class="slr-hero-label">이번 주 평균 · '+heroLabel+'</span><span class="slr-hero-value">'+heroVal+'</span></div>'+
+    '<div class="slr-hero">'+_slrHeroIcon(ic[0],ic[1])+'<div class="slr-hero-text"><span class="slr-hero-label">이번 주 평균 · '+heroLabel+'</span><span class="slr-hero-value">'+heroVal+'</span></div></div>'+
     '<div class="slr-range-note">'+(rangeNote||'')+'</div>'+
     '<div class="slr-chart-box"><canvas id="'+canvasId+'" width="680" height="200"></canvas></div>'+
     (insightHtml?'<div class="slr-insight-box"><b>무엇을 의미하나요?</b><br>'+insightHtml+'</div>':'')+
     (suggestHtml?'<div class="slr-suggest-box"><b>제안</b><br>'+suggestHtml+'</div>':'')+
+    _slrPageFoot(num)+
     '</div>';
 }
 
@@ -13653,6 +13703,7 @@ function _slrBuildReportHtml(c, s, labels){
     '<div class="slr-page slr-cover">'+
       '<div class="slr-cover-eyebrow">SLEEP RHYTHM DIAGNOSIS · INSOMNIA FOCUS</div>'+
       '<div class="slr-cover-title">'+(M.name||'-')+' 님의<br>수면 리듬 진단 레포트</div>'+
+      '<div class="slr-cover-divider"></div>'+
       '<div class="slr-cover-period">모니터링 기간: '+(M.startDate||'-')+' ~ '+(M.endDate||'-')+'</div>'+
       '<div class="slr-cover-chips">'+
         '<div class="slr-chip"><div class="slr-chip-label">모니터링 대상</div><div class="slr-chip-value">'+(M.name||'-')+'</div></div>'+
@@ -13662,6 +13713,7 @@ function _slrBuildReportHtml(c, s, labels){
       '<div class="slr-cover-indicators">'+
         ['수면효율','입면잠복기','각성횟수','수면중 심박수','호흡수','SpO2'].map(t=>'<span class="slr-indicator-pill">'+t+'</span>').join('')+
       '</div>'+
+      '<div class="slr-page-foot slr-page-foot-onDark"><span>healmarucare VIP Care</span><span>01 / 18</span></div>'+
     '</div>'
   );
 
@@ -13675,36 +13727,36 @@ function _slrBuildReportHtml(c, s, labels){
     ['06','호흡수','Respiratory Rate','수면 중 분당 호흡 횟수. 참고범위 12~20회/분.','rr'],
     ['07','SpO2','혈중 산소포화도','수면 중 혈액의 산소포화도. 참고범위 95% 이상.','spo2']
   ];
-  function defCard(d){
-    return '<div class="slr-def-card"><div class="slr-def-num">'+d[0]+'</div><div class="slr-def-title">'+d[1]+'</div>'+
+  function defCard(d,cardio){
+    return '<div class="slr-def-card'+(cardio?' cardio':'')+'"><div class="slr-def-num">'+d[0]+'</div><div class="slr-def-title">'+d[1]+'</div>'+
       '<div class="slr-def-eng">'+d[2]+'</div>'+
       '<div class="slr-def-icon-wrap">'+_slrDefIcon(d[4],s,c)+'</div>'+
       '<div class="slr-def-desc">'+d[3]+'</div></div>';
   }
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">02</div>'+
+    '<div class="slr-page">'+_slrPageHead('02')+
     '<div class="slr-page-title">지표를 다시 정의합니다</div>'+
     '<div class="slr-page-desc">일반적인 웰니스 지표 대신, 불면 진단에 실제로 쓰이는 7가지 지표로 이 레포트를 구성했습니다. 각 지표는 "잠을 잘 잤는가"가 아니라 "왜 그 잠이 회복이 되지 않았는가"에 답하기 위한 것입니다.</div>'+
     '<div class="slr-def-section">수면의 구조 — 01~04</div>'+
-    '<div class="slr-def-grid">'+defs.slice(0,4).map(defCard).join('')+'</div>'+
+    '<div class="slr-def-grid">'+defs.slice(0,4).map(d=>defCard(d,false)).join('')+'</div>'+
     '<div class="slr-def-section">수면 중 신체 반응 — 05~07</div>'+
-    '<div class="slr-def-grid">'+defs.slice(4).map(defCard).join('')+
+    '<div class="slr-def-grid">'+defs.slice(4).map(d=>defCard(d,true)).join('')+
       '<div class="slr-def-card slr-def-summary">01~04는 \'수면의 구조\'를, 05~07은 \'수면 중 신체 반응\'을 나타냅니다. 이 리포트는 각 지표를 개별 판정으로 나열하는 대신, 지표들이 서로 어떤 값과 어떤 값으로부터 계산되고 함께 어떻게 움직이는지를 실제 데이터로 확인해 보여줍니다.</div>'+
-    '</div></div>'
+    '</div>'+_slrPageFoot('02')+'</div>'
   );
 
   /* 03 수면구조 */
   const debtHrs = s.sleepDebtMin/60;
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">03</div>'+
+    '<div class="slr-page">'+_slrPageHead('03')+
     '<div class="slr-page-title">얼마나, 그리고 어떻게 잤는지</div>'+
     '<div class="slr-page-desc">총수면시간을 깊은수면·얕은수면·렘수면 세 구간으로 나누어 쌓아 표시했습니다.</div>'+
-    '<div class="slr-hero"><span class="slr-hero-label">이번 주 평균 · 총수면시간</span><span class="slr-hero-value">'+_slrMinToHm(s.tst.avg)+'</span></div>'+
+    '<div class="slr-hero">'+_slrHeroIcon('moon')+'<div class="slr-hero-text"><span class="slr-hero-label">이번 주 평균 · 총수면시간</span><span class="slr-hero-value">'+_slrMinToHm(s.tst.avg)+'</span></div></div>'+
     '<div class="slr-range-note">이번 주 범위: '+_slrMinToHm(s.tst.min)+' ~ '+_slrMinToHm(s.tst.max)+' · 목표 하루 7시간</div>'+
     '<div class="slr-chart-box"><canvas id="slr-cv-structure" width="680" height="220"></canvas></div>'+
     '<div class="slr-insight-box">목표 수면시간(하루 7시간) 대비 이번 주 실제 총수면시간은 약 '+_slrRoundTxt(s.totalActualMin/60,1)+'시간으로, '+
       (debtHrs>0 ? ('약 '+_slrRoundTxt(debtHrs,1)+'시간의 수면부채가 누적되었습니다.') : '수면부채는 발생하지 않았습니다.')+
-    '</div></div>'
+    '</div>'+_slrPageFoot('03')+'</div>'
   );
 
   /* 04 수면효율 */
@@ -13725,34 +13777,34 @@ function _slrBuildReportHtml(c, s, labels){
     s.sol.avg!=null && s.sol.avg>20 ? '취침 30~60분 전부터 조명을 낮추고 화면 사용을 줄이는 것이 잠드는 데 걸리는 시간을 줄이는 데 도움이 됩니다. 목표: 20분 이내.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
   ));
 
-  /* 06 통합 상관관계 (기존 07에서 이동) */
+  /* 07 통합 상관관계 (기존 06에서 이동) */
   const rTxt = (v)=> v==null ? '데이터 부족' : (v>0?'+':'')+v;
   const tibAvg06 = slrAvg(s.tibMinArr);
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">06</div>'+
+    '<div class="slr-page">'+_slrPageHead('07')+
     '<div class="slr-page-title">세 지표는 따로 움직이지 않습니다</div>'+
-    '<div class="slr-page-desc">총수면시간(03p)·수면효율(04p)·입면잠복기(05p)·각성횟수(07p)는 하나의 계산식으로 연결되어 있습니다. 침상시간(TIB) = 입면잠복기 + 총수면시간 + 입면 후 각성(WASO), 수면효율(SE) = 총수면시간 ÷ TIB × 100. 입면잠복기가 길어지거나 각성이 잦아지면 같은 TIB 안에서 총수면시간 비중이 줄어 SE도 함께 낮아집니다.</div>'+
+    '<div class="slr-page-desc">총수면시간(03p)·수면효율(04p)·입면잠복기(05p)·각성횟수(06p)는 하나의 계산식으로 연결되어 있습니다. 침상시간(TIB) = 입면잠복기 + 총수면시간 + 입면 후 각성(WASO), 수면효율(SE) = 총수면시간 ÷ TIB × 100. 입면잠복기가 길어지거나 각성이 잦아지면 같은 TIB 안에서 총수면시간 비중이 줄어 SE도 함께 낮아집니다.</div>'+
     '<div class="slr-stat-tiles">'+
       '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 침상시간(TIB)</div><div class="slr-stat-tile-value">'+_slrMinToHm(tibAvg06)+'</div></div>'+
       '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 수면효율(04p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt(s.eff.avg,0)+'%</div></div>'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 각성횟수(07p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt(s.awake.avg,1)+'회</div></div>'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 각성횟수(06p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt(s.awake.avg,1)+'회</div></div>'+
       '<div class="slr-stat-tile"><div class="slr-stat-tile-label">r (입면잠복기 ↔ 수면효율)</div><div class="slr-stat-tile-value">'+rTxt(s.r.solEff)+'</div></div>'+
     '</div>'+
     '<div class="slr-combo-title">침상시간 구성·수면효율·각성횟수 — 한 그래프로 함께 보기</div>'+
     '<div class="slr-combo-legend">'+
-      '<span><i class="slr-legend-chip" style="background:#E8B368"></i>입면잠복기(막대)</span>'+
-      '<span><i class="slr-legend-chip" style="background:#0E8FA3"></i>총수면시간(막대)</span>'+
-      '<span><i class="slr-legend-chip" style="background:#F2994A"></i>입면 후 각성(막대)</span>'+
-      '<span><i class="slr-legend-line" style="background:#0D2246"></i>수면효율 SE%(선·오른쪽 축)</span>'+
+      '<span><i class="slr-legend-chip" style="background:#DAA44C"></i>입면잠복기(막대)</span>'+
+      '<span><i class="slr-legend-chip" style="background:#25545A"></i>총수면시간(막대)</span>'+
+      '<span><i class="slr-legend-chip" style="background:#C97B53"></i>입면 후 각성(막대)</span>'+
+      '<span><i class="slr-legend-line" style="background:#17393E"></i>수면효율 SE%(선·오른쪽 축)</span>'+
       '<span><i class="slr-legend-dot"></i>각성횟수(점선·점 위 숫자로 표기)</span>'+
     '</div>'+
     '<div class="slr-chart-box"><canvas id="slr-cv-tibcombo" width="680" height="175"></canvas></div>'+
     '<div class="slr-range-note">막대 = 침상시간(TIB) 구성(왼쪽 축, 시간) · 실선 = 수면효율 SE%(오른쪽 축) · 점선 = 각성횟수(점 위 숫자로 표기, 축 없이 겹쳐보기)</div>'+
     '<div class="slr-combo-title" style="margin-top:.5rem">활동시간·입면잠복기·수면효율 — 세 값이 함께 움직이는지 <span class="slr-combo-subtitle">(13p·05p·04p 데이터 통합)</span></div>'+
     '<div class="slr-combo-legend">'+
-      '<span><i class="slr-legend-chip" style="background:#8FD1BE"></i>활동시간(막대·왼쪽 축)</span>'+
-      '<span><i class="slr-legend-line" style="background:#0D2246"></i>수면효율 SE%(선·오른쪽 축)</span>'+
-      '<span><i class="slr-legend-dot" style="background:#C07820"></i>입면잠복기(점선·점 위 분으로 표기)</span>'+
+      '<span><i class="slr-legend-chip" style="background:#DCEAE6"></i>활동시간(막대·왼쪽 축)</span>'+
+      '<span><i class="slr-legend-line" style="background:#17393E"></i>수면효율 SE%(선·오른쪽 축)</span>'+
+      '<span><i class="slr-legend-dot" style="background:#DAA44C"></i>입면잠복기(점선·점 위 분으로 표기)</span>'+
     '</div>'+
     '<div class="slr-chart-box"><canvas id="slr-cv-actcombo" width="680" height="175"></canvas></div>'+
     '<div class="slr-range-note">막대 = 활동시간(왼쪽 축) · 실선 = 수면효율 SE%(오른쪽 축) · 점선 = 입면잠복기(점 위 분으로 표기)</div>'+
@@ -13766,12 +13818,12 @@ function _slrBuildReportHtml(c, s, labels){
       (s.actEffSlopePer10!=null ? ('활동시간 10분당 수면효율 변화는 약 '+(s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p로 추정됩니다. ') : '')+
       (s.worstIdx>=0 ? ('이번 주 수면효율이 가장 낮았던 날은 '+(labels[s.worstIdx]||'')+'요일로, 입면잠복기·각성횟수·활동시간을 함께 확인해볼 필요가 있습니다.') : '')+
     '</div>'+
-    '<div class="slr-suggest-box"><b>제안: 세 지표로 원인 위치 구분하기</b><br>입면잠복기·각성횟수가 함께 높은 날은 "잠들기 어려움"에 먼저 대응하고(05p 이완 루틴), 입면잠복기는 정상인데 각성횟수만 높은 날은 "자주 깨어남" 쪽 요인(07p 각성 유발 요인 조정)을 먼저 살펴보는 것이 더 효율적입니다.</div>'+
-    '</div>'
+    '<div class="slr-suggest-box"><b>제안: 세 지표로 원인 위치 구분하기</b><br>입면잠복기·각성횟수가 함께 높은 날은 "잠들기 어려움"에 먼저 대응하고(05p 이완 루틴), 입면잠복기는 정상인데 각성횟수만 높은 날은 "자주 깨어남" 쪽 요인(06p 각성 유발 요인 조정)을 먼저 살펴보는 것이 더 효율적입니다.</div>'+
+    _slrPageFoot('07')+'</div>'
   );
 
-  /* 07 각성횟수 (기존 06에서 이동) */
-  P.push(_slrMetricPage('07','잠든 뒤 밤사이 깨어난 횟수','각성횟수(Awakenings)는 수면 중 일정 시간 이상 깨어난 것으로 기록된 구간의 수입니다.',
+  /* 06 각성횟수 (기존 07에서 이동) */
+  P.push(_slrMetricPage('06','잠든 뒤 밤사이 깨어난 횟수','각성횟수(Awakenings)는 수면 중 일정 시간 이상 깨어난 것으로 기록된 구간의 수입니다.',
     '각성횟수', _slrRoundTxt(s.awake.avg,1)+'회/밤',
     '이번 주 범위: '+_slrRoundTxt(s.awake.min,0)+'~'+_slrRoundTxt(s.awake.max,0)+'회 · 참고범위 2회 이하',
     'slr-cv-awake',
@@ -13808,16 +13860,16 @@ function _slrBuildReportHtml(c, s, labels){
 
   /* 11 취침·기상 규칙성 */
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">11</div>'+
+    '<div class="slr-page">'+_slrPageHead('11')+
     '<div class="slr-page-title">몇 시에 자고, 몇 시에 일어났는지</div>'+
     '<div class="slr-page-desc">잠든 시각과 일어난 시각이 매일 비슷할수록 생체리듬이 안정적입니다.</div>'+
-    '<div class="slr-hero"><span class="slr-hero-label">평균 취침시각</span><span class="slr-hero-value">'+slrMinToTime(s.bedMin.avg)+'</span></div>'+
+    '<div class="slr-hero">'+_slrHeroIcon('clock',false)+'<div class="slr-hero-text"><span class="slr-hero-label">평균 취침시각</span><span class="slr-hero-value">'+slrMinToTime(s.bedMin.avg)+'</span></div></div>'+
     '<div class="slr-range-note">요일 간 편차 ±'+_slrRoundTxt(s.bedStd,0)+'분 · 참고범위 20분 이내</div>'+
     '<div class="slr-chart-box"><canvas id="slr-cv-bed" width="680" height="160"></canvas></div>'+
-    '<div class="slr-hero" style="margin-top:.6rem"><span class="slr-hero-label">평균 기상시각</span><span class="slr-hero-value">'+slrMinToTime(s.wakeMin.avg)+'</span></div>'+
+    '<div class="slr-hero" style="margin-top:.6rem">'+_slrHeroIcon('clock',true)+'<div class="slr-hero-text"><span class="slr-hero-label">평균 기상시각</span><span class="slr-hero-value">'+slrMinToTime(s.wakeMin.avg)+'</span></div></div>'+
     '<div class="slr-range-note">요일 간 편차 ±'+_slrRoundTxt(s.wakeStd,0)+'분 · 참고범위 20분 이내</div>'+
     '<div class="slr-chart-box"><canvas id="slr-cv-wake" width="680" height="160"></canvas></div>'+
-    '</div>'
+    _slrPageFoot('11')+'</div>'
   );
 
   /* 12 좋은밤 vs 나쁜밤 */
@@ -13832,7 +13884,7 @@ function _slrBuildReportHtml(c, s, labels){
   }
   const bd = s.bestIdx>=0 ? c.days[s.bestIdx] : null, wd = s.worstIdx>=0 ? c.days[s.worstIdx] : null;
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">12</div>'+
+    '<div class="slr-page">'+_slrPageHead('12')+
     '<div class="slr-page-title">가장 좋았던 밤과 가장 힘들었던 밤</div>'+
     '<div class="slr-page-desc">이번 주 수면효율이 가장 높았던 밤과 가장 낮았던 밤을 나란히 놓고 비교합니다.</div>'+
     '<div class="slr-nightcards">'+
@@ -13844,7 +13896,7 @@ function _slrBuildReportHtml(c, s, labels){
         '취침 '+(wd?wd.bedTime||'-':'-')+' → 기상 '+(wd?wd.wakeTime||'-':'-')+
         '<div class="slr-nightcard-tags">'+nightTags(s.worstIdx).map(t=>'<span class="slr-nightcard-tag">'+t+'</span>').join('')+'</div>'+
       '</div>'+
-    '</div></div>'
+    '</div>'+_slrPageFoot('12')+'</div>'
   );
 
   /* 13 활동량 */
@@ -13906,7 +13958,7 @@ function _slrBuildReportHtml(c, s, labels){
   }
   const tierMaxV = tiers ? Math.max(100, tiers.lo||0, tiers.mid||0, tiers.hi||0) : 100;
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">16</div>'+
+    '<div class="slr-page">'+_slrPageHead('16')+
     '<div class="slr-page-title">요일 비교가 아니라, 참고범위 대비</div>'+
     '<div class="slr-page-desc">"어제보다 나은가"가 아니라 "임상 참고범위와 비교해 어느 방향으로, 얼마나 떨어져 있는가"를 기준으로 정리합니다.</div>'+
     '<table class="slr-table"><thead><tr><th>지표</th><th>이번 주 평균</th><th>임상 참고범위</th><th>참고범위 대비</th></tr></thead><tbody>'+
@@ -13934,7 +13986,7 @@ function _slrBuildReportHtml(c, s, labels){
       '</div>'+
       '<div class="slr-range-note" style="margin-top:.5rem">위 값은 이번 주 7일 데이터로 재계산한 상관·회귀 추정치이며, 인과관계를 의미하지 않습니다.</div>'+
     '</div>'+
-    '</div>'
+    _slrPageFoot('16')+'</div>'
   );
 
   /* 17 이상신호 스크리닝 */
@@ -13945,14 +13997,14 @@ function _slrBuildReportHtml(c, s, labels){
     const actAvg = slrAvg(actArr), vitAvg = slrAvg(vitArr);
     const adAct = ad.activityMin, adVit = ad.vitality;
     P.push(
-      '<div class="slr-page"><div class="slr-page-num">17</div>'+
+      '<div class="slr-page">'+_slrPageHead('17')+
       '<div class="slr-page-title-row"><div class="slr-page-title">'+(ad.date||'')+'('+(labels[s.anomalyIdx]||'')+') 밤, 세 지표가 함께 움직였습니다</div>'+
         '<span class="slr-badge-pill">● 관찰 · 확진 아님</span></div>'+
       '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어났습니다. 우연히 겹쳤을 가능성도 있어 관찰 플래그만 남깁니다.</div>'+
       '<div class="slr-anomaly-cards">'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">수면 중 심박수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.hr,0)+'bpm</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.hr.avg,0)+'bpm 대비 '+(ad.hr-s.hr.avg>=0?'+':'')+_slrRoundTxt(ad.hr-s.hr.avg,0)+'</div>'+_slrMiniWeekBars(hrArr, labels, s.anomalyIdx, '#C83535')+'</div>'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">호흡수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.rr,0)+'회/분</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.rr.avg,0)+'회 대비 '+(ad.rr-s.rr.avg>=0?'+':'')+_slrRoundTxt(ad.rr-s.rr.avg,0)+'</div>'+_slrMiniWeekBars(rrArr, labels, s.anomalyIdx, '#5B8DEF')+'</div>'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">SpO2</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.spo2,0)+'%</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.spo2.avg,0)+'% 대비 '+(ad.spo2-s.spo2.avg>=0?'+':'')+_slrRoundTxt(ad.spo2-s.spo2.avg,0)+'</div>'+_slrMiniWeekBars(spo2Arr, labels, s.anomalyIdx, '#29B6F6')+'</div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">수면 중 심박수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.hr,0)+'bpm</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.hr.avg,0)+'bpm 대비 '+(ad.hr-s.hr.avg>=0?'+':'')+_slrRoundTxt(ad.hr-s.hr.avg,0)+'</div>'+_slrMiniWeekBars(hrArr, labels, s.anomalyIdx, '#A14E42')+'</div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">호흡수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.rr,0)+'회/분</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.rr.avg,0)+'회 대비 '+(ad.rr-s.rr.avg>=0?'+':'')+_slrRoundTxt(ad.rr-s.rr.avg,0)+'</div>'+_slrMiniWeekBars(rrArr, labels, s.anomalyIdx, '#A14E42')+'</div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">SpO2</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.spo2,0)+'%</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.spo2.avg,0)+'% 대비 '+(ad.spo2-s.spo2.avg>=0?'+':'')+_slrRoundTxt(ad.spo2-s.spo2.avg,0)+'</div>'+_slrMiniWeekBars(spo2Arr, labels, s.anomalyIdx, '#A14E42')+'</div>'+
       '</div>'+
       (adAct!=null||adVit!=null ? (
         '<div class="slr-insight-box" style="margin-top:.8rem"><b>활동 영역도 함께 확인해보면</b><br>같은 날 활동시간'+(adAct!=null?('('+_slrRoundTxt(adAct,0)+'분, 평소 '+_slrRoundTxt(actAvg,0)+'분)'):'')+
@@ -13960,14 +14012,14 @@ function _slrBuildReportHtml(c, s, labels){
         '도 이번 주 중 가장 낮은 편에 속했는지 함께 살펴보면, 생리 지표뿐 아니라 활동 영역에서도 같은 날 함께 흔들리는 패턴이 반복되는지 지켜볼 근거가 됩니다.</div>'
       ) : '')+
       '<div class="slr-insight-box slr-insight-warn">하루의 일시적 변화는 스트레스, 카페인·알코올, 활동량, 경미한 컨디션 저하 등 다양한 요인으로도 나타날 수 있습니다. 같은 패턴이 반복되는지 함께 지켜볼 것을 제안하며, 다음 주에도 같은 방향으로 움직인다면 의료진과의 상담을 권합니다. (관찰 · 확진 아님)</div>'+
-      '</div>'
+      _slrPageFoot('17')+'</div>'
     );
   } else {
     P.push(
-      '<div class="slr-page"><div class="slr-page-num">17</div>'+
+      '<div class="slr-page">'+_slrPageHead('17')+
       '<div class="slr-page-title">이상신호 스크리닝</div>'+
       '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어난 날은 발견되지 않았습니다.</div>'+
-      '</div>'
+      _slrPageFoot('17')+'</div>'
     );
   }
 
@@ -13976,11 +14028,11 @@ function _slrBuildReportHtml(c, s, labels){
   const targetBedMid = (s.wakeMin.avg!=null) ? ((((s.wakeMin.avg - tib7min) % 1440) + 1440) % 1440) : null;
   const targetBedTxt = targetBedMid!=null ? (slrMinToTime(targetBedMid-5)+'~'+slrMinToTime(targetBedMid+5)) : '-';
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">18</div>'+
+    '<div class="slr-page">'+_slrPageHead('18')+
     '<div class="slr-page-title">이번 주가 알려준 것부터 바꿔봅니다</div>'+
     '<div class="slr-page-desc">치료의 급성기를 지나 경과관찰 중이라면, 목표는 "더 열심히"가 아니라 "더 규칙적으로"입니다.</div>'+
     '<div class="slr-stat-tiles">'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">활동·수면 상관계수 (06p)</div><div class="slr-stat-tile-value">r = '+rTxt(s.r.actEff)+'</div></div>'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">활동·수면 상관계수 (07p)</div><div class="slr-stat-tile-value">r = '+rTxt(s.r.actEff)+'</div></div>'+
       '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 활동시간 (13p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt((s.act.avg||0)+10,0)+'분 이상 / 일</div></div>'+
       '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 취침시각 (11p)</div><div class="slr-stat-tile-value">'+targetBedTxt+'</div></div>'+
     '</div>'+
@@ -14004,7 +14056,7 @@ function _slrBuildReportHtml(c, s, labels){
       '<li>컨디션이 흔들린 날은 한 줄로 메모하기</li>'+
     '</ul>'+
     '<div class="slr-range-note" style="margin-top:.8rem">본 루틴 제안은 생활 가이드이며 의학적 진단이나 처방을 대신하지 않습니다. 증상이 지속되거나 악화되는 경우 의료진과 상담해 주세요.</div>'+
-    '</div>'
+    _slrPageFoot('18')+'</div>'
   );
 
   return '<div class="slr-report">'+P.join('')+'</div>';
@@ -14048,14 +14100,14 @@ function slrDrawChart(canvasId, opts){
   if(opts.band){
     const bMin = opts.band.min!=null ? opts.band.min : vMin;
     const bMax = opts.band.max!=null ? opts.band.max : vMax;
-    ctx.fillStyle = opts.band.color || 'rgba(14,143,163,.10)';
+    ctx.fillStyle = opts.band.color || '#E8EDE9';
     ctx.fillRect(pad.l, yToPx(bMax), plotW, Math.max(0,yToPx(bMin)-yToPx(bMax)));
   }
 
   /* horizontal gridlines + y tick labels (dotted, matches reference report style) */
   const ticks = 4;
-  ctx.setLineDash([2,3]); ctx.strokeStyle = '#E3EEF3'; ctx.lineWidth = 1;
-  ctx.fillStyle = '#9BB4C4'; ctx.font = '9px sans-serif'; ctx.textAlign = 'right';
+  ctx.setLineDash([2,3]); ctx.strokeStyle = '#E6E1D3'; ctx.lineWidth = 1;
+  ctx.fillStyle = '#8B948E'; ctx.font = '9px sans-serif'; ctx.textAlign = 'right';
   for(let i=0;i<=ticks;i++){
     const v = vMin + (vMax-vMin)*i/ticks;
     const y = yToPx(v);
@@ -14084,7 +14136,7 @@ function slrDrawChart(canvasId, opts){
         stackBase += v;
       });
       if(opts.stackLabels && stackBase>0){
-        ctx.fillStyle = '#3A5A78'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+        ctx.fillStyle = '#52605C'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
         ctx.fillText((opts.totalFmt||fmt)(stackBase), pad.l+i*slotW+slotW/2, yToPx(stackBase)-6);
       }
     });
@@ -14097,14 +14149,14 @@ function slrDrawChart(canvasId, opts){
         const x = pad.l + i*slotW + (slotW-barW)/2;
         const y0 = yToPx(0), y1 = yToPx(v);
         ctx.fillStyle = sr.barColor || sr.color;
-        ctx.globalAlpha = sr.type==='combo' ? 0.26 : 1;
+        ctx.globalAlpha = (sr.type==='combo' && !sr.barColor) ? 0.26 : 1;
         ctx.fillRect(x, Math.min(y0,y1), barW, Math.max(1,Math.abs(y1-y0)));
         ctx.globalAlpha = 1;
       });
     });
   }
 
-  ctx.strokeStyle = '#C9DDE6'; ctx.lineWidth=1;
+  ctx.strokeStyle = '#DDD7C4'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(pad.l, pad.t+plotH); ctx.lineTo(pad.l+plotW, pad.t+plotH); ctx.stroke();
 
   /* line series (plain 'line' or the line half of a 'combo') */
@@ -14133,7 +14185,7 @@ function slrDrawChart(canvasId, opts){
     }
   });
 
-  ctx.fillStyle = '#7A9FB8'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle = '#8B948E'; ctx.font='10px sans-serif'; ctx.textAlign='center';
   labels.forEach(function(lb,i){ ctx.fillText(String(lb), pad.l+i*slotW+slotW/2, H-8); });
 }
 
@@ -14164,12 +14216,12 @@ function _slrComboDualChart(canvasId, opts){
   const yRight = v => pad.t + plotH - ((v-rightMin)/(rightMax-rightMin))*plotH;
 
   const ticks=4;
-  ctx.setLineDash([2,3]); ctx.strokeStyle='#E3EEF3'; ctx.lineWidth=1; ctx.font='9px sans-serif';
+  ctx.setLineDash([2,3]); ctx.strokeStyle='#E6E1D3'; ctx.lineWidth=1; ctx.font='9px sans-serif';
   for(let i=0;i<=ticks;i++){
     const lv = leftMin+(leftMax-leftMin)*i/ticks;
     const y = yLeft(lv);
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+plotW,y); ctx.stroke();
-    ctx.fillStyle='#9BB4C4'; ctx.textAlign='right';
+    ctx.fillStyle='#8B948E'; ctx.textAlign='right';
     ctx.fillText(leftFmt(lv), pad.l-6, y+3);
     const rv = rightMin+(rightMax-rightMin)*i/ticks;
     ctx.textAlign='left';
@@ -14191,7 +14243,7 @@ function _slrComboDualChart(canvasId, opts){
     });
   });
 
-  ctx.strokeStyle='#C9DDE6'; ctx.lineWidth=1;
+  ctx.strokeStyle='#DDD7C4'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(pad.l,pad.t+plotH); ctx.lineTo(pad.l+plotW,pad.t+plotH); ctx.stroke();
 
   if(opts.line){
@@ -14250,7 +14302,7 @@ function _slrComboDualChart(canvasId, opts){
     });
   }
 
-  ctx.fillStyle='#7A9FB8'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='#8B948E'; ctx.font='10px sans-serif'; ctx.textAlign='center';
   labels.forEach(function(lb,i){ ctx.fillText(String(lb), pad.l+i*slotW+slotW/2, H-8); });
 }
 
@@ -14258,125 +14310,135 @@ function _slrDrawAllCharts(c, s, labels){
   _slrComboDualChart('slr-cv-tibcombo', {
     labels: labels,
     bars: [
-      {data: c.days.map(d=>d.sol), color:'#E8B368'},
-      {data: c.days.map(d=>d.tst), color:'#0E8FA3'},
-      {data: s.wasoMinArr, color:'#F2994A'}
+      {data: c.days.map(d=>d.sol), color:'#DAA44C'},
+      {data: c.days.map(d=>d.tst), color:'#25545A'},
+      {data: s.wasoMinArr, color:'#C97B53'}
     ],
     leftFmt: _slrMinShort,
-    line: {data: c.days.map(d=>d.eff), color:'#0D2246', fmt: v=>Math.round(v)+'%'},
-    overlay: {data: c.days.map(d=>d.awakeCount), color:'#C83535', fmt: v=>Math.round(v)+'회'}
+    line: {data: c.days.map(d=>d.eff), color:'#17393E', fmt: v=>Math.round(v)+'%'},
+    overlay: {data: c.days.map(d=>d.awakeCount), color:'#A14E42', fmt: v=>Math.round(v)+'회'}
   });
   _slrComboDualChart('slr-cv-actcombo', {
     labels: labels,
-    bars: [ {data: c.days.map(d=>d.activityMin), color:'#8FD1BE'} ],
+    bars: [ {data: c.days.map(d=>d.activityMin), color:'#DCEAE6'} ],
     leftFmt: v=>Math.round(v)+'분',
-    line: {data: c.days.map(d=>d.eff), color:'#0D2246', fmt: v=>Math.round(v)+'%'},
-    overlay: {data: c.days.map(d=>d.sol), color:'#C07820', fmt: v=>Math.round(v)+'분'}
+    line: {data: c.days.map(d=>d.eff), color:'#17393E', fmt: v=>Math.round(v)+'%'},
+    overlay: {data: c.days.map(d=>d.sol), color:'#DAA44C', fmt: v=>Math.round(v)+'분'}
   });
   slrDrawChart('slr-cv-structure', { labels:labels, stacked:true, stackLabels:true, segFmt:_slrMinShort, totalFmt:_slrMinShort, yFmt:_slrMinShort, series:[
-    {data:s.deepMin,  color:'#0D2246'},
-    {data:s.lightMin, color:'#5CC8B8'},
-    {data:s.remMin,   color:'#B892D9'}
+    {data:s.deepMin,  color:'#17393E'},
+    {data:s.lightMin, color:'#6FA49E'},
+    {data:s.remMin,   color:'#8C7BA7'}
   ]});
-  slrDrawChart('slr-cv-eff',   { labels:labels, showLabels:true, band:{min:85}, yMax: Math.max(90, ...c.days.map(d=>d.eff||0), 1)*1.05, series:[{data:c.days.map(d=>d.eff), color:'#0E8FA3', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
-  slrDrawChart('slr-cv-sol',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.sol), color:'#C07820', type:'combo'}] });
-  slrDrawChart('slr-cv-awake', { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.awakeCount), color:'#B8860B', type:'combo'}] });
-  slrDrawChart('slr-cv-hr',    { labels:labels, showLabels:true, band:{min:45,max:70}, series:[{data:c.days.map(d=>d.hr), color:'#C83535', type:'combo'}] });
-  slrDrawChart('slr-cv-rr',    { labels:labels, showLabels:true, band:{min:12,max:20}, series:[{data:c.days.map(d=>d.rr), color:'#5B8DEF', type:'combo'}] });
-  slrDrawChart('slr-cv-spo2',  { labels:labels, showLabels:true, yMax:100, band:{min:95}, series:[{data:c.days.map(d=>d.spo2), color:'#29B6F6', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
-  slrDrawChart('slr-cv-bed',   { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.bedMinArr, color:'#0D2246', type:'line', labelFmt:slrMinToTime}] });
-  slrDrawChart('slr-cv-wake',  { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.wakeMinArr, color:'#FF6B35', type:'line', labelFmt:slrMinToTime}] });
-  slrDrawChart('slr-cv-act',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.activityMin), color:'#1E9E5A', type:'combo'}] });
-  slrDrawChart('slr-cv-cal',   { labels:labels, showLabels:true, series:[{data:c.days.map(d=>d.cal), color:'#FF8A5C', type:'combo'}] });
-  slrDrawChart('slr-cv-vit',   { labels:labels, showLabels:true, yMin:0, yMax:100, series:[{data:c.days.map(d=>d.vitality), color:'#D9A62E', type:'combo'}] });
+  slrDrawChart('slr-cv-eff',   { labels:labels, showLabels:true, band:{min:85}, yMax: Math.max(90, ...c.days.map(d=>d.eff||0), 1)*1.05, series:[{data:c.days.map(d=>d.eff), color:'#17393E', barColor:'#DCEAE6', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
+  slrDrawChart('slr-cv-sol',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.sol), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] });
+  slrDrawChart('slr-cv-awake', { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.awakeCount), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] });
+  slrDrawChart('slr-cv-hr',    { labels:labels, showLabels:true, band:{min:45,max:70}, series:[{data:c.days.map(d=>d.hr), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
+  slrDrawChart('slr-cv-rr',    { labels:labels, showLabels:true, band:{min:12,max:20}, series:[{data:c.days.map(d=>d.rr), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
+  slrDrawChart('slr-cv-spo2',  { labels:labels, showLabels:true, yMax:100, band:{min:95}, series:[{data:c.days.map(d=>d.spo2), color:'#8B5238', barColor:'#F4E3D7', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
+  slrDrawChart('slr-cv-bed',   { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.bedMinArr, color:'#17393E', type:'line', labelFmt:slrMinToTime}] });
+  slrDrawChart('slr-cv-wake',  { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.wakeMinArr, color:'#C97B53', type:'line', labelFmt:slrMinToTime}] });
+  slrDrawChart('slr-cv-act',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.activityMin), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] });
+  slrDrawChart('slr-cv-cal',   { labels:labels, showLabels:true, series:[{data:c.days.map(d=>d.cal), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
+  slrDrawChart('slr-cv-vit',   { labels:labels, showLabels:true, yMin:0, yMax:100, series:[{data:c.days.map(d=>d.vitality), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
 }
 
 /* ── 인쇄 / 다운로드 ── */
 function _slrReportCss(){
-  return '.slr-report{display:flex;flex-direction:column;gap:16px}'+
-  '.slr-page{background:#F7FBFD;border:1px solid #D8ECF4;border-radius:12px;padding:18px 18px}'+
-  '.slr-page-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#0D2246;color:#fff;font-size:11px;font-weight:800;margin-bottom:8px}'+
-  '.slr-page-title{font-size:16px;font-weight:800;color:#0D2246;margin-bottom:4px}'+
-  '.slr-page-desc{font-size:12px;color:#7A9FB8;margin-bottom:10px;line-height:1.5}'+
-  '.slr-hero{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}'+
-  '.slr-hero-label{font-size:12px;color:#7A9FB8;font-weight:600}'+
-  '.slr-hero-value{font-size:24px;font-weight:800;color:#0D2246}'+
-  '.slr-range-note{font-size:11px;color:#7A9FB8;margin:4px 0 10px}'+
-  '.slr-chart-box{background:#fff;border-radius:10px;padding:8px;margin-bottom:10px}'+
+  return '.slr-report{display:flex;flex-direction:column;gap:16px;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}'+
+  '.slr-page{position:relative;background:#F5F1E7;border:1px solid #E7E2D3;border-radius:14px;padding:30px 27px 26px}'+
+  '.slr-page-num{display:none}'+
+  '.slr-page-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:11px;margin-bottom:17px;border-bottom:1px solid #E7E2D3;font-size:11px;color:#8B948E}'+
+  '.slr-page-head-left{font-weight:700}'+
+  '.slr-page-head-brand{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:10px;white-space:nowrap}'+
+  '.slr-page-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:24px;padding-top:12px;border-top:1px solid #E7E2D3;font-size:10px;color:#8B948E}'+
+  '.slr-page-foot-onDark{border-top-color:rgba(255,255,255,.16);color:rgba(255,255,255,.55)}'+
+  '.slr-page-title{font-size:21px;font-weight:800;color:#20282A;margin-bottom:5px;letter-spacing:-.01em}'+
+  '.slr-page-desc{font-size:12px;color:#52605C;margin-bottom:14px;line-height:1.6}'+
+  '.slr-hero{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:14px 17px;margin-bottom:11px}'+
+  '.slr-hero-icon{flex-shrink:0;width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:#17393E}'+
+  '.slr-hero-icon.tc{color:#8B5238}'+
+  '.slr-hero-text{display:flex;flex-direction:column;gap:2px}'+
+  '.slr-hero-label{font-size:12px;color:#8B948E;font-weight:600}'+
+  '.slr-hero-value{font-size:30px;font-weight:800;color:#20282A;line-height:1.15}'+
+  '.slr-range-note{font-size:11px;color:#8B948E;margin:4px 0 12px}'+
+  '.slr-chart-box{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:12px;margin-bottom:10px}'+
   '.slr-chart-box img{width:100%;height:auto;display:block}'+
-  '.slr-insight-box{background:#D0EEF3;color:#0D2246;border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:8px}'+
-  '.slr-suggest-box{background:#FEF0D3;color:#0D2246;border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.6}'+
-  '.slr-combo-title{font-size:12px;font-weight:800;color:#0D2246;margin-bottom:4px}'+
-  '.slr-combo-subtitle{font-size:10px;font-weight:600;color:#7A9FB8}'+
-  '.slr-combo-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:9px;color:#3A5A78;margin-bottom:7px}'+
+  '.slr-insight-box{background:#DCEAE6;color:#20282A;border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.65;margin-bottom:8px}'+
+  '.slr-suggest-box{background:#F4E3D7;color:#20282A;border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.65}'+
+  '.slr-combo-title{font-size:12px;font-weight:800;color:#20282A;margin-bottom:4px}'+
+  '.slr-combo-subtitle{font-size:10px;font-weight:600;color:#8B948E}'+
+  '.slr-combo-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:9px;color:#52605C;margin-bottom:7px}'+
   '.slr-combo-legend span{display:inline-flex;align-items:center;gap:4px}'+
   '.slr-legend-chip{display:inline-block;width:8px;height:8px;border-radius:2px}'+
   '.slr-legend-line{display:inline-block;width:13px;height:2px}'+
-  '.slr-legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#C83535}'+
+  '.slr-legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#A14E42}'+
   '.slr-16-insights{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}'+
-  '.slr-16-insights .slr-insight-box{margin-bottom:0;border-left:3px solid #0E8FA3}'+
-  '.slr-insight-warn{background:#FEF0D3 !important;border-left:3px solid #C07820}'+
+  '.slr-16-insights .slr-insight-box{background:#fff;border:1px solid #E7E2D3;margin-bottom:0;border-left:3px solid #17393E}'+
+  '.slr-insight-warn{background:#FBDCD4 !important;border-left:3px solid #A14E42}'+
   '.slr-page-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}'+
   '.slr-page-title-row .slr-page-title{margin-bottom:0}'+
-  '.slr-badge-pill{flex-shrink:0;background:#FDDFDF;color:#C83535;font-size:9px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap}'+
+  '.slr-badge-pill{flex-shrink:0;background:#FBDCD4;color:#A14E42;font-size:9px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}'+
   '.slr-anomaly-card svg{display:block;margin:7px auto 0}'+
-  '.slr-integrated-card{background:#fff;border:1px solid #D8ECF4;border-radius:10px;padding:12px 14px}'+
-  '.slr-integrated-title{font-weight:800;font-size:11px;color:#3A5A78;margin-bottom:8px}'+
+  '.slr-integrated-card{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:12px 14px}'+
+  '.slr-integrated-title{font-weight:800;font-size:11px;color:#52605C;margin-bottom:8px}'+
   '.slr-integrated-grid{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:14px}'+
-  '.slr-integrated-label{font-size:9px;color:#7A9FB8;margin-bottom:3px}'+
-  '.slr-integrated-value{font-size:15px;font-weight:800;color:#0D2246}'+
+  '.slr-integrated-label{font-size:9px;color:#8B948E;margin-bottom:3px}'+
+  '.slr-integrated-value{font-size:15px;font-weight:800;color:#20282A}'+
   '.slr-tierbar-row{display:flex;align-items:center;gap:6px;margin-top:4px}'+
-  '.slr-tierbar-label{font-size:9px;color:#7A9FB8;width:38px;flex-shrink:0}'+
-  '.slr-tierbar-track{flex:1;height:7px;background:#EEF3F6;border-radius:6px;overflow:hidden}'+
-  '.slr-tierbar-fill{height:100%;background:#0E8FA3;border-radius:6px}'+
-  '.slr-tierbar-val{font-size:9px;font-weight:700;color:#3A5A78;width:32px;text-align:right;flex-shrink:0}'+
+  '.slr-tierbar-label{font-size:9px;color:#8B948E;width:38px;flex-shrink:0}'+
+  '.slr-tierbar-track{flex:1;height:7px;background:#DCEAE6;border-radius:6px;overflow:hidden}'+
+  '.slr-tierbar-fill{height:100%;background:#17393E;border-radius:6px}'+
+  '.slr-tierbar-val{font-size:9px;font-weight:700;color:#52605C;width:32px;text-align:right;flex-shrink:0}'+
   '.slr-def-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}'+
-  '.slr-def-card{background:#fff;border:1px solid #D8ECF4;border-radius:9px;padding:9px 10px;position:relative}'+
-  '.slr-def-num{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#0E8FA3;color:#fff;font-size:9px;font-weight:800;margin-bottom:4px}'+
-  '.slr-def-title{font-weight:800;font-size:12px;color:#0D2246}'+
-  '.slr-def-eng{font-size:10px;color:#7A9FB8;margin-bottom:4px}'+
+  '.slr-def-card{background:#fff;border:1px solid #E7E2D3;border-radius:10px;padding:9px 10px;position:relative}'+
+  '.slr-def-num{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#25545A;color:#fff;font-size:9px;font-weight:800;margin-bottom:4px}'+
+  '.slr-def-card.cardio .slr-def-num{background:#C97B53}'+
+  '.slr-def-title{font-weight:800;font-size:12px;color:#20282A}'+
+  '.slr-def-eng{font-size:10px;color:#8B948E;margin-bottom:4px}'+
   '.slr-def-icon-wrap{display:flex;align-items:center;justify-content:center;margin:5px 0;min-height:40px}'+
-  '.slr-def-desc{font-size:11px;color:#3A5A78;line-height:1.5}'+
-  '.slr-def-section{font-size:10px;font-weight:700;color:#7A9FB8;margin:4px 0 7px}'+
-  '.slr-def-summary{display:flex;align-items:center;font-size:10px;color:#3A5A78;line-height:1.5;background:#F7FBFD;word-break:keep-all}'+
-  '.slr-cover{background:#0D2246;color:#fff;border-radius:12px;padding:26px 20px}'+
-  '.slr-cover-eyebrow{font-size:10px;letter-spacing:.1em;color:#5CC8B8;font-weight:700;margin-bottom:8px}'+
-  '.slr-cover-title{font-size:20px;font-weight:800;line-height:1.4;margin-bottom:10px}'+
-  '.slr-cover-period{font-size:11px;color:rgba(255,255,255,.65);margin-bottom:14px}'+
-  '.slr-cover-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}'+
-  '.slr-chip{background:rgba(255,255,255,.08);border-radius:9px;padding:8px 10px;min-width:110px}'+
+  '.slr-def-desc{font-size:11px;color:#52605C;line-height:1.5}'+
+  '.slr-def-section{font-size:10px;font-weight:700;color:#8B948E;margin:4px 0 7px}'+
+  '.slr-def-summary{display:flex;align-items:center;font-size:10px;color:#52605C;line-height:1.5;background:#fff;word-break:keep-all}'+
+  '.slr-cover{background:#17393E;color:#fff;border-radius:14px;padding:34px 28px}'+
+  '.slr-cover-eyebrow{font-size:10px;letter-spacing:.12em;color:#C97B53;font-weight:700;margin-bottom:9px}'+
+  '.slr-cover-title{font-size:26px;font-weight:800;line-height:1.4;margin-bottom:11px}'+
+  '.slr-cover-divider{width:46px;height:3px;background:#C97B53;border-radius:2px;margin-bottom:13px}'+
+  '.slr-cover-period{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:14px}'+
+  '.slr-cover-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}'+
+  '.slr-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px;min-width:110px}'+
   '.slr-chip-label{font-size:9px;color:rgba(255,255,255,.55);margin-bottom:2px}'+
   '.slr-chip-value{font-size:12px;font-weight:700}'+
   '.slr-cover-indicators{display:flex;flex-wrap:wrap;gap:6px}'+
-  '.slr-indicator-pill{background:rgba(255,255,255,.1);border-radius:999px;padding:4px 11px;font-size:10px;color:rgba(255,255,255,.85)}'+
+  '.slr-indicator-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:5px 12px;font-size:10px;color:rgba(255,255,255,.9)}'+
   '.slr-table{width:100%;border-collapse:collapse;font-size:11px}'+
-  '.slr-table th,.slr-table td{border-bottom:1px solid #D8ECF4;padding:7px 9px;text-align:left}'+
-  '.slr-table th{color:#7A9FB8;font-weight:700;font-size:10px}'+
+  '.slr-table th,.slr-table td{border-bottom:1px solid #E7E2D3;padding:8px 9px;text-align:left;color:#20282A}'+
+  '.slr-table th{color:#8B948E;font-weight:700;font-size:10px}'+
   '.slr-nightcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}'+
-  '.slr-nightcard{background:#fff;border-radius:10px;padding:12px 14px;border-left:4px solid #0E8FA3;font-size:11px}'+
-  '.slr-nightcard.worst{border-left-color:#C83535}'+
-  '.slr-nightcard-head{font-weight:800;font-size:12px;margin-bottom:6px}'+
+  '.slr-nightcard{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:12px 14px;border-left:4px solid #17393E;font-size:11px;color:#52605C}'+
+  '.slr-nightcard.worst{border-left-color:#A14E42}'+
+  '.slr-nightcard-head{font-weight:800;font-size:12px;margin-bottom:6px;color:#20282A}'+
   '.slr-nightcard-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}'+
-  '.slr-nightcard-tag{background:#F7FBFD;border-radius:6px;padding:3px 8px;font-size:10px;color:#3A5A78}'+
+  '.slr-nightcard-tag{background:#F5F1E7;border-radius:6px;padding:3px 8px;font-size:10px;color:#52605C}'+
   '.slr-anomaly-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}'+
-  '.slr-anomaly-card{background:#fff;border-radius:10px;padding:11px;text-align:center}'+
-  '.slr-anomaly-metric{font-size:10px;color:#7A9FB8}'+
-  '.slr-anomaly-value{font-size:18px;font-weight:800;color:#0D2246}'+
+  '.slr-anomaly-card{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:11px;text-align:center}'+
+  '.slr-anomaly-metric{font-size:10px;color:#8B948E}'+
+  '.slr-anomaly-value{font-size:18px;font-weight:800;color:#A14E42}'+
   '.slr-stat-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:11px}'+
-  '.slr-stat-tile{background:#fff;border:1px solid #D8ECF4;border-radius:10px;padding:10px 12px}'+
-  '.slr-stat-tile-label{font-size:9px;color:#7A9FB8;margin-bottom:4px}'+
-  '.slr-stat-tile-value{font-size:14px;font-weight:800;color:#0D2246}'+
-  '.slr-manager-box{background:#D0EEF3;border-radius:10px;padding:11px 13px;margin-bottom:12px}'+
-  '.slr-manager-label{font-size:9px;font-weight:700;color:#0E8FA3;margin-bottom:4px}'+
-  '.slr-manager-text{font-size:11px;color:#0D2246;line-height:1.6;font-style:italic}'+
+  '.slr-stat-tile{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:10px 12px}'+
+  '.slr-stat-tile-label{font-size:9px;color:#8B948E;margin-bottom:4px}'+
+  '.slr-stat-tile-value{font-size:14px;font-weight:800;color:#20282A}'+
+  '.slr-manager-box{background:#DCEAE6;border-radius:12px;padding:11px 13px;margin-bottom:12px}'+
+  '.slr-manager-label{font-size:9px;font-weight:700;color:#25545A;margin-bottom:4px}'+
+  '.slr-manager-text{font-size:11px;color:#20282A;line-height:1.6;font-style:italic}'+
   '.slr-routine-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}'+
-  '.slr-routine-card{background:#fff;border-radius:10px;padding:11px 13px}'+
-  '.slr-routine-num{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#C07820;color:#fff;align-items:center;justify-content:center;font-size:10px;font-weight:800;margin-right:6px}'+
-  '.slr-routine-title{font-weight:700;font-size:12px}'+
-  '.slr-routine-desc{font-size:11px;color:#3A5A78;line-height:1.5;margin-top:5px}'+
+  '.slr-routine-card{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:11px 13px}'+
+  '.slr-routine-num{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#C97B53;color:#fff;align-items:center;justify-content:center;font-size:10px;font-weight:800;margin-right:6px}'+
+  '.slr-routine-title{font-weight:700;font-size:12px;color:#20282A}'+
+  '.slr-routine-desc{font-size:11px;color:#52605C;line-height:1.5;margin-top:5px}'+
   '.slr-checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}'+
-  '.slr-checklist li{font-size:11px;color:#3A5A78}'+
-  '.slr-checklist li::before{content:"☐ ";color:#0E8FA3}'+
+  '.slr-checklist li{font-size:11px;color:#52605C}'+
+  '.slr-checklist li::before{content:"☐ ";color:#17393E}'+
   '@media print{'+
     '.slr-report{gap:0}'+
     '.slr-page{break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid;border-radius:0;min-height:277mm}'+

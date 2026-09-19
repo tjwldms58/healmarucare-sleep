@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
 /* ═══════════════════════════════════════
@@ -180,6 +181,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .lbox-visual {
   display: flex; flex-direction: column; align-items: center;
   flex-shrink: 0;
+  pointer-events: none; /* 3D 장식 요소가 로그인 버튼 클릭 막지 않도록 */
 }
 .miband-scene {
   position: relative;
@@ -1362,6 +1364,228 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   .nav-tab { padding: 6px 8px; }
 }
 
+/* ═══════════════════════════════════════
+   수면 레포트 탭
+═══════════════════════════════════════ */
+.rpt-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  align-items: start;
+}
+.rpt-left {
+  position: sticky;
+  top: 76px;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+.rpt-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 18px;
+}
+.rpt-panel-title {
+  font-size: .72rem;
+  font-weight: 800;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 12px;
+}
+/* 드래그&드롭 영역 */
+.rpt-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 11px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  background: var(--bg);
+}
+.rpt-drop-zone:hover, .rpt-drop-zone.drag-over {
+  border-color: var(--teal);
+  background: var(--teal-light);
+}
+.rpt-drop-zone .dz-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.rpt-drop-zone .dz-main { font-size: .82rem; font-weight: 700; color: var(--text-1); margin-bottom: 3px; }
+.rpt-drop-zone .dz-sub  { font-size: .72rem; color: var(--text-3); }
+/* 파일 리스트 */
+.rpt-file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.rpt-file-item {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.rpt-file-item:hover { border-color: var(--teal); }
+.rpt-file-item.active { border-color: var(--teal); background: var(--teal-light); }
+.rpt-file-item .fi-icon { font-size: .95rem; flex-shrink: 0; }
+.rpt-file-item .fi-info { flex: 1; min-width: 0; }
+.rpt-file-item .fi-name { font-size: .75rem; font-weight: 700; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rpt-file-item .fi-meta { font-size: .68rem; color: var(--text-3); margin-top: 1px; }
+.rpt-file-item .fi-del  { font-size: .8rem; color: var(--text-3); cursor: pointer; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; }
+.rpt-file-item .fi-del:hover { background: var(--err-bg); color: var(--err); }
+/* 레포트 액션 버튼들 */
+.rpt-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 9px;
+  border: none;
+  font-size: .78rem; font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .15s;
+}
+.rpt-btn:disabled { opacity: .4; cursor: not-allowed; }
+.rpt-btn-primary { background: var(--teal); color: #fff; }
+.rpt-btn-primary:hover:not(:disabled) { opacity: .85; }
+.rpt-btn-secondary { background: var(--neutral-bg); color: var(--text-2); border: 1px solid var(--border); }
+.rpt-btn-secondary:hover:not(:disabled) { background: var(--border); }
+.rpt-btn-danger { background: var(--err-bg); color: var(--err); border: 1px solid transparent; }
+.rpt-btn-danger:hover:not(:disabled) { border-color: var(--err); }
+/* 우측 프리뷰 영역 */
+.rpt-right {}
+/* 레포트 없을 때 빈 상태 */
+.rpt-empty {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 64px 32px;
+  text-align: center;
+  color: var(--text-3);
+}
+.rpt-empty .re-icon { font-size: 2.8rem; margin-bottom: 12px; }
+.rpt-empty .re-txt  { font-size: .85rem; font-weight: 600; }
+/* 탭 행 (여러 파일) */
+.rpt-tabs-row {
+  display: flex; gap: .5rem; flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.rpt-file-tab {
+  background: var(--neutral-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: .75rem; font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.rpt-file-tab:hover { border-color: var(--teal); color: var(--teal); }
+.rpt-file-tab.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+/* 레포트 카드 */
+.rpt-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.rpt-card-header {
+  background: var(--navy);
+  color: #fff;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rpt-card-header .ch-info { display: flex; flex-direction: column; gap: 3px; }
+.rpt-card-header .ch-name { font-size: 1.05rem; font-weight: 800; }
+.rpt-card-header .ch-meta { font-size: .72rem; color: rgba(255,255,255,.6); }
+.rpt-card-header .ch-btns { display: flex; gap: 8px; }
+.rpt-card-header .ch-btn {
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff; border-radius: 8px;
+  padding: 6px 12px; font-size: .72rem; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.rpt-card-header .ch-btn:hover { background: rgba(255,255,255,.22); }
+.rpt-card-body { padding: 20px; }
+/* 요약 그리드 */
+.rpt-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: .75rem;
+  margin-bottom: 1.2rem;
+}
+.rpt-stat-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.rpt-stat-box .sb-label { font-size: .65rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.rpt-stat-box .sb-val   { font-size: 1.2rem; font-weight: 800; color: var(--text-1); line-height: 1; }
+.rpt-stat-box .sb-unit  { font-size: .65rem; color: var(--text-3); margin-top: 3px; }
+.rpt-stat-box.ok  { border-color: var(--ok); background: var(--ok-bg); }
+.rpt-stat-box.ok .sb-val  { color: var(--ok); }
+.rpt-stat-box.warn{ border-color: var(--warn); background: var(--warn-bg); }
+.rpt-stat-box.warn .sb-val{ color: var(--warn); }
+.rpt-stat-box.err { border-color: var(--err); background: var(--err-bg); }
+.rpt-stat-box.err .sb-val { color: var(--err); }
+/* 날짜별 테이블 */
+.rpt-section-title {
+  font-size: .78rem; font-weight: 800;
+  color: var(--text-2);
+  margin: 1.2rem 0 .6rem;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.rpt-data-table {
+  width: 100%; border-collapse: collapse;
+  font-size: .73rem;
+}
+.rpt-data-table th {
+  background: var(--bg);
+  color: var(--text-3);
+  font-weight: 700;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.rpt-data-table td {
+  padding: 7px 10px;
+  color: var(--text-1);
+  border-bottom: 1px solid var(--border-soft);
+  white-space: nowrap;
+}
+.rpt-data-table tbody tr:hover { background: var(--surface-2); }
+/* 차트 영역 */
+.rpt-chart-wrap {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+.rpt-chart-wrap canvas { display: block; }
+/* 인쇄 전용 스타일 */
+@media print {
+  .rpt-chart-wrap canvas { max-width: 100%; }
+}
+/* 모바일 */
+@media (max-width: 900px) {
+  .rpt-layout { grid-template-columns: 1fr; padding: .75rem; }
+  .rpt-left { position: static; }
+}
+
 /* ── Guide Modal ── */
 .guide-step { margin-bottom:20px; }
 .guide-step-title { font-size:.85rem;font-weight:800;color:#17324D;margin-bottom:8px;padding-bottom:5px;border-bottom:1.5px solid #EAF2F6; }
@@ -1757,6 +1981,9 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
       </button>
       <button class="nav-tab" onclick="switchTab('schedule', this)">
         <span class="tab-icon">📅</span><span class="nav-tab-label"> 일정</span>
+      </button>
+      <button class="nav-tab" onclick="switchTab('report', this)">
+        <span class="tab-icon">📊</span><span class="nav-tab-label"> 레포트</span>
       </button>
     </nav>
   </div>
@@ -3266,6 +3493,76 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   </div><!-- /schedule-wrap -->
 </section>
 
+<!-- ═══════════════════════════════════════
+     수면 레포트 TAB
+═══════════════════════════════════════ -->
+<section id="tab-report" class="tab-section">
+  <div class="rpt-layout">
+
+    <!-- ── 좌측 패널 ── -->
+    <div class="rpt-left">
+
+      <!-- 파일 업로드 -->
+      <div class="rpt-panel">
+        <div class="rpt-panel-title">📂 엑셀 파일 업로드</div>
+        <div class="rpt-drop-zone" id="rpt-drop-zone"
+          onclick="document.getElementById('rpt-file-input').click()"
+          ondragover="rptDragOver(event)"
+          ondragleave="rptDragLeave(event)"
+          ondrop="rptDrop(event)">
+          <div class="dz-icon">📁</div>
+          <div class="dz-main">클릭 또는 파일을 드래그</div>
+          <div class="dz-sub">힐마루케어 엑셀 파일 · 최대 10개</div>
+        </div>
+        <input type="file" id="rpt-file-input" accept=".xlsx,.xls" multiple
+          style="display:none" onchange="rptFileSelected(this)">
+        <div class="rpt-file-list" id="rpt-file-list"></div>
+      </div>
+
+      <!-- 액션 버튼 -->
+      <div class="rpt-panel" style="display:flex;flex-direction:column;gap:8px">
+        <div class="rpt-panel-title">⚙️ 레포트 작업</div>
+        <button class="rpt-btn rpt-btn-primary" id="rpt-btn-gen" onclick="rptGenerate()" disabled>
+          📊 레포트 생성
+        </button>
+        <button class="rpt-btn rpt-btn-secondary" id="rpt-btn-print-all" onclick="rptPrintAll()" disabled>
+          🖨 전체 인쇄 (일괄)
+        </button>
+        <button class="rpt-btn rpt-btn-secondary" id="rpt-btn-zip" onclick="rptDownloadZip()" disabled style="background:var(--ok-bg);color:var(--ok);border-color:var(--ok)">
+          📦 ZIP 다운로드 (전체)
+        </button>
+        <button class="rpt-btn rpt-btn-danger" onclick="rptClearAll()">
+          🗑 파일 전체 삭제
+        </button>
+      </div>
+
+      <!-- 도움말 -->
+      <div class="rpt-panel" style="font-size:.71rem;color:var(--text-3);line-height:1.7">
+        <div class="rpt-panel-title">💡 사용법</div>
+        1. <b style="color:var(--text-2)">엑셀 내보내기</b>로 저장한 파일을 업로드<br>
+        2. 최대 10개 파일 동시 처리<br>
+        3. 레포트 생성 후 개별 인쇄 또는 전체 일괄 인쇄
+      </div>
+
+    </div><!-- /rpt-left -->
+
+    <!-- ── 우측 프리뷰 ── -->
+    <div class="rpt-right" id="rpt-right">
+      <div class="rpt-empty" id="rpt-empty">
+        <div class="re-icon">📋</div>
+        <div class="re-txt">엑셀 파일을 업로드하고<br>레포트 생성을 눌러주세요</div>
+      </div>
+      <div id="rpt-content" style="display:none">
+        <!-- 탭 (여러 파일) -->
+        <div class="rpt-tabs-row" id="rpt-tabs-row"></div>
+        <!-- 레포트 카드들 -->
+        <div id="rpt-cards"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- Customer Guide Modal -->
 <div id="guide-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9990;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto" onclick="if(event.target===this)closeGuide()">
   <div style="background:#fff;border-radius:16px;max-width:700px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden" id="guide-modal-box">
@@ -4221,7 +4518,7 @@ function _getRecordGroup(r){
   return match ? (match.group || '') : '';
 }
 
-const APP_VER = '6.99';
+const APP_VER = '7.00';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6890,14 +7187,14 @@ async function exportExcel(){
 
     // 웹페이지와 동일한 로직: 이름+나이+성별로 묶고, 각 타입 날짜순 정렬 후 위치(인덱스)로 병합
     const _pmE = new Map();
-    function _getPKE(n,a,g){ return `${n||''}||${a||''}||${g||''}`; }
-    function _getPE(n,a,g,ex){
+    const _getPKE = (n,a,g) => `${n||''}||${a||''}||${g||''}`;
+    const _getPE = (n,a,g,ex) => {
       const k=_getPKE(n,a,g);
       if(!_pmE.has(k)) _pmE.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',sleep:[],heart:[],weight:[],stress:[],activity:[]},ex));
       const p=_pmE.get(k);
       if(ex){ if(!p.give&&ex.give) p.give=ex.give; if(!p.collect&&ex.collect) p.collect=ex.collect; if(!p.cancer&&ex.cancer) p.cancer=ex.cancer; if(!p.stage&&ex.stage) p.stage=ex.stage; }
       return p;
-    }
+    };
     filt(sleepRecords).forEach(r=>{ const p=_getPE(r.name,r.age,r.gender,{give:r.give,collect:r.collect,cancer:r.cancer,stage:r.stage}); p.sleep.push(r); });
     filt(heartRateRecords).forEach(r=>{ _getPE(r.name,r.age,r.gender,{give:r.give}).heart.push(r); });
     filt(weightRecords).forEach(r=>{ _getPE(r.name,r.age,r.gender,{give:r.give}).weight.push(r); });
@@ -6919,9 +7216,9 @@ async function exportExcel(){
     });
 
     // 정상여부 자동판단 (휴식 심박수 기준)
-    function _hrStatus(rest){ const r=parseFloat(rest); if(isNaN(r)) return ''; if(r>=60&&r<=100) return '정상'; if(r<60) return '서맥 알람'; return '빈맥 알람'; }
+    const _hrStatus = (rest) => { const r=parseFloat(rest); if(isNaN(r)) return ''; if(r>=60&&r<=100) return '정상'; if(r<60) return '서맥 알람'; return '빈맥 알람'; };
     // 추천체중 계산: (height/100)^2 × 22
-    function _recWeight(kg,height){ const h=parseFloat(height); if(!h) return ''; return ((h/100)*(h/100)*22).toFixed(1); }
+    const _recWeight = (kg,height) => { const h=parseFloat(height); if(!h) return ''; return ((h/100)*(h/100)*22).toFixed(1); };
 
     const headers = [
       '날짜','고객명','나이','성별','암종','병기','현재단계','제공일자','수거일자',
@@ -6950,7 +7247,7 @@ async function exportExcel(){
         sv?sv.score||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':'',
         ac?ac.calActual||'':'', ac?ac.calGoal||'':'',
         ac?ac.stepActual||'':'', ac?ac.stepGoal||'':'',
-        ac?ac.hiActual||'':'', ac?ac.hiGoal||''
+        ac?ac.hiActual||'':'', ac?ac.hiGoal||'':''
       ];
     });
 
@@ -7206,14 +7503,14 @@ async function exportAllDocx(){
     // 웹페이지와 동일: 이름+나이+성별로 묶고, 각 타입 날짜순 정렬 후 위치(인덱스)로 병합
     const filt2 = (arr) => currentFilterGroup==='전체' ? arr : arr.filter(r=>(r.group||'')===currentFilterGroup);
     const _pm2 = new Map();
-    function _getPK2(n,a,g){ return `${n||''}||${a||''}||${g||''}`; }
-    function _getP2(n,a,g,ex){
+    const _getPK2 = (n,a,g) => `${n||''}||${a||''}||${g||''}`;
+    const _getP2 = (n,a,g,ex) => {
       const k=_getPK2(n,a,g);
       if(!_pm2.has(k)) _pm2.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',sleep:[],heart:[],bp:[],weight:[],womens:[],stress:[]},ex));
       const p=_pm2.get(k);
       if(ex){ if(!p.give&&ex.give) p.give=ex.give; if(!p.collect&&ex.collect) p.collect=ex.collect; if(!p.cancer&&ex.cancer) p.cancer=ex.cancer; if(!p.stage&&ex.stage) p.stage=ex.stage; }
       return p;
-    }
+    };
     filt2(sleepRecords).forEach(r=>{ const p=_getP2(r.name,r.age,r.gender,{give:r.give,collect:r.collect,cancer:r.cancer,stage:r.stage}); p.sleep.push(r); });
     filt2(heartRateRecords).forEach(r=>{ _getP2(r.name,r.age,r.gender,{give:r.give}).heart.push(r); });
     filt2(bloodPressureRecords).forEach(r=>{ _getP2(r.name,r.age,r.gender,{give:r.give}).bp.push(r); });
@@ -10367,5 +10664,468 @@ function printAllReport(){
   w.document.close();
   w.focus();
 }
+
+/* ═══════════════════════════════════════
+   수면 레포트 기능
+═══════════════════════════════════════ */
+(function(){
+
+// 컬럼 인덱스 매핑 (exportExcel() 헤더 순서)
+const COL = {
+  date:0, name:1, age:2, gender:3, cancer:4, stage:5, curStage:6, give:7, collect:8,
+  remPct:9, remTime:10, lightPct:11, lightTime:12, deepPct:13, deepTime:14,
+  awakeMin:15, awakeCnt:16, eff:17, totalSleep:18, nap:19,
+  sleepHr:20, sleepHrv:21, sleepO2:22, sleepRr:23, sleepOnset:24,
+  bedTime:25, wakeTime:26,
+  hrRange:27, hrAvg:28, hrRest:29, hrWalk:30, hrStatus:31,
+  weight:32, height:33, recWeight:34, bmi:35,
+  stress:36, vital:37, finalVital:38,
+  calAct:39, calGoal:40, stepAct:41, stepGoal:42, hiAct:43, hiGoal:44
+};
+
+// 상태
+let _rptFiles = [];    // {file, name, data:[{...}], patientKey}
+let _rptActive = 0;   // 현재 선택된 파일 인덱스
+
+// ──── 파일 처리 ────
+window.rptDragOver = function(e){
+  e.preventDefault();
+  document.getElementById('rpt-drop-zone').classList.add('drag-over');
+};
+window.rptDragLeave = function(){
+  document.getElementById('rpt-drop-zone').classList.remove('drag-over');
+};
+window.rptDrop = function(e){
+  e.preventDefault();
+  document.getElementById('rpt-drop-zone').classList.remove('drag-over');
+  _rptAddFiles(Array.from(e.dataTransfer.files));
+};
+window.rptFileSelected = function(input){
+  _rptAddFiles(Array.from(input.files));
+  input.value='';
+};
+
+function _rptAddFiles(files){
+  const xlsFiles = files.filter(f=>f.name.match(/\.(xlsx|xls)$/i));
+  const remain = 10 - _rptFiles.length;
+  if(remain <= 0){ showToast('최대 10개 파일까지 업로드 가능합니다.', true); return; }
+  const toAdd = xlsFiles.slice(0, remain);
+  if(xlsFiles.length > remain) showToast(`최대 10개까지 가능해 ${remain}개만 추가됩니다.`, true);
+  toAdd.forEach(f=>{
+    // 중복 방지
+    if(_rptFiles.find(r=>r.name===f.name)) return;
+    _rptFiles.push({file:f, name:f.name, data:null, parsed:false});
+  });
+  _rptRenderFileList();
+}
+
+function _rptRenderFileList(){
+  const wrap = document.getElementById('rpt-file-list');
+  wrap.innerHTML = '';
+  _rptFiles.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'rpt-file-item' + (idx===_rptActive?' active':'');
+    div.onclick = ()=>{ _rptActive=idx; _rptRenderFileList(); if(item.data) _rptShowCards(); };
+    const sizeMB = (item.file.size/1024/1024).toFixed(1);
+    div.innerHTML = `
+      <span class="fi-icon">📊</span>
+      <div class="fi-info">
+        <div class="fi-name" title="${item.name}">${item.name}</div>
+        <div class="fi-meta">${sizeMB} MB · ${item.parsed?'<span style="color:var(--ok)">파싱완료</span>':'대기 중'}</div>
+      </div>
+      <span class="fi-del" onclick="event.stopPropagation();rptRemoveFile(${idx})" title="삭제">✕</span>`;
+    wrap.appendChild(div);
+  });
+  // 버튼 활성화
+  const hasFiles = _rptFiles.length > 0;
+  const hasParsed = _rptFiles.some(f=>f.parsed);
+  document.getElementById('rpt-btn-gen').disabled = !hasFiles;
+  document.getElementById('rpt-btn-print-all').disabled = !hasParsed;
+  document.getElementById('rpt-btn-zip').disabled = !hasParsed;
+}
+
+window.rptRemoveFile = function(idx){
+  _rptFiles.splice(idx, 1);
+  if(_rptActive >= _rptFiles.length) _rptActive = Math.max(0, _rptFiles.length-1);
+  _rptRenderFileList();
+  if(_rptFiles.length===0) _rptShowEmpty();
+  else if(_rptFiles[_rptActive]?.parsed) _rptShowCards();
+};
+
+window.rptClearAll = function(){
+  _rptFiles = []; _rptActive = 0;
+  _rptRenderFileList();
+  _rptShowEmpty();
+};
+
+// ──── 파싱 ────
+window.rptGenerate = async function(){
+  if(!_rptFiles.length) return;
+  const btn = document.getElementById('rpt-btn-gen');
+  btn.disabled = true; btn.textContent = '파싱 중…';
+  for(let i=0;i<_rptFiles.length;i++){
+    if(_rptFiles[i].parsed) continue;
+    try {
+      const rows = await _rptParseFile(_rptFiles[i].file);
+      _rptFiles[i].data = rows;
+      _rptFiles[i].parsed = true;
+    } catch(err){
+      showToast(`${_rptFiles[i].name} 파싱 오류: ${err.message}`, true);
+    }
+  }
+  btn.disabled = false; btn.textContent = '📊 레포트 생성';
+  _rptRenderFileList();
+  _rptShowCards();
+};
+
+function _rptParseFile(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      try {
+        const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const raw = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+        if(raw.length < 2){ reject(new Error('데이터 없음')); return; }
+        // 첫 행 헤더, 나머지 데이터
+        const header = raw[0];
+        const rows = raw.slice(1).filter(r=>r.some(c=>c!=='')).map(r=>{
+          const o={};
+          Object.entries(COL).forEach(([k,i])=>{ o[k] = r[i]!==undefined?String(r[i]):''; });
+          return o;
+        });
+        resolve(rows);
+      } catch(err){ reject(err); }
+    };
+    reader.onerror = ()=>reject(new Error('파일 읽기 실패'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// ──── 통계 계산 ────
+function _avg(arr, key){
+  const vals = arr.map(r=>parseFloat(r[key])).filter(v=>!isNaN(v)&&v>0);
+  if(!vals.length) return '';
+  return (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+}
+function _val(v, fallback='—'){ return v&&v!==''?v:fallback; }
+
+// ──── 카드 렌더링 ────
+function _rptShowEmpty(){
+  document.getElementById('rpt-empty').style.display='';
+  document.getElementById('rpt-content').style.display='none';
+}
+function _rptShowCards(){
+  document.getElementById('rpt-empty').style.display='none';
+  document.getElementById('rpt-content').style.display='';
+  // 탭 행
+  const tabRow = document.getElementById('rpt-tabs-row');
+  tabRow.innerHTML = '';
+  _rptFiles.filter(f=>f.parsed).forEach((item,idx)=>{
+    const realIdx = _rptFiles.indexOf(item);
+    const btn = document.createElement('button');
+    btn.className = 'rpt-file-tab' + (realIdx===_rptActive?' active':'');
+    // 고객명 추출
+    const firstName = item.data?.[0]?.name || item.name.replace(/\.(xlsx|xls)$/i,'');
+    btn.textContent = firstName + (item.data.length>1?` (${item.data.length}일)`:'');
+    btn.onclick=()=>{ _rptActive=realIdx; _rptRenderFileList(); _rptShowCards(); };
+    tabRow.appendChild(btn);
+  });
+  // 카드
+  const cardsWrap = document.getElementById('rpt-cards');
+  cardsWrap.innerHTML='';
+  const file = _rptFiles[_rptActive];
+  if(!file||!file.parsed) return;
+  const card = _buildCard(file, _rptActive);
+  cardsWrap.appendChild(card);
+}
+
+function _buildCard(file, idx){
+  const rows = file.data;
+  // 환자 기본정보 (첫 행 기준)
+  const first = rows[0]||{};
+  const patName  = _val(first.name);
+  const patAge   = _val(first.age);
+  const patGender= _val(first.gender);
+  const cancer   = _val(first.cancer);
+  const stage    = _val(first.stage);
+  const curStage = _val(first.curStage);
+  const give     = _val(first.give);
+  const collect  = _val(first.collect);
+
+  // 수면 통계 (7일 평균)
+  const avgEff      = _avg(rows,'eff');
+  const avgTotal    = _avg(rows,'totalSleep');
+  const avgDeepPct  = _avg(rows,'deepPct');
+  const avgRemPct   = _avg(rows,'remPct');
+  const avgHrv      = _avg(rows,'sleepHrv');
+  const avgO2       = _avg(rows,'sleepO2');
+  const avgStress   = _avg(rows,'stress');
+  const finalVital  = rows.map(r=>r.finalVital).filter(v=>v&&v!=='').slice(-1)[0]||'—';
+  const avgStepAct  = _avg(rows,'stepAct');
+
+  // 효율성 색상
+  function effColor(v){ const n=parseFloat(v); if(isNaN(n)) return ''; if(n>=85) return 'ok'; if(n>=70) return 'warn'; return 'err'; }
+  function o2Color(v){  const n=parseFloat(v); if(isNaN(n)) return ''; if(n>=95) return 'ok'; if(n>=90) return 'warn'; return 'err'; }
+  function hrvColor(v){ const n=parseFloat(v); if(isNaN(n)) return ''; if(n>=40) return 'ok'; if(n>=20) return 'warn'; return 'err'; }
+  function stressColor(v){ const n=parseFloat(v); if(isNaN(n)) return ''; if(n<=29) return 'ok'; if(n<=59) return 'warn'; return 'err'; }
+
+  // 날짜별 테이블 행
+  const tableRows = rows.map((r,i)=>`
+    <tr>
+      <td>${_val(r.date)}</td>
+      <td>${_val(r.totalSleep)}</td>
+      <td>${_val(r.eff)}%</td>
+      <td>${_val(r.deepPct)}%</td>
+      <td>${_val(r.remPct)}%</td>
+      <td>${_val(r.awakeCnt)}</td>
+      <td>${_val(r.sleepHrv)}</td>
+      <td>${_val(r.sleepO2)}%</td>
+      <td>${_val(r.hrRest)}</td>
+      <td>${_val(r.stress)}</td>
+      <td>${_val(r.vital)}</td>
+      <td>${_val(r.stepAct)}</td>
+    </tr>`).join('');
+
+  // 수면 구성 비율 막대 SVG (7일 평균)
+  const deepN  = parseFloat(avgDeepPct)||0;
+  const remN   = parseFloat(avgRemPct)||0;
+  const lightN = Math.max(0, 100-deepN-remN-(parseFloat(_avg(rows,'awakeMin'))||0));
+  function bar(pct,color){ return `<div style="width:${pct}%;background:${color};height:100%;display:inline-block;transition:width .3s"></div>`; }
+
+  const div = document.createElement('div');
+  div.className = 'rpt-card';
+  div.dataset.idx = idx;
+  div.innerHTML = `
+    <!-- 카드 헤더 -->
+    <div class="rpt-card-header">
+      <div class="ch-info">
+        <div class="ch-name">🌙 ${patName} 수면 레포트</div>
+        <div class="ch-meta">${patAge}세 · ${patGender} · ${cancer} ${stage} · ${curStage} · 측정 ${rows.length}일</div>
+        <div class="ch-meta" style="margin-top:2px">기기 제공 ${give} → 수거 ${collect}</div>
+      </div>
+      <div class="ch-btns">
+        <button class="ch-btn" onclick="rptPrintOne(${idx})">🖨 인쇄</button>
+        <button class="ch-btn" onclick="rptDownloadOneZip(${idx})">📥 저장</button>
+      </div>
+    </div>
+
+    <!-- 카드 바디 -->
+    <div class="rpt-card-body">
+
+      <!-- 7일 평균 요약 -->
+      <div class="rpt-section-title">📊 7일 평균 요약</div>
+      <div class="rpt-summary-grid">
+        <div class="rpt-stat-box ${effColor(avgEff)}">
+          <div class="sb-label">수면 효율성</div>
+          <div class="sb-val">${avgEff||'—'}</div>
+          <div class="sb-unit">% 평균</div>
+        </div>
+        <div class="rpt-stat-box">
+          <div class="sb-label">수면 시간</div>
+          <div class="sb-val">${avgTotal||'—'}</div>
+          <div class="sb-unit">평균</div>
+        </div>
+        <div class="rpt-stat-box">
+          <div class="sb-label">깊은 수면</div>
+          <div class="sb-val">${avgDeepPct||'—'}</div>
+          <div class="sb-unit">% 평균</div>
+        </div>
+        <div class="rpt-stat-box">
+          <div class="sb-label">REM 수면</div>
+          <div class="sb-val">${avgRemPct||'—'}</div>
+          <div class="sb-unit">% 평균</div>
+        </div>
+        <div class="rpt-stat-box ${hrvColor(avgHrv)}">
+          <div class="sb-label">HRV</div>
+          <div class="sb-val">${avgHrv||'—'}</div>
+          <div class="sb-unit">ms 평균</div>
+        </div>
+        <div class="rpt-stat-box ${o2Color(avgO2)}">
+          <div class="sb-label">혈중 산소</div>
+          <div class="sb-val">${avgO2||'—'}</div>
+          <div class="sb-unit">% 평균</div>
+        </div>
+        <div class="rpt-stat-box ${stressColor(avgStress)}">
+          <div class="sb-label">스트레스</div>
+          <div class="sb-val">${avgStress||'—'}</div>
+          <div class="sb-unit">평균</div>
+        </div>
+        <div class="rpt-stat-box">
+          <div class="sb-label">7일 활력점수</div>
+          <div class="sb-val">${finalVital||'—'}</div>
+          <div class="sb-unit">점 (최종)</div>
+        </div>
+        <div class="rpt-stat-box">
+          <div class="sb-label">걸음수</div>
+          <div class="sb-val">${Math.round(parseFloat(avgStepAct)||0).toLocaleString()}</div>
+          <div class="sb-unit">보 평균</div>
+        </div>
+      </div>
+
+      <!-- 수면 구성 비율 -->
+      <div class="rpt-section-title">🎨 수면 구성 비율 (7일 평균)</div>
+      <div style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:10px;padding:14px 16px">
+        <div style="display:flex;border-radius:6px;overflow:hidden;height:22px;width:100%">
+          ${bar(deepN,'#5CC8B8')}${bar(remN,'#7C9EF8')}${bar(Math.max(0,lightN),'#A8C4E8')}
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:5px;font-size:.72rem">
+            <span style="width:10px;height:10px;border-radius:2px;background:#5CC8B8;display:inline-block"></span>
+            <span style="color:var(--text-2)">깊은수면 <b>${avgDeepPct||'—'}%</b></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:.72rem">
+            <span style="width:10px;height:10px;border-radius:2px;background:#7C9EF8;display:inline-block"></span>
+            <span style="color:var(--text-2)">REM <b>${avgRemPct||'—'}%</b></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:.72rem">
+            <span style="width:10px;height:10px;border-radius:2px;background:#A8C4E8;display:inline-block"></span>
+            <span style="color:var(--text-2)">얕은수면 <b>${_avg(rows,'lightPct')||'—'}%</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 날짜별 상세 테이블 -->
+      <div class="rpt-section-title">📅 날짜별 상세 데이터</div>
+      <div style="overflow-x:auto">
+        <table class="rpt-data-table">
+          <thead>
+            <tr>
+              <th>날짜</th><th>수면시간</th><th>효율성</th><th>깊은수면</th><th>REM</th>
+              <th>각성횟수</th><th>HRV</th><th>혈중O₂</th><th>휴식심박</th>
+              <th>스트레스</th><th>활력점수</th><th>걸음수</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+
+    </div>`;
+  return div;
+}
+
+// ──── 인쇄 ────
+function _buildPrintHTML(file){
+  if(!file||!file.parsed) return '';
+  const rows = file.data;
+  const first = rows[0]||{};
+  const patName = first.name||'환자';
+  const now = new Date().toLocaleDateString('ko-KR');
+  const bodyInner = document.createElement('div');
+  const card = _buildCard(file, 0);
+  // 헤더 버튼 숨기기
+  card.querySelectorAll('.ch-btn').forEach(b=>b.style.display='none');
+  bodyInner.appendChild(card);
+  return `<!DOCTYPE html><html lang="ko"><head>
+  <meta charset="UTF-8">
+  <title>${patName} 수면 레포트</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Noto Sans KR',sans-serif;background:#EEF6FB;padding:16px;font-size:13px;color:#0D2246;}
+    :root{
+      --navy:#0D2246;--teal:#0E8FA3;--teal-light:#D0EEF3;--mint:#5CC8B8;
+      --bg:#F2F8FC;--surface:#FFFFFF;--surface-2:#F7FBFD;
+      --border:#D8ECF4;--border-soft:#EBF4F9;
+      --text-1:#0D2246;--text-2:#3A5A78;--text-3:#7A9FB8;
+      --ok:#1E9E5A;--ok-bg:#D6F5E4;--warn:#C07820;--warn-bg:#FEF0D3;
+      --err:#C83535;--err-bg:#FDDFDF;
+      --neutral:#6B8EA8;--neutral-bg:#ECF3F8;
+    }
+    .rpt-card{background:#fff;border:1px solid #D8ECF4;border-radius:14px;overflow:hidden;margin-bottom:16px;}
+    .rpt-card-header{background:#0D2246;color:#fff;padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;}
+    .ch-name{font-size:1.05rem;font-weight:800;}
+    .ch-meta{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:3px;}
+    .ch-btn{display:none;}
+    .rpt-card-body{padding:20px;}
+    .rpt-section-title{font-size:.78rem;font-weight:800;color:#3A5A78;margin:1.2rem 0 .6rem;padding-bottom:6px;border-bottom:2px solid #D8ECF4;}
+    .rpt-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem;}
+    .rpt-stat-box{background:#F7FBFD;border:1px solid #EBF4F9;border-radius:10px;padding:10px 12px;}
+    .rpt-stat-box.ok{border-color:#1E9E5A;background:#D6F5E4;}
+    .rpt-stat-box.ok .sb-val{color:#1E9E5A;}
+    .rpt-stat-box.warn{border-color:#C07820;background:#FEF0D3;}
+    .rpt-stat-box.warn .sb-val{color:#C07820;}
+    .rpt-stat-box.err{border-color:#C83535;background:#FDDFDF;}
+    .rpt-stat-box.err .sb-val{color:#C83535;}
+    .sb-label{font-size:.62rem;font-weight:700;color:#7A9FB8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+    .sb-val{font-size:1.1rem;font-weight:800;color:#0D2246;line-height:1;}
+    .sb-unit{font-size:.62rem;color:#7A9FB8;margin-top:3px;}
+    .rpt-data-table{width:100%;border-collapse:collapse;font-size:.7rem;}
+    .rpt-data-table th{background:#F2F8FC;color:#7A9FB8;font-weight:700;font-size:.62rem;text-transform:uppercase;padding:6px 8px;border-bottom:2px solid #D8ECF4;white-space:nowrap;}
+    .rpt-data-table td{padding:6px 8px;color:#0D2246;border-bottom:1px solid #EBF4F9;white-space:nowrap;}
+    .print-footer{margin-top:20px;text-align:center;font-size:.68rem;color:#7A9FB8;border-top:1px solid #D8ECF4;padding-top:10px;}
+    @media print{@page{size:A4;margin:10mm;}}
+  </style>
+  </head><body>
+  ${bodyInner.innerHTML}
+  <div class="print-footer">힐마루케어 수면관리 · ${now} 출력</div>
+  <scr` + `ipt>window.addEventListener('load',function(){setTimeout(function(){window.print();},600);});<\/script>
+  </body></html>`;
+}
+
+window.rptPrintOne = function(idx){
+  const file = _rptFiles[idx];
+  if(!file||!file.parsed){ showToast('레포트를 먼저 생성해주세요.', true); return; }
+  const html = _buildPrintHTML(file);
+  const w = window.open('','_blank','width=900,height=700');
+  if(!w){ showToast('팝업이 차단됐습니다. 허용 후 다시 시도해주세요.', true); return; }
+  w.document.open(); w.document.write(html); w.document.close(); w.focus();
+};
+
+window.rptPrintAll = function(){
+  const parsed = _rptFiles.filter(f=>f.parsed);
+  if(!parsed.length){ showToast('생성된 레포트가 없습니다.', true); return; }
+  parsed.forEach((file,i)=>{
+    setTimeout(()=>{ rptPrintOne(_rptFiles.indexOf(file)); }, i*600);
+  });
+};
+
+// ──── ZIP 다운로드 ────
+window.rptDownloadOneZip = async function(idx){
+  const file = _rptFiles[idx];
+  if(!file||!file.parsed){ showToast('레포트를 먼저 생성해주세요.', true); return; }
+  const html = _buildPrintHTML(file);
+  const name  = (file.data[0]?.name||'레포트').replace(/[\/\\:*?"<>|]/g,'_');
+  const blob  = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url   = URL.createObjectURL(blob);
+  const a     = document.createElement('a');
+  a.href=url; a.download=`${name}_수면레포트.html`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  showToast(`✅ ${name} 레포트 저장 완료`);
+};
+
+window.rptDownloadZip = async function(){
+  const parsed = _rptFiles.filter(f=>f.parsed);
+  if(!parsed.length){ showToast('생성된 레포트가 없습니다.', true); return; }
+  if(typeof JSZip==='undefined'){ showToast('JSZip 로딩 중입니다. 잠시 후 다시 시도해주세요.', true); return; }
+  const btn = document.getElementById('rpt-btn-zip');
+  btn.disabled=true; btn.textContent='압축 중…';
+  try {
+    const zip = new JSZip();
+    parsed.forEach(file=>{
+      const html = _buildPrintHTML(file);
+      const name = (file.data[0]?.name||'레포트').replace(/[\/\\:*?"<>|]/g,'_');
+      zip.file(`${name}_수면레포트.html`, html);
+    });
+    const blob = await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+    const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download=`힐마루케어_수면레포트_${stamp}.zip`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showToast(`✅ 레포트 ${parsed.length}개 ZIP 다운로드 완료`);
+  } catch(err){
+    showToast('ZIP 생성 오류: '+err.message, true);
+  } finally {
+    btn.disabled=false; btn.textContent='📦 ZIP 다운로드 (전체)';
+    _rptRenderFileList(); // 버튼 상태 복원
+  }
+};
+
+})(); // end IIFE
 
 </script>

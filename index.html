@@ -649,6 +649,119 @@ html.hm-readonly textarea:disabled {
 .tab-section.active { display: block; }
 
 /* ═══════════════════════════════════════
+   수면레포트 TAB — LAYOUT
+═══════════════════════════════════════ */
+.slr-layout {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1900px;
+  margin: 0 auto;
+  align-items: start;
+}
+.slr-upload-box, .slr-preview-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+.slr-upload-box { position: sticky; top: 76px; min-height: 520px; }
+.slr-box-title { font-size: 1rem; font-weight: 800; color: var(--text-1); margin-bottom: .4rem; }
+.slr-box-desc { font-size: .8rem; color: var(--text-3); line-height: 1.5; margin-bottom: 1rem; }
+.slr-tpl-btn {
+  width: 100%; padding: .6rem .8rem; border-radius: 9px; border: 1.5px solid var(--teal);
+  background: var(--teal-light); color: var(--teal); font-weight: 700; font-size: .82rem;
+  cursor: pointer; margin-bottom: 1rem;
+}
+.slr-tpl-btn:hover { filter: brightness(.97); }
+.slr-dropzone {
+  border: 2px dashed var(--border); border-radius: 12px; padding: 1.8rem 1rem;
+  text-align: center; cursor: pointer; transition: .15s; color: var(--text-3);
+}
+.slr-dropzone:hover, .slr-dropzone.dragover { border-color: var(--teal); background: var(--teal-light); color: var(--teal); }
+.slr-dropzone-icon { font-size: 1.8rem; margin-bottom: .3rem; }
+.slr-dropzone-main { font-size: .85rem; font-weight: 600; }
+.slr-file-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .5rem .7rem; background: var(--surface-2); border-radius: 8px;
+  margin-top: .5rem; font-size: .8rem; color: var(--text-1); gap: .5rem;
+}
+.slr-file-item button { background: none; border: none; color: var(--err); cursor: pointer; font-size: .95rem; line-height: 1; padding: 2px 4px; }
+.slr-empty { text-align: center; color: var(--text-3); padding: 5rem 1.5rem; font-size: .88rem; line-height: 1.6; }
+.slr-tabs { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: 1rem; }
+.slr-tab-btn {
+  padding: .4rem .95rem; border-radius: 999px; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text-3); font-size: .8rem; font-weight: 600; cursor: pointer;
+}
+.slr-tab-btn:hover:not(.active) { border-color: var(--teal); color: var(--teal); }
+.slr-tab-btn.active { background: var(--teal-light); border-color: var(--teal-light); color: var(--teal); font-weight: 700; }
+.slr-report-actions { display: flex; gap: .5rem; margin-bottom: 1.1rem; }
+.slr-action-btn {
+  padding: .5rem 1rem; border-radius: 8px; border: 1.5px solid var(--border);
+  background: var(--surface-2); color: var(--text-1); font-size: .8rem; font-weight: 700; cursor: pointer;
+}
+.slr-action-btn:hover { border-color: var(--teal); color: var(--teal); }
+.slr-report { display: flex; flex-direction: column; gap: 1.1rem; }
+.slr-page { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; page-break-inside: avoid; }
+.slr-page-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--navy);
+  color: #fff; font-size: .72rem; font-weight: 800; margin-bottom: .5rem;
+}
+.slr-page-title { font-size: 1.05rem; font-weight: 800; color: var(--text-1); margin-bottom: .2rem; }
+.slr-page-desc { font-size: .8rem; color: var(--text-3); margin-bottom: .8rem; line-height: 1.5; }
+.slr-hero { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+.slr-hero-label { font-size: .78rem; color: var(--text-3); font-weight: 600; }
+.slr-hero-value { font-size: 1.7rem; font-weight: 800; color: var(--text-1); }
+.slr-range-note { font-size: .76rem; color: var(--text-3); margin: .2rem 0 .8rem; }
+.slr-chart-box { background: var(--surface); border-radius: 10px; padding: 8px; margin-bottom: .8rem; }
+.slr-chart-box canvas { width: 100%; height: auto; display: block; }
+.slr-insight-box { background: var(--teal-light); color: var(--text-1); border-radius: 9px; padding: .8rem .9rem; font-size: .82rem; line-height: 1.6; margin-bottom: .6rem; }
+.slr-suggest-box { background: var(--warn-bg); color: var(--text-1); border-radius: 9px; padding: .8rem .9rem; font-size: .82rem; line-height: 1.6; }
+.slr-def-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: .7rem; }
+.slr-def-card { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: .7rem .8rem; }
+.slr-def-title { font-weight: 800; font-size: .85rem; color: var(--text-1); }
+.slr-def-eng { font-size: .68rem; color: var(--text-3); margin-bottom: .3rem; }
+.slr-def-desc { font-size: .76rem; color: var(--text-2); line-height: 1.5; }
+.slr-cover { background: var(--navy); color: #fff; border-radius: 12px; padding: 2rem 1.6rem; }
+.slr-cover-eyebrow { font-size: .7rem; letter-spacing: .1em; color: var(--mint); font-weight: 700; margin-bottom: .6rem; }
+.slr-cover-title { font-size: 1.5rem; font-weight: 800; line-height: 1.4; margin-bottom: .8rem; }
+.slr-cover-period { font-size: .8rem; color: rgba(255,255,255,.65); margin-bottom: 1.1rem; }
+.slr-cover-chips { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; }
+.slr-chip { background: rgba(255,255,255,.08); border-radius: 9px; padding: .6rem .8rem; min-width: 120px; }
+.slr-chip-label { font-size: .68rem; color: rgba(255,255,255,.55); margin-bottom: .15rem; }
+.slr-chip-value { font-size: .88rem; font-weight: 700; }
+.slr-cover-indicators { display: flex; flex-wrap: wrap; gap: .4rem; }
+.slr-indicator-pill { background: rgba(255,255,255,.1); border-radius: 999px; padding: .3rem .8rem; font-size: .72rem; color: rgba(255,255,255,.85); }
+.slr-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.slr-table th, .slr-table td { border-bottom: 1px solid var(--border); padding: .5rem .6rem; text-align: left; }
+.slr-table th { color: var(--text-3); font-weight: 700; font-size: .72rem; }
+.slr-nightcards { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.slr-nightcard { background: var(--surface); border-radius: 10px; padding: .9rem 1rem; border-left: 4px solid var(--teal); }
+.slr-nightcard.worst { border-left-color: var(--err); }
+.slr-nightcard-head { font-weight: 800; font-size: .85rem; margin-bottom: .4rem; }
+.slr-nightcard-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
+.slr-nightcard-tag { background: var(--surface-2); border-radius: 6px; padding: .25rem .55rem; font-size: .72rem; color: var(--text-2); }
+.slr-anomaly-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: .7rem; }
+.slr-anomaly-card { background: var(--surface); border-radius: 10px; padding: .8rem; text-align: center; }
+.slr-anomaly-metric { font-size: .74rem; color: var(--text-3); }
+.slr-anomaly-value { font-size: 1.3rem; font-weight: 800; color: var(--text-1); }
+.slr-routine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-bottom: .9rem; }
+.slr-routine-card { background: var(--surface); border-radius: 10px; padding: .8rem 1rem; }
+.slr-routine-num { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--warn); color: #fff; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; margin-right: .4rem; }
+.slr-routine-title { font-weight: 700; font-size: .85rem; }
+.slr-routine-desc { font-size: .77rem; color: var(--text-2); line-height: 1.5; margin-top: .35rem; }
+.slr-checklist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .4rem; }
+.slr-checklist li { font-size: .8rem; color: var(--text-2); display: flex; align-items: center; gap: .5rem; }
+.slr-checklist li::before { content: '☐'; color: var(--teal); }
+@media (max-width: 900px) {
+  .slr-layout { grid-template-columns: 1fr; }
+  .slr-upload-box { position: static; }
+  .slr-nightcards, .slr-anomaly-cards, .slr-routine-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════
    기록 TAB — LAYOUT
 ═══════════════════════════════════════ */
 .record-layout {
@@ -1882,6 +1995,9 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
       </button>
       <button class="nav-tab" onclick="switchTab('schedule', this)">
         <span class="tab-icon">📅</span><span class="nav-tab-label"> 일정</span>
+      </button>
+      <button class="nav-tab" onclick="switchTab('sleepReport', this)">
+        <span class="tab-icon">📊</span><span class="nav-tab-label"> 수면레포트</span>
       </button>
     </nav>
   </div>
@@ -3768,6 +3884,43 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
   </div><!-- /schedule-wrap -->
 </section>
 
+<!-- ═══════════════════════════════════════
+     수면레포트 TAB
+═══════════════════════════════════════ -->
+<section id="tab-sleepReport" class="tab-section">
+  <div class="slr-layout">
+    <div class="slr-upload-box">
+      <div class="slr-box-title">📊 수면레포트 — 엑셀 업로드</div>
+      <div class="slr-box-desc">고객별 수면·활동 데이터가 담긴 엑셀 파일을 업로드하세요. 파일 1개 = 고객 1명이며, 최대 10명까지 한 번에 분석할 수 있습니다.</div>
+      <button class="slr-tpl-btn" onclick="downloadSleepReportTemplate()">⬇ 업로드용 엑셀 템플릿 다운로드</button>
+      <div class="slr-dropzone" id="slr-dropzone"
+        onclick="document.getElementById('slr-file-input').click()"
+        ondragover="event.preventDefault(); this.classList.add('dragover')"
+        ondragleave="this.classList.remove('dragover')"
+        ondrop="event.preventDefault(); this.classList.remove('dragover'); handleSleepReportFiles(event.dataTransfer.files)">
+        <div class="slr-dropzone-icon">📂</div>
+        <div class="slr-dropzone-main">클릭하거나 파일을 끌어다 놓으세요</div>
+        <div class="slr-range-note">.xlsx 파일 · 최대 10개(고객 10명)</div>
+      </div>
+      <input type="file" id="slr-file-input" accept=".xlsx,.xls" multiple style="display:none" onchange="handleSleepReportFiles(this.files)">
+      <div id="slr-file-list"></div>
+    </div>
+    <div class="slr-preview-box">
+      <div id="slr-preview-empty" class="slr-empty">
+        📊 왼쪽에서 고객별 엑셀 파일을 업로드하면<br>이곳에 수면 리듬 진단 레포트 미리보기가 표시됩니다.
+      </div>
+      <div id="slr-preview-content" style="display:none">
+        <div class="slr-tabs" id="slr-customer-tabs"></div>
+        <div class="slr-report-actions">
+          <button class="slr-action-btn" onclick="printSleepWeeklyReport()">🖨 인쇄 / PDF로 저장</button>
+          <button class="slr-action-btn" onclick="downloadSleepWeeklyReportHtml()">⬇ HTML 다운로드</button>
+        </div>
+        <div id="slr-report-body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Customer Guide Modal -->
 <div id="guide-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9990;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto" onclick="if(event.target===this)closeGuide()">
   <div style="background:#fff;border-radius:16px;max-width:700px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden" id="guide-modal-box">
@@ -4943,7 +5096,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.01';
+const APP_VER = '7.02';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -13102,6 +13255,807 @@ function printAllReport(){
   </body></html>`);
   w.document.close();
   w.focus();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   수면레포트 (SLEEP RHYTHM DIAGNOSIS REPORT)
+   — 고객별 엑셀(최대 10개) 업로드 → 요일별 데이터 분석 → 진단 레포트 생성
+═══════════════════════════════════════════════════════════ */
+let _slrCustomers = [];
+let _slrActiveIdx = 0;
+
+const SLR_REF = {
+  eff:   {label:'수면효율',       min:85,  max:null, unit:'%',    dir:'higher'},
+  sol:   {label:'입면잠복기',     min:null,max:20,   unit:'분',   dir:'lower'},
+  awake: {label:'각성횟수',       min:null,max:2,    unit:'회',   dir:'lower'},
+  hr:    {label:'수면 중 심박수', min:45,  max:70,   unit:'bpm',  dir:'range'},
+  rr:    {label:'호흡수',         min:12,  max:20,   unit:'회/분',dir:'range'},
+  spo2:  {label:'SpO2',           min:95,  max:null, unit:'%',    dir:'higher'}
+};
+
+/* ── 엑셀 템플릿 다운로드 ── */
+function downloadSleepReportTemplate(){
+  const metaHeader = ['고객명','모니터링 시작일','모니터링 종료일','현재 단계','주요 고민(주호소)'];
+  const metaSample = ['홍길동','2026-09-08','2026-09-14','경구용 항호르몬제 · 경과관찰','불면'];
+  const dayHeader = ['날짜','요일','총수면시간(분)','깊은수면(%)','얕은수면(%)','렘수면(%)','각성횟수','수면효율(%)','낮잠(분)','입면잠복기(분)','취침시각','기상시각','수면중심박수(BPM)','수면중HRV(ms)','평균SpO2(%)','호흡수(회/분)','걸음수','활동시간(분)','칼로리(kcal)','활력점수'];
+  const wsData = [metaHeader, metaSample, [], dayHeader];
+  const wdKo = ['월','화','수','목','금','토','일'];
+  const base = new Date();
+  const monday = new Date(base);
+  const dow = base.getDay();
+  monday.setDate(base.getDate() - ((dow+6)%7));
+  for(let i=0;i<7;i++){
+    const d = new Date(monday); d.setDate(monday.getDate()+i);
+    wsData.push([d.toISOString().slice(0,10), wdKo[i], '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+  }
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+  ws['!cols'] = dayHeader.map(h=>({wch: Math.max(9, h.length+2)}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '수면레포트데이터');
+  const buf = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+  const blob = new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '힐마루케어_수면레포트_업로드양식.xlsx';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  showToast('업로드용 엑셀 템플릿을 다운로드했습니다.');
+}
+
+/* ── 파일 업로드 처리 ── */
+async function handleSleepReportFiles(fileList){
+  const files = Array.from(fileList||[]).filter(f=>/\.xlsx?$/i.test(f.name));
+  if(!files.length) return;
+  if(_slrCustomers.length + files.length > 10){
+    alert('최대 10개(고객 10명)까지 업로드할 수 있습니다. 현재 '+_slrCustomers.length+'개 업로드됨.');
+    const inp=document.getElementById('slr-file-input'); if(inp) inp.value='';
+    return;
+  }
+  for(const f of files){
+    try{
+      const customer = await parseSleepReportExcel(f);
+      _slrCustomers.push(customer);
+    }catch(err){
+      alert(err.message || String(err));
+    }
+  }
+  const inp=document.getElementById('slr-file-input'); if(inp) inp.value='';
+  renderSlrFileList();
+  if(_slrCustomers.length){ _slrActiveIdx = _slrCustomers.length-1; }
+  renderSlrPreview();
+}
+
+function parseSleepReportExcel(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      try{
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, {type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:''});
+
+        let metaHeaderIdx = -1;
+        for(let i=0;i<Math.min(rows.length,4);i++){
+          if(rows[i] && String(rows[i][0]||'').trim()==='고객명'){ metaHeaderIdx=i; break; }
+        }
+        if(metaHeaderIdx===-1) metaHeaderIdx = 0;
+        const metaVals = rows[metaHeaderIdx+1]||[];
+        const meta = {
+          name:      String(metaVals[0]||'').trim(),
+          startDate: String(metaVals[1]||'').trim(),
+          endDate:   String(metaVals[2]||'').trim(),
+          stage:     String(metaVals[3]||'').trim(),
+          complaint: String(metaVals[4]||'').trim()
+        };
+
+        let headerIdx = -1;
+        for(let i=metaHeaderIdx;i<Math.min(rows.length, metaHeaderIdx+8);i++){
+          if(rows[i] && String(rows[i][0]||'').trim()==='날짜'){ headerIdx=i; break; }
+        }
+        if(headerIdx===-1) headerIdx = metaHeaderIdx+3;
+
+        const num = v => { if(v===''||v===null||v===undefined) return null; const n=parseFloat(v); return isNaN(n)?null:n; };
+        const dayRows = rows.slice(headerIdx+1).filter(r=>r && String(r[0]||'').trim());
+        const days = dayRows.slice(0,7).map(r=>({
+          date: String(r[0]||'').trim(),
+          weekday: String(r[1]||'').trim(),
+          tst: num(r[2]), deepPct: num(r[3]), lightPct: num(r[4]), remPct: num(r[5]),
+          awakeCount: num(r[6]), eff: num(r[7]), nap: num(r[8]), sol: num(r[9]),
+          bedTime: String(r[10]||'').trim(), wakeTime: String(r[11]||'').trim(),
+          hr: num(r[12]), hrv: num(r[13]), spo2: num(r[14]), rr: num(r[15]),
+          steps: num(r[16]), activityMin: num(r[17]), cal: num(r[18]), vitality: num(r[19])
+        }));
+
+        if(!meta.name){ reject(new Error('"'+file.name+'" — 고객명을 찾을 수 없습니다. 업로드 템플릿 형식을 확인해주세요.')); return; }
+        if(!days.length){ reject(new Error('"'+file.name+'" — 요일별 데이터를 찾을 수 없습니다. 업로드 템플릿 형식을 확인해주세요.')); return; }
+        resolve({ fileName: file.name, meta, days });
+      }catch(err){
+        reject(new Error('"'+file.name+'" 파일을 읽는 중 오류가 발생했습니다: ' + (err.message||err)));
+      }
+    };
+    reader.onerror = ()=>reject(new Error('"'+file.name+'" 파일을 읽을 수 없습니다.'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function removeSlrFile(idx){
+  _slrCustomers.splice(idx,1);
+  if(_slrActiveIdx>=_slrCustomers.length) _slrActiveIdx = Math.max(0,_slrCustomers.length-1);
+  renderSlrFileList();
+  renderSlrPreview();
+}
+
+function renderSlrFileList(){
+  const box = document.getElementById('slr-file-list');
+  if(!box) return;
+  box.innerHTML = _slrCustomers.map((c,i)=>
+    '<div class="slr-file-item"><span>📄 '+(c.meta.name||c.fileName)+' <span style="color:var(--text-3)">('+c.days.length+'일)</span></span>'+
+    '<button onclick="removeSlrFile('+i+')" title="삭제">✕</button></div>'
+  ).join('');
+}
+
+/* ── 통계 유틸 ── */
+function slrAvg(arr){ const v=arr.filter(x=>x!=null && !isNaN(x)); return v.length? v.reduce((a,b)=>a+b,0)/v.length : null; }
+function slrMin(arr){ const v=arr.filter(x=>x!=null && !isNaN(x)); return v.length? Math.min.apply(null,v) : null; }
+function slrMax(arr){ const v=arr.filter(x=>x!=null && !isNaN(x)); return v.length? Math.max.apply(null,v) : null; }
+function slrStdDev(arr){
+  const v = arr.filter(x=>x!=null && !isNaN(x));
+  if(v.length<2) return null;
+  const m = v.reduce((a,b)=>a+b,0)/v.length;
+  const variance = v.reduce((a,b)=>a+(b-m)*(b-m),0)/v.length;
+  return Math.sqrt(variance);
+}
+function slrPearson(xs, ys){
+  const pairs = xs.map((x,i)=>[x, ys[i]]).filter(function(p){ return p[0]!=null && p[1]!=null && !isNaN(p[0]) && !isNaN(p[1]); });
+  const n = pairs.length;
+  if(n<3) return null;
+  const mx = pairs.reduce((a,p)=>a+p[0],0)/n, my = pairs.reduce((a,p)=>a+p[1],0)/n;
+  let num=0, dx2=0, dy2=0;
+  pairs.forEach(function(p){ const dx=p[0]-mx, dy=p[1]-my; num+=dx*dy; dx2+=dx*dx; dy2+=dy*dy; });
+  const den = Math.sqrt(dx2*dy2);
+  return den===0 ? null : +(num/den).toFixed(2);
+}
+function slrRegressSlope(xs, ys){
+  const pairs = xs.map((x,i)=>[x, ys[i]]).filter(function(p){ return p[0]!=null && p[1]!=null && !isNaN(p[0]) && !isNaN(p[1]); });
+  const n = pairs.length;
+  if(n<3) return null;
+  const mx = pairs.reduce((a,p)=>a+p[0],0)/n, my = pairs.reduce((a,p)=>a+p[1],0)/n;
+  let num=0, den=0;
+  pairs.forEach(function(p){ num+=(p[0]-mx)*(p[1]-my); den+=(p[0]-mx)*(p[0]-mx); });
+  return den===0 ? null : num/den;
+}
+function slrTimeToMin(t, wrapPm){
+  if(!t) return null;
+  const m = String(t).match(/^(\d{1,2}):(\d{2})/);
+  if(!m) return null;
+  let h = +m[1], mi = +m[2];
+  let total = h*60+mi;
+  if(wrapPm && h < 12) total += 1440;
+  return total;
+}
+function slrMinToTime(mins){
+  if(mins==null||isNaN(mins)) return '-';
+  let m = ((Math.round(mins)%1440)+1440)%1440;
+  const h = Math.floor(m/60), mi = m%60;
+  return String(h).padStart(2,'0')+':'+String(mi).padStart(2,'0');
+}
+function _slrMinToHm(mins){
+  if(mins==null||isNaN(mins)) return '-';
+  const h = Math.floor(mins/60), m = Math.round(mins%60);
+  return h+'시간 '+m+'분';
+}
+function _slrRoundTxt(v,d){
+  if(v==null||isNaN(v)) return '-';
+  return d ? v.toFixed(d) : String(Math.round(v));
+}
+function _slrRefRangeTxt(ref){
+  if(ref.dir==='higher') return ref.min+ref.unit+' 이상';
+  if(ref.dir==='lower') return ref.max+ref.unit+' 이내';
+  return ref.min+'~'+ref.max+ref.unit;
+}
+function _slrRefCompare(ref, avg){
+  if(avg==null) return '데이터 없음';
+  if(ref.dir==='higher'){
+    const diff = avg - ref.min;
+    return diff>=0 ? (diff===0?'참고범위 충족':_slrRoundTxt(Math.abs(diff),0)+ref.unit+' 여유') : _slrRoundTxt(Math.abs(diff),0)+ref.unit+' 낮음';
+  }
+  if(ref.dir==='lower'){
+    const diff = ref.max - avg;
+    return diff>=0 ? '범위 안' : _slrRoundTxt(Math.abs(diff),0)+ref.unit+' 김';
+  }
+  if(avg<ref.min) return _slrRoundTxt(ref.min-avg,0)+ref.unit+' 낮음';
+  if(avg>ref.max) return _slrRoundTxt(avg-ref.max,0)+ref.unit+' 높음';
+  return '범위 안';
+}
+
+/* ── 통계 계산 ── */
+function computeSlrStats(customer){
+  const days = customer.days;
+  const n = days.length;
+  const get = k => days.map(d=>d[k]);
+  const tst=get('tst'), deepPct=get('deepPct'), lightPct=get('lightPct'), remPct=get('remPct'),
+        awake=get('awakeCount'), eff=get('eff'), nap=get('nap'), sol=get('sol'),
+        hr=get('hr'), hrv=get('hrv'), spo2=get('spo2'), rr=get('rr'),
+        steps=get('steps'), act=get('activityMin'), cal=get('cal'), vit=get('vitality');
+  const bedMin = days.map(d=>slrTimeToMin(d.bedTime,true));
+  const wakeMin = days.map(d=>slrTimeToMin(d.wakeTime,false));
+  const deepMin  = days.map(d=> (d.tst!=null&&d.deepPct!=null)? Math.round(d.tst*d.deepPct/100) : null);
+  const lightMin = days.map(d=> (d.tst!=null&&d.lightPct!=null)? Math.round(d.tst*d.lightPct/100) : null);
+  const remMin   = days.map(d=> (d.tst!=null&&d.remPct!=null)? Math.round(d.tst*d.remPct/100) : null);
+
+  const stat = arr => ({ avg: slrAvg(arr), min: slrMin(arr), max: slrMax(arr) });
+  const s = {
+    tst: stat(tst), deepPct: stat(deepPct), lightPct: stat(lightPct), remPct: stat(remPct),
+    awake: stat(awake), eff: stat(eff), nap: stat(nap), sol: stat(sol),
+    hr: stat(hr), hrv: stat(hrv), spo2: stat(spo2), rr: stat(rr),
+    steps: stat(steps), act: stat(act), cal: stat(cal), vit: stat(vit),
+    bedMin: stat(bedMin), wakeMin: stat(wakeMin)
+  };
+  s.bedStd = slrStdDev(bedMin);
+  s.wakeStd = slrStdDev(wakeMin);
+  s.r = {
+    solEff: slrPearson(sol, eff),
+    actEff: slrPearson(act, eff),
+    actSol: slrPearson(act, sol),
+    hrRr: slrPearson(hr, rr),
+    hrSpo2: slrPearson(hr, spo2),
+    rrSpo2: slrPearson(rr, spo2)
+  };
+  s.actEffSlopePer10 = (function(){ const sl=slrRegressSlope(act, eff); return sl!=null ? sl*10 : null; })();
+
+  const targetPerDay = 420;
+  const totalActual = tst.reduce((a,b)=>a+(b||0),0);
+  s.totalActualMin = totalActual;
+  s.sleepDebtMin = (targetPerDay*n) - totalActual;
+
+  let bestIdx=-1, worstIdx=-1;
+  eff.forEach((v,i)=>{ if(v==null) return; if(bestIdx===-1||v>eff[bestIdx]) bestIdx=i; if(worstIdx===-1||v<eff[worstIdx]) worstIdx=i; });
+  s.bestIdx = bestIdx; s.worstIdx = worstIdx;
+
+  let anomalyIdx=-1, anomalyScore=-1;
+  days.forEach((d,i)=>{
+    if(d.hr==null||d.rr==null||d.spo2==null||s.hr.avg==null||s.rr.avg==null||s.spo2.avg==null) return;
+    const score = Math.max(0,(d.hr-s.hr.avg)) + Math.max(0,(d.rr-s.rr.avg)) + Math.max(0,(s.spo2.avg-d.spo2));
+    if(score>anomalyScore){ anomalyScore=score; anomalyIdx=i; }
+  });
+  s.anomalyIdx = (anomalyScore>0) ? anomalyIdx : -1;
+
+  s.deepMin=deepMin; s.lightMin=lightMin; s.remMin=remMin;
+  s.bedMinArr=bedMin; s.wakeMinArr=wakeMin;
+  s.n = n;
+  return s;
+}
+
+/* ── 화면 렌더 ── */
+function renderSlrPreview(){
+  const empty = document.getElementById('slr-preview-empty');
+  const content = document.getElementById('slr-preview-content');
+  if(!empty || !content) return;
+  if(!_slrCustomers.length){
+    empty.style.display='block'; content.style.display='none';
+    return;
+  }
+  empty.style.display='none'; content.style.display='block';
+  if(_slrActiveIdx>=_slrCustomers.length) _slrActiveIdx=0;
+
+  document.getElementById('slr-customer-tabs').innerHTML = _slrCustomers.map((c,i)=>
+    '<button class="slr-tab-btn'+(i===_slrActiveIdx?' active':'')+'" onclick="_slrActiveIdx='+i+';renderSlrPreview()">'+(c.meta.name||c.fileName)+'</button>'
+  ).join('');
+
+  const c = _slrCustomers[_slrActiveIdx];
+  const s = computeSlrStats(c);
+  const days = c.days;
+  const labels = days.map(d=>d.weekday||d.date);
+
+  document.getElementById('slr-report-body').innerHTML = _slrBuildReportHtml(c, s, labels);
+  requestAnimationFrame(()=>{ _slrDrawAllCharts(c, s, labels); });
+}
+
+function _slrMetricPage(num,title,desc,heroLabel,heroVal,rangeNote,canvasId,insightHtml,suggestHtml){
+  return '<div class="slr-page"><div class="slr-page-num">'+num+'</div>'+
+    '<div class="slr-page-title">'+title+'</div>'+
+    (desc?'<div class="slr-page-desc">'+desc+'</div>':'')+
+    '<div class="slr-hero"><span class="slr-hero-label">이번 주 평균 · '+heroLabel+'</span><span class="slr-hero-value">'+heroVal+'</span></div>'+
+    '<div class="slr-range-note">'+(rangeNote||'')+'</div>'+
+    '<div class="slr-chart-box"><canvas id="'+canvasId+'" width="680" height="200"></canvas></div>'+
+    (insightHtml?'<div class="slr-insight-box"><b>무엇을 의미하나요?</b><br>'+insightHtml+'</div>':'')+
+    (suggestHtml?'<div class="slr-suggest-box"><b>제안</b><br>'+suggestHtml+'</div>':'')+
+    '</div>';
+}
+
+function _slrBuildReportHtml(c, s, labels){
+  const M = c.meta, P = [];
+
+  /* 01 표지 */
+  P.push(
+    '<div class="slr-page slr-cover">'+
+      '<div class="slr-cover-eyebrow">SLEEP RHYTHM DIAGNOSIS · INSOMNIA FOCUS</div>'+
+      '<div class="slr-cover-title">'+(M.name||'-')+' 님의<br>수면 리듬 진단 레포트</div>'+
+      '<div class="slr-cover-period">모니터링 기간: '+(M.startDate||'-')+' ~ '+(M.endDate||'-')+'</div>'+
+      '<div class="slr-cover-chips">'+
+        '<div class="slr-chip"><div class="slr-chip-label">모니터링 대상</div><div class="slr-chip-value">'+(M.name||'-')+'</div></div>'+
+        '<div class="slr-chip"><div class="slr-chip-label">현재 단계</div><div class="slr-chip-value">'+(M.stage||'-')+'</div></div>'+
+        '<div class="slr-chip"><div class="slr-chip-label">주요 고민</div><div class="slr-chip-value">'+(M.complaint||'-')+'</div></div>'+
+      '</div>'+
+      '<div class="slr-cover-indicators">'+
+        ['수면효율','입면잠복기','각성횟수','수면중 심박수','호흡수','SpO2'].map(t=>'<span class="slr-indicator-pill">'+t+'</span>').join('')+
+      '</div>'+
+    '</div>'
+  );
+
+  /* 02 지표 정의 */
+  const defs = [
+    ['총수면시간','Total Sleep Time','깊은수면·얕은수면·렘수면 세 구간을 합친, 실제로 잠들어 있던 시간의 총합.'],
+    ['수면효율','Sleep Efficiency','침대에 누운 시간(TIB) 대비 실제로 잠든 시간의 비율. 참고범위 85% 이상.'],
+    ['입면잠복기','Sleep Onset Latency','불을 끄고 누운 뒤 실제로 잠들기까지 걸린 시간. 참고범위 20분 이내.'],
+    ['각성횟수','Number of Awakenings','잠든 후 밤사이 깨어난 것으로 분류된 횟수. 참고범위 2회 이하.'],
+    ['수면 중 심박수','Heart Rate during Sleep','수면 중 평균 심박수. 참고범위 45~70bpm.'],
+    ['호흡수','Respiratory Rate','수면 중 분당 호흡 횟수. 참고범위 12~20회/분.'],
+    ['SpO2','혈중 산소포화도','수면 중 혈액의 산소포화도. 참고범위 95% 이상.']
+  ];
+  P.push(
+    '<div class="slr-page"><div class="slr-page-num">02</div>'+
+    '<div class="slr-page-title">지표를 다시 정의합니다</div>'+
+    '<div class="slr-page-desc">일반적인 웰니스 지표 대신, 불면 진단에 실제로 쓰이는 6가지 지표로 이 레포트를 구성했습니다.</div>'+
+    '<div class="slr-def-grid">'+defs.map(d=>'<div class="slr-def-card"><div class="slr-def-title">'+d[0]+'</div><div class="slr-def-eng">'+d[1]+'</div><div class="slr-def-desc">'+d[2]+'</div></div>').join('')+
+    '</div></div>'
+  );
+
+  /* 03 수면구조 */
+  const debtHrs = s.sleepDebtMin/60;
+  P.push(
+    '<div class="slr-page"><div class="slr-page-num">03</div>'+
+    '<div class="slr-page-title">얼마나, 그리고 어떻게 잤는지</div>'+
+    '<div class="slr-page-desc">총수면시간을 깊은수면·얕은수면·렘수면 세 구간으로 나누어 쌓아 표시했습니다.</div>'+
+    '<div class="slr-hero"><span class="slr-hero-label">이번 주 평균 · 총수면시간</span><span class="slr-hero-value">'+_slrMinToHm(s.tst.avg)+'</span></div>'+
+    '<div class="slr-range-note">이번 주 범위: '+_slrMinToHm(s.tst.min)+' ~ '+_slrMinToHm(s.tst.max)+' · 목표 하루 7시간</div>'+
+    '<div class="slr-chart-box"><canvas id="slr-cv-structure" width="680" height="220"></canvas></div>'+
+    '<div class="slr-insight-box">목표 수면시간(하루 7시간) 대비 이번 주 실제 총수면시간은 약 '+_slrRoundTxt(s.totalActualMin/60,1)+'시간으로, '+
+      (debtHrs>0 ? ('약 '+_slrRoundTxt(debtHrs,1)+'시간의 수면부채가 누적되었습니다.') : '수면부채는 발생하지 않았습니다.')+
+    '</div></div>'
+  );
+
+  /* 04 수면효율 */
+  P.push(_slrMetricPage('04','잠자리에 누운 시간 중 실제로 잠든 비율','수면효율(Sleep Efficiency)은 침상에 머문 시간 대비 실제 수면 시간의 비율입니다.',
+    '수면효율', _slrRoundTxt(s.eff.avg,0)+'%',
+    '이번 주 범위: '+_slrRoundTxt(s.eff.min,0)+'~'+_slrRoundTxt(s.eff.max,0)+'% · 참고범위 85% 이상',
+    'slr-cv-eff',
+    '이번 주 평균은 '+_slrRoundTxt(s.eff.avg,0)+'%로 참고범위(85% 이상) 대비 '+_slrRefCompare(SLR_REF.eff,s.eff.avg)+'입니다.',
+    s.eff.avg!=null && s.eff.avg<85 ? '수면효율이 낮은 날이 이어질 때는 잠자리에 누운 지 20분이 지나도 잠들지 않으면 잠시 일어나 있다가 졸릴 때 다시 눕는 자극조절법이 권장됩니다.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
+  ));
+
+  /* 05 입면잠복기 */
+  P.push(_slrMetricPage('05','불을 끄고 나서 잠들기까지 걸린 시간','입면잠복기(Sleep Onset Latency)는 잠자리에 누운 뒤 실제로 잠들기까지 걸린 시간입니다.',
+    '입면잠복기', _slrRoundTxt(s.sol.avg,0)+'분',
+    '이번 주 범위: '+_slrRoundTxt(s.sol.min,0)+'~'+_slrRoundTxt(s.sol.max,0)+'분 · 참고범위 20분 이내',
+    'slr-cv-sol',
+    '이번 주 평균은 '+_slrRoundTxt(s.sol.avg,0)+'분으로 참고범위(20분 이내) 대비 '+_slrRefCompare(SLR_REF.sol,s.sol.avg)+'입니다.',
+    s.sol.avg!=null && s.sol.avg>20 ? '취침 30~60분 전부터 조명을 낮추고 화면 사용을 줄이는 것이 잠드는 데 걸리는 시간을 줄이는 데 도움이 됩니다. 목표: 20분 이내.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
+  ));
+
+  /* 06 각성횟수 */
+  P.push(_slrMetricPage('06','잠든 뒤 밤사이 깨어난 횟수','각성횟수(Awakenings)는 수면 중 일정 시간 이상 깨어난 것으로 기록된 구간의 수입니다.',
+    '각성횟수', _slrRoundTxt(s.awake.avg,1)+'회/밤',
+    '이번 주 범위: '+_slrRoundTxt(s.awake.min,0)+'~'+_slrRoundTxt(s.awake.max,0)+'회 · 참고범위 2회 이하',
+    'slr-cv-awake',
+    '이번 주 평균은 '+_slrRoundTxt(s.awake.avg,1)+'회로 참고범위(2회 이하) 대비 '+_slrRefCompare(SLR_REF.awake,s.awake.avg)+'입니다.',
+    s.awake.avg!=null && s.awake.avg>2 ? '밤사이 깨는 횟수가 많은 날이 이어질 때는 카페인·알코올 섭취 시각을 취침 6시간 이전으로 당기고, 깼을 때 시계를 보지 않는 것이 재입면에 도움이 됩니다. 목표: 2회 이하.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
+  ));
+
+  /* 07 통합 상관관계 */
+  const rTxt = (v)=> v==null ? '데이터 부족' : (v>0?'+':'')+v;
+  P.push(
+    '<div class="slr-page"><div class="slr-page-num">07</div>'+
+    '<div class="slr-page-title">세 지표는 따로 움직이지 않습니다</div>'+
+    '<div class="slr-page-desc">입면잠복기·수면효율·각성횟수·활동시간은 서로 연결되어 있습니다. 상관계수(r)의 절대값이 클수록 두 값이 강하게 함께 움직인다는 뜻입니다.</div>'+
+    '<div class="slr-anomaly-cards">'+
+      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (입면잠복기 ↔ 수면효율)</div><div class="slr-anomaly-value">'+rTxt(s.r.solEff)+'</div></div>'+
+      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 수면효율)</div><div class="slr-anomaly-value">'+rTxt(s.r.actEff)+'</div></div>'+
+      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 입면잠복기)</div><div class="slr-anomaly-value">'+rTxt(s.r.actSol)+'</div></div>'+
+    '</div>'+
+    '<div class="slr-insight-box" style="margin-top:.8rem">'+
+      (s.actEffSlopePer10!=null ? ('활동시간 10분당 수면효율 변화는 약 '+(s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p로 추정됩니다. ') : '')+
+      (s.worstIdx>=0 ? ('이번 주 수면효율이 가장 낮았던 날은 '+(labels[s.worstIdx]||'')+'요일로, 입면잠복기·각성횟수·활동시간을 함께 확인해볼 필요가 있습니다.') : '')+
+    '</div></div>'
+  );
+
+  /* 08 심박수 */
+  P.push(_slrMetricPage('08','잠자는 동안 심장이 뛴 속도','수면 중 심박수는 수면 단계 동안 측정된 심박수의 평균입니다.',
+    '수면 중 심박수', _slrRoundTxt(s.hr.avg,0)+'bpm',
+    '이번 주 범위: '+_slrRoundTxt(s.hr.min,0)+'~'+_slrRoundTxt(s.hr.max,0)+'bpm · 참고범위 45~70bpm',
+    'slr-cv-hr',
+    '이번 주 평균은 '+_slrRoundTxt(s.hr.avg,0)+'bpm으로 참고범위 대비 '+_slrRefCompare(SLR_REF.hr,s.hr.avg)+'입니다. 호흡수·SpO2와의 상관계수는 각각 r='+rTxt(s.r.hrRr)+', r='+rTxt(s.r.hrSpo2)+'입니다.',
+    ''
+  ));
+
+  /* 09 호흡수 */
+  P.push(_slrMetricPage('09','잠자는 동안 1분당 호흡한 횟수','수면 중 호흡수는 수면 단계 동안 측정된 분당 호흡 횟수의 평균입니다.',
+    '호흡수', _slrRoundTxt(s.rr.avg,0)+'회/분',
+    '이번 주 범위: '+_slrRoundTxt(s.rr.min,0)+'~'+_slrRoundTxt(s.rr.max,0)+'회 · 참고범위 12~20회/분',
+    'slr-cv-rr',
+    '이번 주 평균은 '+_slrRoundTxt(s.rr.avg,0)+'회/분으로 참고범위 대비 '+_slrRefCompare(SLR_REF.rr,s.rr.avg)+'입니다. SpO2와의 상관계수는 r='+rTxt(s.r.rrSpo2)+'입니다.',
+    ''
+  ));
+
+  /* 10 SpO2 */
+  P.push(_slrMetricPage('10','잠자는 동안 혈액 속 산소가 얼마나 충분했는지','SpO2는 수면 중 말초 혈액의 산소포화도 평균입니다.',
+    'SpO2', _slrRoundTxt(s.spo2.avg,0)+'%',
+    '이번 주 범위: '+_slrRoundTxt(s.spo2.min,0)+'~'+_slrRoundTxt(s.spo2.max,0)+'% · 참고범위 95% 이상',
+    'slr-cv-spo2',
+    '이번 주 평균은 '+_slrRoundTxt(s.spo2.avg,0)+'%로 참고범위(95% 이상) 대비 '+_slrRefCompare(SLR_REF.spo2,s.spo2.avg)+'입니다. 심박수·호흡수와 함께 흔들리는 날은 17번(이상신호 스크리닝)에서 확인합니다.',
+    ''
+  ));
+
+  /* 11 취침·기상 규칙성 */
+  P.push(
+    '<div class="slr-page"><div class="slr-page-num">11</div>'+
+    '<div class="slr-page-title">몇 시에 자고, 몇 시에 일어났는지</div>'+
+    '<div class="slr-page-desc">잠든 시각과 일어난 시각이 매일 비슷할수록 생체리듬이 안정적입니다.</div>'+
+    '<div class="slr-hero"><span class="slr-hero-label">평균 취침시각</span><span class="slr-hero-value">'+slrMinToTime(s.bedMin.avg)+'</span></div>'+
+    '<div class="slr-range-note">요일 간 편차 ±'+_slrRoundTxt(s.bedStd,0)+'분 · 참고범위 20분 이내</div>'+
+    '<div class="slr-chart-box"><canvas id="slr-cv-bed" width="680" height="160"></canvas></div>'+
+    '<div class="slr-hero" style="margin-top:.6rem"><span class="slr-hero-label">평균 기상시각</span><span class="slr-hero-value">'+slrMinToTime(s.wakeMin.avg)+'</span></div>'+
+    '<div class="slr-range-note">요일 간 편차 ±'+_slrRoundTxt(s.wakeStd,0)+'분 · 참고범위 20분 이내</div>'+
+    '<div class="slr-chart-box"><canvas id="slr-cv-wake" width="680" height="160"></canvas></div>'+
+    '</div>'
+  );
+
+  /* 12 좋은밤 vs 나쁜밤 */
+  function nightTags(idx){
+    if(idx<0) return [];
+    const d = c.days[idx], tags=[];
+    tags.push((d.sol!=null && s.sol.avg!=null && d.sol<=s.sol.avg) ? '빠르게 잠듦' : '잠들기까지 오래 걸림');
+    tags.push((d.deepPct!=null && s.deepPct.avg!=null && d.deepPct>=s.deepPct.avg) ? '깊은 잠 구간 유지' : '얕은 잠·잦은 각성');
+    tags.push((d.remPct!=null && s.remPct.avg!=null && d.remPct>=s.remPct.avg) ? '렘수면 규칙적으로 반복' : '짧은 렘·깊은잠 부족');
+    tags.push((d.awakeCount!=null && s.awake.avg!=null && d.awakeCount<=s.awake.avg) ? '완만하게 깨어남' : '이른 각성·자주 깸');
+    return tags;
+  }
+  const bd = s.bestIdx>=0 ? c.days[s.bestIdx] : null, wd = s.worstIdx>=0 ? c.days[s.worstIdx] : null;
+  P.push(
+    '<div class="slr-page"><div class="slr-page-num">12</div>'+
+    '<div class="slr-page-title">가장 좋았던 밤과 가장 힘들었던 밤</div>'+
+    '<div class="slr-page-desc">이번 주 수면효율이 가장 높았던 밤과 가장 낮았던 밤을 나란히 놓고 비교합니다.</div>'+
+    '<div class="slr-nightcards">'+
+      '<div class="slr-nightcard best"><div class="slr-nightcard-head">🟢 좋았던 밤 · '+(bd?(bd.date+' ('+(labels[s.bestIdx]||'')+')'):'-')+' · 수면효율 '+(bd?_slrRoundTxt(bd.eff,0)+'%':'-')+'</div>'+
+        '취침 '+(bd?bd.bedTime||'-':'-')+' → 기상 '+(bd?bd.wakeTime||'-':'-')+
+        '<div class="slr-nightcard-tags">'+nightTags(s.bestIdx).map(t=>'<span class="slr-nightcard-tag">'+t+'</span>').join('')+'</div>'+
+      '</div>'+
+      '<div class="slr-nightcard worst"><div class="slr-nightcard-head">🔴 힘들었던 밤 · '+(wd?(wd.date+' ('+(labels[s.worstIdx]||'')+')'):'-')+' · 수면효율 '+(wd?_slrRoundTxt(wd.eff,0)+'%':'-')+'</div>'+
+        '취침 '+(wd?wd.bedTime||'-':'-')+' → 기상 '+(wd?wd.wakeTime||'-':'-')+
+        '<div class="slr-nightcard-tags">'+nightTags(s.worstIdx).map(t=>'<span class="slr-nightcard-tag">'+t+'</span>').join('')+'</div>'+
+      '</div>'+
+    '</div></div>'
+  );
+
+  /* 13 활동량 */
+  P.push(_slrMetricPage('13','낮 동안 몸을 얼마나 움직였는지','활동시간은 하루 중 걷기 등 의도적인 신체활동으로 기록된 시간의 합입니다.',
+    '활동시간', _slrRoundTxt(s.act.avg,0)+'분/일',
+    '평균 걸음수(참고용): 약 '+_slrRoundTxt(s.steps.avg,0)+'보/일 · 이번 주 범위: '+_slrRoundTxt(s.act.min,0)+'~'+_slrRoundTxt(s.act.max,0)+'분',
+    'slr-cv-act',
+    '이번 주 합계 활동시간은 약 '+_slrRoundTxt((s.act.avg||0)*s.n,0)+'분입니다. 권장 기준(주 150분)'+(((s.act.avg||0)*s.n)>=150?'을 충족했습니다.':'에 아직 못 미쳤습니다.'),
+    '양을 늘리기보다, 매일 비슷한 시간대에 짧게라도 걷는 방식으로 요일별 편차를 줄이는 것을 목표로 삼아볼 수 있습니다.'
+  ));
+
+  /* 14 칼로리 */
+  P.push(_slrMetricPage('14','하루 동안 소모한 총 에너지','총 소모 칼로리는 기초대사량과 활동으로 인한 추가 소모량을 합한 하루 총합입니다. (참고용 지표)',
+    '총 소모 칼로리', _slrRoundTxt(s.cal.avg,0)+'kcal/일',
+    '이번 주 범위: '+_slrRoundTxt(s.cal.min,0)+'~'+_slrRoundTxt(s.cal.max,0)+'kcal',
+    'slr-cv-cal',
+    '칼로리 소모량은 활동시간이 많았던 날 함께 높아지는 경향을 보입니다. 절대값보다 활동량과 같은 방향으로 움직이는지가 이 지표를 읽는 유용한 방법입니다.',
+    ''
+  ));
+
+  /* 15 활력점수 */
+  const half = Math.ceil(s.n/2);
+  const firstHalfAvg = slrAvg(days2vit(c,0,half)), secondHalfAvg = slrAvg(days2vit(c,half,s.n));
+  function days2vit(cc,a,b){ return cc.days.slice(a,b).map(d=>d.vitality); }
+  P.push(_slrMetricPage('15','웨어러블이 종합한 그날의 컨디션 지수','활력점수는 0에서 시작해 활동량이 늘면 100 쪽으로 가까워지고, 활동량이 줄면 다시 낮아지는 누적형 지수로 읽어야 하는 참고용 값입니다.',
+    '활력점수', _slrRoundTxt(s.vit.avg,0)+'점/100',
+    '이번 주 범위: '+_slrRoundTxt(s.vit.min,0)+'~'+_slrRoundTxt(s.vit.max,0)+'점',
+    'slr-cv-vit',
+    (firstHalfAvg!=null && secondHalfAvg!=null) ? ('주 전반부 평균 '+_slrRoundTxt(firstHalfAvg,0)+'점 대비 후반부 평균 '+_slrRoundTxt(secondHalfAvg,0)+'점으로, '+(secondHalfAvg>=firstHalfAvg?'주 후반으로 갈수록 회복되는 흐름입니다.':'주 후반으로 갈수록 낮아지는 흐름입니다.')) : '',
+    '활력점수를 직접 높이려 하기보다, 근본 원인인 수면의 질을 개선하는 접근이 더 효과적입니다.'
+  ));
+
+  /* 16 종합진단표 */
+  const refRows = [
+    ['eff', s.eff.avg], ['sol', s.sol.avg], ['awake', s.awake.avg],
+    ['hr', s.hr.avg], ['rr', s.rr.avg], ['spo2', s.spo2.avg]
+  ];
+  P.push(
+    '<div class="slr-page"><div class="slr-page-num">16</div>'+
+    '<div class="slr-page-title">요일 비교가 아니라, 참고범위 대비</div>'+
+    '<div class="slr-page-desc">"어제보다 나은가"가 아니라 "임상 참고범위와 비교해 어느 방향으로, 얼마나 떨어져 있는가"를 기준으로 정리합니다.</div>'+
+    '<table class="slr-table"><thead><tr><th>지표</th><th>이번 주 평균</th><th>임상 참고범위</th><th>참고범위 대비</th></tr></thead><tbody>'+
+      refRows.map(function(rr2){
+        const ref = SLR_REF[rr2[0]], avg = rr2[1];
+        return '<tr><td>'+ref.label+'</td><td>'+(avg==null?'-':_slrRoundTxt(avg, rr2[0]==='awake'?1:0)+ref.unit)+'</td><td>'+_slrRefRangeTxt(ref)+'</td><td>'+_slrRefCompare(ref,avg)+'</td></tr>';
+      }).join('')+
+    '</tbody></table>'+
+    '<div class="slr-insight-box" style="margin-top:.8rem">활동시간↔수면효율 상관계수 r='+rTxt(s.r.actEff)+
+      (s.actEffSlopePer10!=null ? (', 활동 10분↑당 추정 변화 '+(s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p') : '')+
+      '. 위 값은 참고범위 기준 자동 계산값이며, 진단이 아닌 관찰 결과입니다.'+
+    '</div></div>'
+  );
+
+  /* 17 이상신호 스크리닝 */
+  if(s.anomalyIdx>=0){
+    const ad = c.days[s.anomalyIdx];
+    P.push(
+      '<div class="slr-page"><div class="slr-page-num">17</div>'+
+      '<div class="slr-page-title">'+(ad.date||'')+'('+(labels[s.anomalyIdx]||'')+') 밤, 세 지표가 함께 움직였습니다</div>'+
+      '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어났습니다. 우연히 겹쳤을 가능성도 있어 관찰 플래그만 남깁니다.</div>'+
+      '<div class="slr-anomaly-cards">'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">수면 중 심박수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.hr,0)+'bpm</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.hr.avg,0)+'bpm 대비 '+(ad.hr-s.hr.avg>=0?'+':'')+_slrRoundTxt(ad.hr-s.hr.avg,0)+'</div></div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">호흡수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.rr,0)+'회/분</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.rr.avg,0)+'회 대비 '+(ad.rr-s.rr.avg>=0?'+':'')+_slrRoundTxt(ad.rr-s.rr.avg,0)+'</div></div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">SpO2</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.spo2,0)+'%</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.spo2.avg,0)+'% 대비 '+(ad.spo2-s.spo2.avg>=0?'+':'')+_slrRoundTxt(ad.spo2-s.spo2.avg,0)+'</div></div>'+
+      '</div>'+
+      '<div class="slr-insight-box" style="margin-top:.8rem">하루의 일시적 변화는 스트레스, 카페인·알코올, 활동량, 경미한 컨디션 저하 등 다양한 요인으로도 나타날 수 있습니다. 같은 패턴이 반복되는지 함께 지켜볼 것을 제안하며, 다음 주에도 같은 방향으로 움직인다면 의료진과의 상담을 권합니다. (관찰 · 확진 아님)</div>'+
+      '</div>'
+    );
+  } else {
+    P.push(
+      '<div class="slr-page"><div class="slr-page-num">17</div>'+
+      '<div class="slr-page-title">이상신호 스크리닝</div>'+
+      '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어난 날은 발견되지 않았습니다.</div>'+
+      '</div>'
+    );
+  }
+
+  /* 18 루틴 제안 */
+  P.push(
+    '<div class="slr-page"><div class="slr-page-num">18</div>'+
+    '<div class="slr-page-title">이번 주가 알려준 것부터 바꿔봅니다</div>'+
+    '<div class="slr-page-desc">치료의 급성기를 지나 경과관찰 중이라면, 목표는 "더 열심히"가 아니라 "더 규칙적으로"입니다.</div>'+
+    '<div class="slr-routine-grid">'+
+      '<div class="slr-routine-card"><span class="slr-routine-num">1</span><span class="slr-routine-title">취침시각 먼저 고정하기</span>'+
+        '<div class="slr-routine-desc">근거 · 취침시각 편차 ±'+_slrRoundTxt(s.bedStd,0)+'분. 주말 포함 매일 같은 시각에 눕는 것을 목표로 합니다.</div></div>'+
+      '<div class="slr-routine-card"><span class="slr-routine-num">2</span><span class="slr-routine-title">낮 활동량 조금 늘리기</span>'+
+        '<div class="slr-routine-desc">근거 · r='+rTxt(s.r.actEff)+'. 하루 '+_slrRoundTxt((s.act.avg||0)+10,0)+'분 이상, 오전~이른 오후 시간대를 우선 권장합니다.</div></div>'+
+      '<div class="slr-routine-card"><span class="slr-routine-num">3</span><span class="slr-routine-title">저녁 루틴 다듬기</span>'+
+        '<div class="slr-routine-desc">근거 · 입면잠복기·각성횟수. 취침 2~3시간 전 카페인·알코올을 줄이고, 취침 1시간 전 화면·밝은 조명을 낮춥니다.</div></div>'+
+      '<div class="slr-routine-card"><span class="slr-routine-num">4</span><span class="slr-routine-title">흔들린 밤은 기록해두기</span>'+
+        '<div class="slr-routine-desc">근거 · 이상신호 스크리닝 결과. 심박수·호흡수·SpO2가 함께 흔들린 날은 그날의 스트레스·통증·카페인 등을 간단히 메모해 둡니다.</div></div>'+
+    '</div>'+
+    '<ul class="slr-checklist">'+
+      '<li>매일 같은 시각 기상 (주말 포함, ±30분 이내)</li>'+
+      '<li>낮 활동(걷기 등) 30분 이상 확보</li>'+
+      '<li>취침 2~3시간 전 카페인·알코올 자제</li>'+
+      '<li>취침 1시간 전 화면·밝은 조명 줄이기</li>'+
+      '<li>컨디션이 흔들린 날은 한 줄로 메모하기</li>'+
+    '</ul>'+
+    '<div class="slr-range-note" style="margin-top:.8rem">본 루틴 제안은 생활 가이드이며 의학적 진단이나 처방을 대신하지 않습니다. 증상이 지속되거나 악화되는 경우 의료진과 상담해 주세요.</div>'+
+    '</div>'
+  );
+
+  return '<div class="slr-report">'+P.join('')+'</div>';
+}
+
+/* ── 캔버스 차트 렌더러 ── */
+function slrDrawChart(canvasId, opts){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = {t:14,r:12,b:24,l:38};
+  const plotW = W-pad.l-pad.r, plotH = H-pad.t-pad.b;
+  const labels = opts.labels||[];
+  const series = opts.series||[];
+  let allVals = [];
+  series.forEach(function(sr){ sr.data.forEach(function(v){ if(v!=null && !isNaN(v)) allVals.push(v); }); });
+  if(opts.stacked){
+    labels.forEach(function(lb,i){
+      let sum=0; series.forEach(function(sr){ sum += (sr.data[i]||0); });
+      allVals.push(sum);
+    });
+  }
+  if(opts.refMin!=null) allVals.push(opts.refMin);
+  if(opts.refMax!=null) allVals.push(opts.refMax);
+  if(!allVals.length) allVals=[0,1];
+  let vMin = opts.yMin!=null ? opts.yMin : Math.min(0, Math.min.apply(null,allVals));
+  let vMax = opts.yMax!=null ? opts.yMax : Math.max.apply(null,allVals) * 1.18;
+  if(vMax===vMin) vMax = vMin+1;
+  const yToPx = v => pad.t + plotH - ((v-vMin)/(vMax-vMin))*plotH;
+  const n = Math.max(labels.length,1);
+  const slotW = plotW / n;
+
+  if(opts.refMin!=null && opts.refMax!=null){
+    ctx.fillStyle = 'rgba(14,143,163,.08)';
+    ctx.fillRect(pad.l, yToPx(opts.refMax), plotW, Math.max(0,yToPx(opts.refMin)-yToPx(opts.refMax)));
+  }
+  ctx.strokeStyle = '#D8ECF4'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t+plotH); ctx.lineTo(pad.l+plotW, pad.t+plotH); ctx.stroke();
+
+  const barSeries = series.filter(function(sr){ return sr.type!=='line'; });
+  if(barSeries.length){
+    const barW = Math.min(30, slotW*0.55) / (opts.stacked?1:barSeries.length);
+    labels.forEach(function(lb,i){
+      let stackBase = 0;
+      barSeries.forEach(function(sr,si){
+        const v = sr.data[i];
+        if(v==null || isNaN(v)) return;
+        const x = opts.stacked
+          ? pad.l + i*slotW + (slotW-barW)/2
+          : pad.l + i*slotW + (slotW - barW*barSeries.length)/2 + si*barW;
+        const y0 = opts.stacked ? yToPx(stackBase) : yToPx(0);
+        const y1 = yToPx(opts.stacked ? stackBase+v : v);
+        ctx.fillStyle = sr.color;
+        ctx.fillRect(x, Math.min(y0,y1), barW, Math.max(1,Math.abs(y1-y0)));
+        if(opts.stacked) stackBase += v;
+      });
+    });
+  }
+  series.filter(function(sr){ return sr.type==='line'; }).forEach(function(sr){
+    ctx.strokeStyle = sr.color; ctx.lineWidth=2; ctx.beginPath();
+    let started=false;
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x = pad.l + i*slotW + slotW/2, y = yToPx(v);
+      if(!started){ ctx.moveTo(x,y); started=true; } else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    ctx.fillStyle = sr.color;
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x=pad.l+i*slotW+slotW/2, y=yToPx(v);
+      ctx.beginPath(); ctx.arc(x,y,2.8,0,Math.PI*2); ctx.fill();
+    });
+  });
+
+  ctx.fillStyle = '#7A9FB8'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+  labels.forEach(function(lb,i){ ctx.fillText(String(lb), pad.l+i*slotW+slotW/2, H-8); });
+}
+
+function _slrDrawAllCharts(c, s, labels){
+  slrDrawChart('slr-cv-structure', { labels:labels, stacked:true, series:[
+    {data:s.deepMin,  color:'#0D2246'},
+    {data:s.lightMin, color:'#5CC8B8'},
+    {data:s.remMin,   color:'#B892D9'}
+  ]});
+  slrDrawChart('slr-cv-eff',   { labels:labels, refMin:85, series:[{data:c.days.map(d=>d.eff), color:'#0E8FA3', type:'line'}] });
+  slrDrawChart('slr-cv-sol',   { labels:labels, refMax:20, yMin:0, series:[{data:c.days.map(d=>d.sol), color:'#C07820', type:'line'}] });
+  slrDrawChart('slr-cv-awake', { labels:labels, refMax:2,  yMin:0, series:[{data:c.days.map(d=>d.awakeCount), color:'#FFB300'}] });
+  slrDrawChart('slr-cv-hr',    { labels:labels, refMin:45, refMax:70, series:[{data:c.days.map(d=>d.hr), color:'#C83535', type:'line'}] });
+  slrDrawChart('slr-cv-rr',    { labels:labels, refMin:12, refMax:20, series:[{data:c.days.map(d=>d.rr), color:'#5B8DEF', type:'line'}] });
+  slrDrawChart('slr-cv-spo2',  { labels:labels, refMin:95, yMax:100, series:[{data:c.days.map(d=>d.spo2), color:'#29B6F6', type:'line'}] });
+  slrDrawChart('slr-cv-bed',   { labels:labels, series:[{data:s.bedMinArr, color:'#0D2246', type:'line'}] });
+  slrDrawChart('slr-cv-wake',  { labels:labels, series:[{data:s.wakeMinArr, color:'#FF6B35', type:'line'}] });
+  slrDrawChart('slr-cv-act',   { labels:labels, yMin:0, series:[{data:c.days.map(d=>d.activityMin), color:'#1E9E5A'}] });
+  slrDrawChart('slr-cv-cal',   { labels:labels, series:[{data:c.days.map(d=>d.cal), color:'#FF8A5C', type:'line'}] });
+  slrDrawChart('slr-cv-vit',   { labels:labels, yMin:0, yMax:100, series:[{data:c.days.map(d=>d.vitality), color:'#FFCB3D', type:'line'}] });
+}
+
+/* ── 인쇄 / 다운로드 ── */
+function _slrReportCss(){
+  return '.slr-report{display:flex;flex-direction:column;gap:16px}'+
+  '.slr-page{background:#F7FBFD;border:1px solid #D8ECF4;border-radius:12px;padding:18px 18px}'+
+  '.slr-page-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#0D2246;color:#fff;font-size:11px;font-weight:800;margin-bottom:8px}'+
+  '.slr-page-title{font-size:16px;font-weight:800;color:#0D2246;margin-bottom:4px}'+
+  '.slr-page-desc{font-size:12px;color:#7A9FB8;margin-bottom:10px;line-height:1.5}'+
+  '.slr-hero{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}'+
+  '.slr-hero-label{font-size:12px;color:#7A9FB8;font-weight:600}'+
+  '.slr-hero-value{font-size:24px;font-weight:800;color:#0D2246}'+
+  '.slr-range-note{font-size:11px;color:#7A9FB8;margin:4px 0 10px}'+
+  '.slr-chart-box{background:#fff;border-radius:10px;padding:8px;margin-bottom:10px}'+
+  '.slr-chart-box img{width:100%;height:auto;display:block}'+
+  '.slr-insight-box{background:#D0EEF3;color:#0D2246;border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:8px}'+
+  '.slr-suggest-box{background:#FEF0D3;color:#0D2246;border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.6}'+
+  '.slr-def-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px}'+
+  '.slr-def-card{background:#fff;border:1px solid #D8ECF4;border-radius:9px;padding:9px 10px}'+
+  '.slr-def-title{font-weight:800;font-size:12px;color:#0D2246}'+
+  '.slr-def-eng{font-size:10px;color:#7A9FB8;margin-bottom:4px}'+
+  '.slr-def-desc{font-size:11px;color:#3A5A78;line-height:1.5}'+
+  '.slr-cover{background:#0D2246;color:#fff;border-radius:12px;padding:26px 20px}'+
+  '.slr-cover-eyebrow{font-size:10px;letter-spacing:.1em;color:#5CC8B8;font-weight:700;margin-bottom:8px}'+
+  '.slr-cover-title{font-size:20px;font-weight:800;line-height:1.4;margin-bottom:10px}'+
+  '.slr-cover-period{font-size:11px;color:rgba(255,255,255,.65);margin-bottom:14px}'+
+  '.slr-cover-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}'+
+  '.slr-chip{background:rgba(255,255,255,.08);border-radius:9px;padding:8px 10px;min-width:110px}'+
+  '.slr-chip-label{font-size:9px;color:rgba(255,255,255,.55);margin-bottom:2px}'+
+  '.slr-chip-value{font-size:12px;font-weight:700}'+
+  '.slr-cover-indicators{display:flex;flex-wrap:wrap;gap:6px}'+
+  '.slr-indicator-pill{background:rgba(255,255,255,.1);border-radius:999px;padding:4px 11px;font-size:10px;color:rgba(255,255,255,.85)}'+
+  '.slr-table{width:100%;border-collapse:collapse;font-size:11px}'+
+  '.slr-table th,.slr-table td{border-bottom:1px solid #D8ECF4;padding:7px 9px;text-align:left}'+
+  '.slr-table th{color:#7A9FB8;font-weight:700;font-size:10px}'+
+  '.slr-nightcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}'+
+  '.slr-nightcard{background:#fff;border-radius:10px;padding:12px 14px;border-left:4px solid #0E8FA3;font-size:11px}'+
+  '.slr-nightcard.worst{border-left-color:#C83535}'+
+  '.slr-nightcard-head{font-weight:800;font-size:12px;margin-bottom:6px}'+
+  '.slr-nightcard-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}'+
+  '.slr-nightcard-tag{background:#F7FBFD;border-radius:6px;padding:3px 8px;font-size:10px;color:#3A5A78}'+
+  '.slr-anomaly-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}'+
+  '.slr-anomaly-card{background:#fff;border-radius:10px;padding:11px;text-align:center}'+
+  '.slr-anomaly-metric{font-size:10px;color:#7A9FB8}'+
+  '.slr-anomaly-value{font-size:18px;font-weight:800;color:#0D2246}'+
+  '.slr-routine-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}'+
+  '.slr-routine-card{background:#fff;border-radius:10px;padding:11px 13px}'+
+  '.slr-routine-num{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#C07820;color:#fff;align-items:center;justify-content:center;font-size:10px;font-weight:800;margin-right:6px}'+
+  '.slr-routine-title{font-weight:700;font-size:12px}'+
+  '.slr-routine-desc{font-size:11px;color:#3A5A78;line-height:1.5;margin-top:5px}'+
+  '.slr-checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}'+
+  '.slr-checklist li{font-size:11px;color:#3A5A78}'+
+  '.slr-checklist li::before{content:"☐ ";color:#0E8FA3}'+
+  '@media print{ .slr-nightcards,.slr-anomaly-cards,.slr-routine-grid{ } }';
+}
+
+function _slrPreparePrintClone(){
+  const body = document.getElementById('slr-report-body');
+  if(!body || !_slrCustomers.length) return null;
+  const clone = body.cloneNode(true);
+  const origCanvases = body.querySelectorAll('canvas');
+  const cloneCanvases = clone.querySelectorAll('canvas');
+  origCanvases.forEach(function(cv,i){
+    try{
+      const dataUrl = cv.toDataURL('image/png');
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      img.style.cssText = 'width:'+cv.offsetWidth+'px;height:auto;display:block;max-width:100%';
+      if(cloneCanvases[i]) cloneCanvases[i].replaceWith(img);
+    }catch(e){}
+  });
+  clone.querySelectorAll('button').forEach(function(b){ b.style.display='none'; });
+  return clone;
+}
+
+function _slrPrintableDoc(title, sub){
+  const clone = _slrPreparePrintClone();
+  if(!clone){ alert('레포트 데이터가 없습니다. 먼저 엑셀 파일을 업로드해주세요.'); return null; }
+  const printDate = '보고일: ' + new Date().toLocaleDateString('ko-KR');
+  return '<!doctype html><html><head><meta charset="utf-8"><title>'+title+'</title>'+
+  '<link rel="preconnect" href="https://fonts.googleapis.com">'+
+  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">'+
+  '<style>'+
+    '*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}'+
+    'html,body{font-family:\'Noto Sans KR\',\'Apple SD Gothic Neo\',\'Malgun Gothic\',sans-serif;background:#EEF6FB;color:#0D2246;font-size:15px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.print-wrap{max-width:820px;margin:0 auto;padding:20px 16px 40px}'+
+    '.print-header{background:#17324D;border-radius:14px 14px 0 0;padding:16px 20px 12px;display:flex;align-items:flex-start;justify-content:space-between}'+
+    '.print-header-title{color:#fff;font-size:16px;font-weight:800;margin:0 0 2px}'+
+    '.print-header-sub{color:rgba(255,255,255,.65);font-size:11px;margin:0}'+
+    '.print-header-date{color:rgba(255,255,255,.5);font-size:10px;text-align:right;white-space:nowrap}'+
+    '.print-body{background:#F4FAFD;border:1px solid #C8DFF0;border-top:none;padding:18px 16px 20px}'+
+    '.print-footer{padding:10px 18px;background:#EDF4FA;border:1px solid #C8DFF0;border-top:none;border-radius:0 0 14px 14px;font-size:10px;color:#7A9FB8;display:flex;justify-content:space-between}'+
+    'button{display:none!important}'+
+    _slrReportCss()+
+    '@media print{ @page{size:A4;margin:10mm} html,body{background:#EEF6FB} .print-wrap{padding:0} }'+
+  '</style></head><body>'+
+  '<div class="print-wrap">'+
+    '<div class="print-header"><div><div class="print-header-title">'+title+'</div><div class="print-header-sub">'+sub+'</div></div><div class="print-header-date">'+printDate+'</div></div>'+
+    '<div class="print-body">'+clone.innerHTML+'</div>'+
+    '<div class="print-footer"><span>힐마루케어 · 시니어케어 통합 건강관리 시스템</span><span>'+printDate+'</span></div>'+
+  '</div></body></html>';
+}
+
+function printSleepWeeklyReport(){
+  if(!_slrCustomers.length){ alert('레포트 데이터가 없습니다. 먼저 엑셀 파일을 업로드해주세요.'); return; }
+  const c = _slrCustomers[_slrActiveIdx];
+  const title = (c.meta.name||'고객')+' 님 수면 리듬 진단 레포트';
+  const sub = (c.meta.startDate||'')+' ~ '+(c.meta.endDate||'');
+  const html = _slrPrintableDoc(title, sub);
+  if(!html) return;
+  const w = window.open('', '_blank', 'width=900,height=1100');
+  if(!w){ alert('팝업 차단을 해제해 주세요.'); return; }
+  w.document.write(html.replace('</body></html>', '<script>document.fonts.ready.then(function(){ setTimeout(function(){ window.print(); }, 500); });</sc'+'ript></body></html>'));
+  w.document.close();
+  w.focus();
+}
+
+function downloadSleepWeeklyReportHtml(){
+  if(!_slrCustomers.length){ alert('레포트 데이터가 없습니다. 먼저 엑셀 파일을 업로드해주세요.'); return; }
+  const c = _slrCustomers[_slrActiveIdx];
+  const title = (c.meta.name||'고객')+' 님 수면 리듬 진단 레포트';
+  const sub = (c.meta.startDate||'')+' ~ '+(c.meta.endDate||'');
+  const html = _slrPrintableDoc(title, sub);
+  if(!html) return;
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '수면레포트_'+(c.meta.name||'고객')+'_'+new Date().toISOString().slice(0,10)+'.html';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  showToast('수면 레포트를 HTML 파일로 다운로드했습니다.');
 }
 
 </script>

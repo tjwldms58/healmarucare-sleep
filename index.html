@@ -2094,11 +2094,11 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
               </div>
               <div class="hs-dock-item active-dock" onclick="openPhoneScreen('activity')" style="cursor:pointer">
                 <div class="hs-dock-icon">🏃</div>
-                운동
+                활동량
               </div>
-              <div class="hs-dock-item">
-                <div class="hs-dock-icon">⌚</div>
-                장치
+              <div class="hs-dock-item active-dock" onclick="openPhoneScreen('weight')" style="cursor:pointer">
+                <div class="hs-dock-icon">⚖️</div>
+                체중
               </div>
               <div class="hs-dock-item">
                 <div class="hs-dock-icon">👤</div>
@@ -2165,6 +2165,10 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                   <option>3기</option><option>4기</option>
                 </select>
               </div>
+            </div>
+            <div class="form-field">
+              <label>현재 단계</label>
+              <input type="text" id="f-current-stage" placeholder="예) 항암치료 중, 방사선치료 중, 회복기 등 수기 입력">
             </div>
             <div class="form-field">
               <label>담당 간호사</label>
@@ -2787,10 +2791,12 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <input type="number" id="wt-kg" placeholder="예) 62.5" min="0" max="300" step="0.1" oninput="_calcBmiPreview()">
               </div>
             </div>
-            <div id="wt-bmi-preview" style="display:none;margin-top:2px;padding:9px 12px;border-radius:10px;background:rgba(14,143,163,.08);border:1px solid rgba(14,143,163,.18);display:flex;align-items:center;gap:10px">
+            <div id="wt-bmi-preview" style="display:none;margin-top:2px;padding:9px 12px;border-radius:10px;background:rgba(14,143,163,.08);border:1px solid rgba(14,143,163,.18);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
               <span style="font-size:.72rem;color:var(--text-2)">BMI</span>
               <span id="wt-bmi-val" style="font-size:1.05rem;font-weight:800;color:var(--teal)">-</span>
               <span id="wt-bmi-label" style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(14,143,163,.15);color:var(--teal)">-</span>
+              <span style="font-size:.72rem;color:var(--text-2);margin-left:6px">추천체중</span>
+              <span id="wt-rec-val" style="font-size:1.05rem;font-weight:800;color:var(--teal)">-</span>
             </div>
             <div style="height:8px"></div>
           </div>
@@ -3193,6 +3199,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <button class="dt-tab dt-tab-pill" onclick="switchDataTab('heart',this)">❤️ 심박수</button>
         <button class="dt-tab dt-tab-pill" onclick="switchDataTab('o2',this)">O₂ 혈중산소</button>
         <button class="dt-tab dt-tab-pill dt-tab-accent-warn" onclick="switchDataTab('activity',this)">🔥 활동량</button>
+        <button class="dt-tab dt-tab-pill" onclick="switchDataTab('weight',this)">⚖️ 체중</button>
         <button class="dt-tab dt-tab-pill" onclick="switchDataTab('stress',this)">🧠⚡ 스트레스·활력</button>
         <button class="dt-tab" onclick="switchDataTab('device',this)" style="color:#6B5CE7">📦 기기관리</button>
         <button class="dt-tab" onclick="switchDataTab('survey',this)" style="color:#0E8FA3">📝 대상자 설문</button>
@@ -3217,6 +3224,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <th class="freeze-col">암종</th>
                 <th class="freeze-col">담당간호사</th>
                 <th>병기</th>
+                <th>현재단계</th>
                 <th>제공일</th>
                 <th>수거일</th>
                 <th>REM%</th>
@@ -3245,7 +3253,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
             </thead>
             <tbody id="all-tbody">
               <tr id="empty-all-row">
-                <td colspan="41" style="padding:0;border:none">
+                <td colspan="42" style="padding:0;border:none">
                   <div class="empty-state" style="position:sticky;left:0;width:600px">
                     <div class="empty-icon">📋</div>
                     <div class="empty-msg">저장된 건강 기록이 없습니다</div>
@@ -3275,6 +3283,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <th class="freeze-col">암종</th>
                 <th class="freeze-col">간호사</th>
                 <th>병기</th>
+                <th>현재단계</th>
                 <th>제공일</th>
                 <th>수거일</th>
                 <th>REM%</th>
@@ -3300,7 +3309,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
             </thead>
             <tbody id="records-tbody">
               <tr id="empty-record-row">
-                <td colspan="26">
+                <td colspan="27">
                   <div class="empty-state">
                     <div class="empty-icon">🌙</div>
                     <div class="empty-msg">저장된 수면 기록이 없습니다</div>
@@ -3387,7 +3396,31 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
                 <td colspan="9"><div class="empty-state">
                   <div class="empty-icon">🔥</div>
                   <div class="empty-msg">저장된 활동량 기록이 없습니다</div>
-                  <div class="empty-hint">왼쪽 폰 화면 하단 '운동'을 선택 후 입력해 보세요</div>
+                  <div class="empty-hint">왼쪽 폰 화면 하단 '활동량'을 선택 후 입력해 보세요</div>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── 체중 테이블 ── -->
+      <div id="data-panel-weight" style="display:none">
+        <div class="table-scroll">
+          <table class="data-table" id="weight-table">
+            <thead>
+              <tr>
+                <th>#</th><th>날짜</th><th>고객명</th><th>나이</th><th>성별</th>
+                <th>키</th><th>체중</th><th>BMI</th><th>상태</th><th>추천체중</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="weight-tbody">
+              <tr id="empty-weight-row">
+                <td colspan="11"><div class="empty-state">
+                  <div class="empty-icon">⚖️</div>
+                  <div class="empty-msg">저장된 체중 기록이 없습니다</div>
+                  <div class="empty-hint">왼쪽 폰 화면 하단 '체중'을 선택 후 입력해 보세요</div>
                 </div></td>
               </tr>
             </tbody>
@@ -3880,6 +3913,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <div class="form-field"><label>임상단계</label>
           <select id="ef-stage"><option value="">선택</option><option>1기</option><option>2기</option><option>3기</option><option>4기</option><option>관해</option></select>
         </div>
+        <div class="form-field"><label>현재 단계</label><input type="text" id="ef-current-stage" placeholder="예) 항암치료 중"></div>
         <div class="form-field"><label>그룹</label>
           <select id="ef-group"><option value="">미지정</option></select>
         </div>
@@ -4156,10 +4190,12 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <div class="form-field"><label>키 (cm)</label><input type="number" id="ewt-height" min="50" step="0.1" placeholder="예) 165" oninput="_calcBmiEditPreview()"></div>
         <div class="form-field"><label>체중 (kg)</label><input type="number" id="ewt-kg" min="0" step="0.1" placeholder="예) 65.5" oninput="_calcBmiEditPreview()"></div>
       </div>
-      <div id="ewt-bmi-preview" style="display:none;padding:9px 12px;border-radius:10px;background:rgba(14,143,163,.08);border:1px solid rgba(14,143,163,.18);display:flex;align-items:center;gap:10px">
+      <div id="ewt-bmi-preview" style="display:none;padding:9px 12px;border-radius:10px;background:rgba(14,143,163,.08);border:1px solid rgba(14,143,163,.18);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span style="font-size:.72rem;color:var(--text-2)">BMI</span>
         <span id="ewt-bmi-val" style="font-size:1.05rem;font-weight:800;color:var(--teal)">-</span>
         <span id="ewt-bmi-label" style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(14,143,163,.15);color:var(--teal)">-</span>
+        <span style="font-size:.72rem;color:var(--text-2);margin-left:6px">추천체중</span>
+        <span id="ewt-rec-val" style="font-size:1.05rem;font-weight:800;color:var(--teal)">-</span>
       </div>
     </div>
     <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface-2)">
@@ -4660,7 +4696,8 @@ function _submitAllDays(bufType){
   if(bufType==='sleep'){
     shared.name   =_gv('f-name').trim(); shared.age=_gv('f-age'); shared.gender=_gv('f-gender');
     shared.cancer =_gv('f-cancer').trim(); shared.nurse=_gv('f-nurse').trim();
-    shared.stage  =_gv('f-stage'); shared.give=_gv('f-give'); shared.collect=_gv('f-collect');
+    shared.stage  =_gv('f-stage'); shared.currentStage=_gv('f-current-stage').trim();
+    shared.give=_gv('f-give'); shared.collect=_gv('f-collect');
     shared.group  =_gv('f-group')||'';
   } else if(bufType==='hr'){
     shared.name=_gv('hr-name').trim(); shared.age=_gv('hr-age'); shared.gender=_gv('hr-gender');
@@ -4731,8 +4768,9 @@ function _submitAllDays(bufType){
       const kg=buf['wt-kg']||'';
       const bmi=(kg&&shared.height)?calcBmi(parseFloat(kg),parseFloat(shared.height)):null;
       const bmiStatus=bmi!==null?getBmiStatus(bmi).label:'';
+      const recWeight=shared.height?calcRecWeight(parseFloat(shared.height)):null;
       const group=_detectGroup(shared.name,shared.age,shared.gender);
-      weightRecords.unshift({date:buf['wt-date'],...shared,kg,bmi:bmi!==null?bmi:'',bmiStatus,group});
+      weightRecords.unshift({date:buf['wt-date'],...shared,kg,bmi:bmi!==null?bmi:'',bmiStatus,recWeight:recWeight!==null?recWeight:'',group});
     } else if(bufType==='wh'){
       const group=_detectGroup(shared.name,shared.age,shared.gender);
       womensHealthRecords.unshift({date:buf['wh-date'],...shared,group});
@@ -4905,7 +4943,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '6.98';
+const APP_VER = '7.00';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6077,7 +6115,7 @@ function renderAllRecords(){
     const k = getPKey(name, age, gender);
     if(!personMap.has(k)) personMap.set(k, Object.assign(
       { name:name||'', age:age||'', gender:gender||'',
-        group:'', cancer:'', nurse:'', stage:'', give:'', collect:'',
+        group:'', cancer:'', nurse:'', stage:'', currentStage:'', give:'', collect:'',
         sleep:[], heart:[], bp:[], o2:[], weight:[], womens:[], stress:[], act:[] }, extra));
     return personMap.get(k);
   }
@@ -6095,7 +6133,7 @@ function renderAllRecords(){
 
   filteredSleep.forEach(r => {
     const p = getOrCreatePerson(r.name||'', r.age||'', r.gender||'',
-      { group:r.group||'', cancer:r.cancer||'', nurse:r.nurse||'', stage:r.stage||'', give:r.give||r.date||'', collect:r.collect||'' });
+      { group:r.group||'', cancer:r.cancer||'', nurse:r.nurse||'', stage:r.stage||'', currentStage:r.currentStage||'', give:r.give||r.date||'', collect:r.collect||'' });
     p.sleep.push(r);
   });
   heartRateRecords.filter(r=>!r.deleted).forEach(r => {
@@ -6152,7 +6190,7 @@ function renderAllRecords(){
       map.set(rowKey, { date, name:person.name, age:person.age, gender:person.gender,
         group:person.group, give:rowGive, collect:(s&&s.collect)||(h&&h.collect)||(b&&b.collect)||person.collect||'',
         cancer:(s&&s.cancer)||person.cancer||'', nurse:(s&&s.nurse)||person.nurse||'',
-        stage:(s&&s.stage)||person.stage||'',
+        stage:(s&&s.stage)||person.stage||'', currentStage:(s&&s.currentStage)||person.currentStage||'',
         sleep:s, heart:h, bp:b, o2:o, weight:w, womens:wh, stress:sv, act:ac });
     }
   });
@@ -6164,7 +6202,7 @@ function renderAllRecords(){
   if(map.size === 0){
     const tscAll = document.getElementById('tsc-all');
     const cw = tscAll ? tscAll.clientWidth : 600;
-    tbody.innerHTML = `<tr id="empty-all-row"><td colspan="36" style="padding:0;border:none"><div class="empty-state" style="position:sticky;left:0;width:${cw}px"><div class="empty-icon">📋</div><div class="empty-msg">저장된 건강 기록이 없습니다</div><div class="empty-hint">각 탭에서 데이터를 입력하면 여기에 통합 표시됩니다</div></div></td></tr>`;
+    tbody.innerHTML = `<tr id="empty-all-row"><td colspan="37" style="padding:0;border:none"><div class="empty-state" style="position:sticky;left:0;width:${cw}px"><div class="empty-icon">📋</div><div class="empty-msg">저장된 건강 기록이 없습니다</div><div class="empty-hint">각 탭에서 데이터를 입력하면 여기에 통합 표시됩니다</div></div></td></tr>`;
     return;
   }
 
@@ -6195,6 +6233,7 @@ function renderAllRecords(){
     const cancerCell    = s && s.cancer    ? s.cancer    : '-';
     const nurseCell     = s && s.nurse     ? s.nurse     : '-';
     const stageCell     = s && s.stage     ? s.stage     : '-';
+    const currentStageCell = s && s.currentStage ? s.currentStage : '-';
     const giveCell      = s && s.give      ? s.give      : '-';
     const collectCell   = s && s.collect   ? s.collect   : '-';
     const remPctCell    = s && s.remPct    ? s.remPct + '%'   : '-';
@@ -6284,6 +6323,7 @@ function renderAllRecords(){
       <td style="font-size:.72rem">${cancerCell}</td>
       <td style="font-size:.72rem">${nurseCell}</td>
       <td style="font-size:.72rem">${stageCell}</td>
+      <td style="font-size:.72rem">${currentStageCell}</td>
       <td style="font-size:.72rem">${giveCell}</td>
       <td style="font-size:.72rem">${collectCell}</td>
       <td>${remPctCell}</td>
@@ -6840,7 +6880,7 @@ function renderActivities(){
     .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(actFiltered.length === 0){
-    tbody.innerHTML = `<tr id="empty-act-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🔥</div><div class="empty-msg">저장된 활동량 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면 하단 '운동'을 선택 후 입력해 보세요</div></div></td></tr>`;
+    tbody.innerHTML = `<tr id="empty-act-row"><td colspan="9"><div class="empty-state"><div class="empty-icon">🔥</div><div class="empty-msg">저장된 활동량 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면 하단 '활동량'을 선택 후 입력해 보세요</div></div></td></tr>`;
     return;
   }
   const _actSeen=new Set();
@@ -6899,6 +6939,12 @@ function calcBmi(kg, cm){
   const bmi = parseFloat(kg) / Math.pow(parseFloat(cm) / 100, 2);
   return Math.round(bmi * 10) / 10;
 }
+// 추천체중(표준체중) = 키(m)² × 22 (BMI 22 기준)
+function calcRecWeight(cm){
+  if(!cm || isNaN(cm) || cm <= 0) return null;
+  const m = parseFloat(cm) / 100;
+  return Math.round(m * m * 22 * 10) / 10;
+}
 function getBmiStatus(bmi){
   if(bmi === null) return { label:'', color:'#5CC8B8', bg:'rgba(14,143,163,.15)' };
   if(bmi < 18.5)  return { label:'저체중',  color:'#60a5fa', bg:'rgba(96,165,250,.15)' };
@@ -6920,6 +6966,8 @@ function _calcBmiPreview(){
   const lblEl = document.getElementById('wt-bmi-label');
   if(valEl){ valEl.textContent = bmi; valEl.style.color = st.color; }
   if(lblEl){ lblEl.textContent = st.label; lblEl.style.color = st.color; lblEl.style.background = st.bg; }
+  const recEl = document.getElementById('wt-rec-val');
+  if(recEl){ const rec = calcRecWeight(cm); recEl.textContent = rec !== null ? rec + ' kg' : '-'; }
 }
 function _calcBmiEditPreview(){
   const kg = parseFloat(document.getElementById('ewt-kg')?.value);
@@ -6934,6 +6982,8 @@ function _calcBmiEditPreview(){
   const lblEl = document.getElementById('ewt-bmi-label');
   if(valEl){ valEl.textContent = bmi; valEl.style.color = st.color; }
   if(lblEl){ lblEl.textContent = st.label; lblEl.style.color = st.color; lblEl.style.background = st.bg; }
+  const recEl = document.getElementById('ewt-rec-val');
+  if(recEl){ const rec = calcRecWeight(cm); recEl.textContent = rec !== null ? rec + ' kg' : '-'; }
 }
 
 /* ═══════════════════════════════════════
@@ -6951,8 +7001,9 @@ function addWeight(){
   if(!kg){ showToast('체중을 입력해 주세요.', true); return; }
   const bmi = calcBmi(parseFloat(kg), parseFloat(height));
   const bmiStatus = bmi !== null ? getBmiStatus(bmi).label : '';
+  const recWeight = height ? calcRecWeight(parseFloat(height)) : null;
   const group = _detectGroup(name, age, gender);
-  const rec = { date, name, age: age||'', gender: gender||'', kg, height: height||'', bmi: bmi!==null ? bmi : '', bmiStatus, group };
+  const rec = { date, name, age: age||'', gender: gender||'', kg, height: height||'', bmi: bmi!==null ? bmi : '', bmiStatus, recWeight: recWeight!==null ? recWeight : '', group };
   weightRecords.unshift(rec);
   saveWeights();
   renderWeights();
@@ -6970,24 +7021,25 @@ let _pendingDeleteWt = null;
 function deleteWeight(idx){
   if(_pendingDeleteWt === idx){
     _pendingDeleteWt = null;
-    if(weightRecords[idx]) weightRecords[idx].deleted = true;
+    // 묶음(같은 고객) 삭제: 이 고객의 체중 기록 전체가 함께 삭제됨
+    const n = _hmDeleteBatch(weightRecords, idx);
     saveWeights();
     renderWeights();
     renderDataManageTable();
-    showDeleteToast('기록이 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
+    showDeleteToast((n>1?n+'건이':'기록이')+' 삭제되었습니다. 복구를 원하시면 관리자에게 문의해주세요');
   } else {
     _pendingDeleteWt = idx;
-    showToast('한 번 더 클릭하면 삭제됩니다.', true);
+    showToast('한 번 더 클릭하면 이 고객의 기록이 모두 삭제됩니다.', true);
     setTimeout(()=>{ _pendingDeleteWt = null; }, 3000);
   }
 }
 function restoreWeight(idx){
-  if(!weightRecords[idx]) return;
-  weightRecords[idx].deleted = false;
+  const n = _hmRestoreBatch(weightRecords, idx);
+  if(!n) return;
   saveWeights();
   renderWeights();
   renderDataManageTable();
-  showToast('기록이 복구되었습니다.');
+  showToast((n>1?n+'건이':'기록이')+' 복구되었습니다.');
 }
 function clearWeightForm(){
   ['wt-date','wt-name','wt-age','wt-kg','wt-height','wt-give','wt-collect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -7004,7 +7056,7 @@ function renderWeights(){
     .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse)
     .sort((a,b)=>{const na=a.r.name||'',nb=b.r.name||'';if(na!==nb)return na<nb?-1:1;const ga=a.r.give||'',gb=b.r.give||'';if(ga!==gb)return ga<gb?-1:1;return(a.r.date||'')<(b.r.date||'')?-1:1;});
   if(wtFiltered.length===0){
-    tbody.innerHTML = `<tr id="empty-weight-row"><td colspan="10"><div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-msg">저장된 체중 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 체중을 선택 후 입력해 보세요</div></div></td></tr>`;
+    tbody.innerHTML = `<tr id="empty-weight-row"><td colspan="11"><div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-msg">저장된 체중 기록이 없습니다</div><div class="empty-hint">왼쪽 폰 화면에서 체중을 선택 후 입력해 보세요</div></div></td></tr>`;
     return;
   }
   const _wtSeen=new Set();
@@ -7024,9 +7076,10 @@ function renderWeights(){
       <td>${r.kg ? r.kg+' kg' : '-'}</td>
       <td style="font-weight:700;color:${st?st.color:'var(--text-2)'}">${r.bmi||'-'}</td>
       <td>${bmiLabel}</td>
+      <td>${r.recWeight ? r.recWeight+' kg' : '-'}</td>
       <td style="display:flex;gap:4px;justify-content:center;align-items:center">
         <button class="del-btn" title="수정" onclick="openEditWeight(${i});event.stopPropagation()" style="background:rgba(14,143,163,.12);color:var(--teal);border-color:rgba(14,143,163,.25)">✏️</button>
-        <button class="del-btn" onclick="deleteWeight(${i})" title="삭제">×</button>
+        ${_isGF?`<button class="del-btn" onclick="deleteWeight(${i})" title="삭제">×</button>`:''}
       </td>
     </tr>`;
   }).join('');
@@ -10061,6 +10114,7 @@ function addRecord(){
     cancer:document.getElementById('f-cancer').value.trim(),
     nurse: document.getElementById('f-nurse').value.trim(),
     stage: document.getElementById('f-stage').value,
+    currentStage: document.getElementById('f-current-stage').value.trim(),
     give:  document.getElementById('f-give').value,
     collect:document.getElementById('f-collect').value,
     remPct:document.getElementById('f-rem-pct').value,
@@ -10096,7 +10150,7 @@ function addRecord(){
 }
 
 function clearForm(){
-  ['f-date','f-name','f-age','f-gender','f-cancer','f-nurse','f-stage','f-give','f-collect','f-group','f-xiaomi-guide',
+  ['f-date','f-name','f-age','f-gender','f-cancer','f-nurse','f-stage','f-current-stage','f-give','f-collect','f-group','f-xiaomi-guide',
    'f-rem-pct','f-rem-h','f-rem-m','f-light-pct','f-light-h','f-light-m','f-deep-pct','f-deep-h','f-deep-m',
    'f-awake-h','f-awake-m','f-awake-count','f-eff','f-total-h','f-total-m','f-nap-h','f-nap-m',
    'f-sleep-hr','f-sleep-hrv','f-sleep-o2','f-sleep-rr','f-sleep-onset','f-sleep-time','f-wake-time'].forEach(id=>{
@@ -10203,6 +10257,7 @@ function openEditRecord(idx) {
   fv('ef-cancer',r.cancer);
   fv('ef-nurse', r.nurse);
   fv('ef-stage', r.stage);
+  fv('ef-current-stage', r.currentStage);
   fv('ef-group', r.group);
   fv('ef-give',  r.give);
   fv('ef-collect',r.collect);
@@ -10258,6 +10313,7 @@ function saveEditRecord() {
     cancer:   gv('ef-cancer'),
     nurse:    gv('ef-nurse'),
     stage:    gvn('ef-stage'),
+    currentStage: gv('ef-current-stage'),
     group:    gvn('ef-group'),
     give:     gvn('ef-give'),
     collect:  gvn('ef-collect'),
@@ -10341,7 +10397,7 @@ function renderRecords(){
     .filter(({r})=>currentFilterNurse==='전체'||_getRecordNurse(r)===currentFilterNurse);
   badge.textContent = filtered.length+'건';
   if(filtered.length===0){
-    tbody.innerHTML=`<tr id="empty-record-row"><td colspan="20">
+    tbody.innerHTML=`<tr id="empty-record-row"><td colspan="21">
       <div class="empty-state">
         <div class="empty-icon">🌙</div>
         <div class="empty-msg">${currentFilterGroup==='전체'?'저장된 수면 기록이 없습니다':'이 폴더에 기록이 없습니다'}</div>
@@ -10374,6 +10430,7 @@ function renderRecords(){
       <td>${r.cancer||'-'}</td>
       <td>${r.nurse||'-'}</td>
       <td>${r.stage||'-'}</td>
+      <td>${r.currentStage||'-'}</td>
       <td>${r.give||'-'}</td>
       <td>${r.collect||'-'}</td>
       <td style="color:var(--teal)">${r.remPct||'-'}${r.remPct?'%':''}</td>
@@ -12380,6 +12437,7 @@ function saveEditWeight(){
   const height = gv('ewt-height');
   const bmi    = calcBmi(parseFloat(kg), parseFloat(height));
   const bmiStatus = bmi !== null ? getBmiStatus(bmi).label : '';
+  const recWeight = height ? calcRecWeight(parseFloat(height)) : null;
   const updated = {
     ...weightRecords[_editingWtIdx],
     date:      gv('ewt-date'),
@@ -12390,6 +12448,7 @@ function saveEditWeight(){
     height:    height||'',
     bmi:       bmi !== null ? bmi : '',
     bmiStatus,
+    recWeight: recWeight !== null ? recWeight : '',
   };
   if(!updated.date || !updated.name){ showToast('날짜와 고객명은 필수입니다.', true); return; }
   weightRecords[_editingWtIdx] = updated;

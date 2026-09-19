@@ -653,12 +653,13 @@ html.hm-readonly textarea:disabled {
 ═══════════════════════════════════════ */
 .slr-layout {
   display: grid;
-  grid-template-columns: 440px 1fr;
+  grid-template-columns: 400px minmax(0,760px);
   gap: 1.5rem;
-  padding: 1.5rem;
-  max-width: 1900px;
+  padding: 2rem 1.5rem;
+  max-width: 1220px;
   margin: 0 auto;
   align-items: start;
+  justify-content: center;
 }
 .slr-upload-box, .slr-preview-box {
   background: var(--surface);
@@ -675,19 +676,11 @@ html.hm-readonly textarea:disabled {
   cursor: pointer; margin-bottom: 1rem;
 }
 .slr-tpl-btn:hover { filter: brightness(.97); }
-.slr-dropzone {
-  border: 2px dashed var(--border); border-radius: 12px; padding: 1.8rem 1rem;
-  text-align: center; cursor: pointer; transition: .15s; color: var(--text-3);
-}
-.slr-dropzone:hover, .slr-dropzone.dragover { border-color: var(--teal); background: var(--teal-light); color: var(--teal); }
-.slr-dropzone-icon { font-size: 1.8rem; margin-bottom: .3rem; }
-.slr-dropzone-main { font-size: .85rem; font-weight: 600; }
 .slr-file-item {
   display: flex; align-items: center; justify-content: space-between;
   padding: .5rem .7rem; background: var(--surface-2); border-radius: 8px;
   margin-top: .5rem; font-size: .8rem; color: var(--text-1); gap: .5rem;
 }
-.slr-file-item button { background: none; border: none; color: var(--err); cursor: pointer; font-size: .95rem; line-height: 1; padding: 2px 4px; }
 .slr-empty { text-align: center; color: var(--text-3); padding: 5rem 1.5rem; font-size: .88rem; line-height: 1.6; }
 .slr-tabs { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: 1rem; }
 .slr-tab-btn {
@@ -3890,24 +3883,15 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 <section id="tab-sleepReport" class="tab-section">
   <div class="slr-layout">
     <div class="slr-upload-box">
-      <div class="slr-box-title">📊 수면레포트 — 엑셀 업로드</div>
-      <div class="slr-box-desc">고객별 수면·활동 데이터가 담긴 엑셀 파일을 업로드하세요. 파일 1개 = 고객 1명이며, 최대 10명까지 한 번에 분석할 수 있습니다.</div>
-      <button class="slr-tpl-btn" onclick="downloadSleepReportTemplate()">⬇ 업로드용 엑셀 템플릿 다운로드</button>
-      <div class="slr-dropzone" id="slr-dropzone"
-        onclick="document.getElementById('slr-file-input').click()"
-        ondragover="event.preventDefault(); this.classList.add('dragover')"
-        ondragleave="this.classList.remove('dragover')"
-        ondrop="event.preventDefault(); this.classList.remove('dragover'); handleSleepReportFiles(event.dataTransfer.files)">
-        <div class="slr-dropzone-icon">📂</div>
-        <div class="slr-dropzone-main">클릭하거나 파일을 끌어다 놓으세요</div>
-        <div class="slr-range-note">.xlsx 파일 · 최대 10개(고객 10명)</div>
-      </div>
-      <input type="file" id="slr-file-input" accept=".xlsx,.xls" multiple style="display:none" onchange="handleSleepReportFiles(this.files)">
+      <div class="slr-box-title">📊 수면레포트 — 데이터 불러오기</div>
+      <div class="slr-box-desc">전체 탭 "엑셀 내보내기"와 동일한 고객 데이터(수면·심박수·활동량·스트레스 등)를 그대로 불러와 고객별 수면 리듬 진단 레포트를 만듭니다.</div>
+      <button class="slr-tpl-btn" onclick="loadSlrFromAllData()">📥 전체데이터 엑셀 불러오기</button>
+      <div class="slr-range-note">전체 탭에 저장된 고객 전원의 데이터를 기준으로 불러옵니다.</div>
       <div id="slr-file-list"></div>
     </div>
     <div class="slr-preview-box">
       <div id="slr-preview-empty" class="slr-empty">
-        📊 왼쪽에서 고객별 엑셀 파일을 업로드하면<br>이곳에 수면 리듬 진단 레포트 미리보기가 표시됩니다.
+        📊 왼쪽의 "전체데이터 엑셀 불러오기" 버튼을 누르면<br>이곳에 고객별 수면 리듬 진단 레포트 미리보기가 표시됩니다.
       </div>
       <div id="slr-preview-content" style="display:none">
         <div class="slr-tabs" id="slr-customer-tabs"></div>
@@ -5096,7 +5080,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.02';
+const APP_VER = '7.04';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -13273,126 +13257,92 @@ const SLR_REF = {
   spo2:  {label:'SpO2',           min:95,  max:null, unit:'%',    dir:'higher'}
 };
 
-/* ── 엑셀 템플릿 다운로드 ── */
-function downloadSleepReportTemplate(){
-  const metaHeader = ['고객명','모니터링 시작일','모니터링 종료일','현재 단계','주요 고민(주호소)'];
-  const metaSample = ['홍길동','2026-09-08','2026-09-14','경구용 항호르몬제 · 경과관찰','불면'];
-  const dayHeader = ['날짜','요일','총수면시간(분)','깊은수면(%)','얕은수면(%)','렘수면(%)','각성횟수','수면효율(%)','낮잠(분)','입면잠복기(분)','취침시각','기상시각','수면중심박수(BPM)','수면중HRV(ms)','평균SpO2(%)','호흡수(회/분)','걸음수','활동시간(분)','칼로리(kcal)','활력점수'];
-  const wsData = [metaHeader, metaSample, [], dayHeader];
-  const wdKo = ['월','화','수','목','금','토','일'];
-  const base = new Date();
-  const monday = new Date(base);
-  const dow = base.getDay();
-  monday.setDate(base.getDate() - ((dow+6)%7));
-  for(let i=0;i<7;i++){
-    const d = new Date(monday); d.setDate(monday.getDate()+i);
-    wsData.push([d.toISOString().slice(0,10), wdKo[i], '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
-  }
-  const ws = XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols'] = dayHeader.map(h=>({wch: Math.max(9, h.length+2)}));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, '수면레포트데이터');
-  const buf = XLSX.write(wb, {bookType:'xlsx', type:'array'});
-  const blob = new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = '힐마루케어_수면레포트_업로드양식.xlsx';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
-  showToast('업로드용 엑셀 템플릿을 다운로드했습니다.');
-}
+/* ── 전체 탭 데이터로부터 수면레포트 불러오기 ──
+   "전체 탭 → 엑셀 내보내기"(exportAllExcel)와 동일한 고객별·요일별 병합 로직을
+   파일로 내보내지 않고 그대로 재사용해, 앱에 저장된 데이터로 바로 레포트를 만든다. */
+function loadSlrFromAllData(){
+  const liveSleep = (sleepRecords||[]).filter(r=>!r.deleted);
+  if(!liveSleep.length){ alert('전체 탭에 저장된 수면 기록이 없습니다. 먼저 수면 데이터를 입력해주세요.'); return; }
 
-/* ── 파일 업로드 처리 ── */
-async function handleSleepReportFiles(fileList){
-  const files = Array.from(fileList||[]).filter(f=>/\.xlsx?$/i.test(f.name));
-  if(!files.length) return;
-  if(_slrCustomers.length + files.length > 10){
-    alert('최대 10개(고객 10명)까지 업로드할 수 있습니다. 현재 '+_slrCustomers.length+'개 업로드됨.');
-    const inp=document.getElementById('slr-file-input'); if(inp) inp.value='';
-    return;
+  const pm = new Map();
+  const pk = (n,a,g)=> (n||'')+'||'+(a||'')+'||'+(g||'');
+  function getP(n,a,g,ex){
+    const k=pk(n,a,g);
+    if(!pm.has(k)) pm.set(k, Object.assign({name:n||'',age:a||'',gender:g||'',cancer:'',stage:'',currentStage:'',sleep:[],heart:[],weight:[],stress:[],act:[]}, ex));
+    const p=pm.get(k);
+    if(ex){ if(!p.cancer&&ex.cancer) p.cancer=ex.cancer; if(!p.stage&&ex.stage) p.stage=ex.stage; if(!p.currentStage&&ex.currentStage) p.currentStage=ex.currentStage; }
+    return p;
   }
-  for(const f of files){
-    try{
-      const customer = await parseSleepReportExcel(f);
-      _slrCustomers.push(customer);
-    }catch(err){
-      alert(err.message || String(err));
+  const notDel = arr => (arr||[]).filter(r=>!r.deleted);
+  notDel(sleepRecords).forEach(r=>{ getP(r.name,r.age,r.gender,{cancer:r.cancer,stage:r.stage,currentStage:r.currentStage}).sleep.push(r); });
+  notDel(heartRateRecords).forEach(r=>{ getP(r.name,r.age,r.gender).heart.push(r); });
+  notDel(weightRecords).forEach(r=>{ getP(r.name,r.age,r.gender).weight.push(r); });
+  notDel(stressRecords).forEach(r=>{ getP(r.name,r.age,r.gender).stress.push(r); });
+  notDel(activityRecords).forEach(r=>{ getP(r.name,r.age,r.gender).act.push(r); });
+
+  const TYPS=['sleep','heart','weight','stress','act'];
+  const num = v => { if(v===''||v===null||v===undefined) return null; const n=parseFloat(v); return isNaN(n)?null:n; };
+  const customers=[];
+  pm.forEach(function(p){
+    TYPS.forEach(function(t){ p[t].sort((a,b)=>(a.date||'')<(b.date||'')?-1:1); });
+    const mx = Math.max.apply(null, TYPS.map(function(t){ return p[t].length; }).concat(0));
+    if(mx===0) return;
+    const days=[];
+    for(let i=0;i<mx;i++){
+      const s=p.sleep[i]||null, h=p.heart[i]||null, wt=p.weight[i]||null, sv=p.stress[i]||null, ac=p.act[i]||null;
+      const dt = [s,h,wt,sv,ac].filter(Boolean).map(function(r){ return r.date||''; }).sort()[0]||'';
+      days.push({
+        date: dt,
+        weekday: _weekdayKo(dt),
+        tst: (s && s.total) ? parseSleepMin(s.total) : null,
+        deepPct: s ? num(s.deepPct) : null,
+        lightPct: s ? num(s.lightPct) : null,
+        remPct: s ? num(s.remPct) : null,
+        awakeCount: s ? num(s.awakeCount) : null,
+        eff: s ? num(s.eff) : null,
+        nap: s ? num(s.nap) : null,
+        sol: s ? num(s.sleepOnset) : null,
+        bedTime: s ? (s.sleepTime||'') : '',
+        wakeTime: s ? (s.wakeTime||'') : '',
+        hr: s ? num(s.sleepHr) : null,
+        hrv: s ? num(s.sleepHrv) : null,
+        spo2: s ? num(s.sleepO2) : null,
+        rr: s ? num(s.sleepRr) : null,
+        steps: ac ? num(ac.stepsActual) : null,
+        activityMin: ac ? num(ac.hiActual) : null,
+        cal: ac ? num(ac.calActual) : null,
+        vitality: sv ? num(sv.vital) : null
+      });
     }
-  }
-  const inp=document.getElementById('slr-file-input'); if(inp) inp.value='';
-  renderSlrFileList();
-  if(_slrCustomers.length){ _slrActiveIdx = _slrCustomers.length-1; }
-  renderSlrPreview();
-}
-
-function parseSleepReportExcel(file){
-  return new Promise((resolve, reject)=>{
-    const reader = new FileReader();
-    reader.onload = (e)=>{
-      try{
-        const data = new Uint8Array(e.target.result);
-        const wb = XLSX.read(data, {type:'array'});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:''});
-
-        let metaHeaderIdx = -1;
-        for(let i=0;i<Math.min(rows.length,4);i++){
-          if(rows[i] && String(rows[i][0]||'').trim()==='고객명'){ metaHeaderIdx=i; break; }
-        }
-        if(metaHeaderIdx===-1) metaHeaderIdx = 0;
-        const metaVals = rows[metaHeaderIdx+1]||[];
-        const meta = {
-          name:      String(metaVals[0]||'').trim(),
-          startDate: String(metaVals[1]||'').trim(),
-          endDate:   String(metaVals[2]||'').trim(),
-          stage:     String(metaVals[3]||'').trim(),
-          complaint: String(metaVals[4]||'').trim()
-        };
-
-        let headerIdx = -1;
-        for(let i=metaHeaderIdx;i<Math.min(rows.length, metaHeaderIdx+8);i++){
-          if(rows[i] && String(rows[i][0]||'').trim()==='날짜'){ headerIdx=i; break; }
-        }
-        if(headerIdx===-1) headerIdx = metaHeaderIdx+3;
-
-        const num = v => { if(v===''||v===null||v===undefined) return null; const n=parseFloat(v); return isNaN(n)?null:n; };
-        const dayRows = rows.slice(headerIdx+1).filter(r=>r && String(r[0]||'').trim());
-        const days = dayRows.slice(0,7).map(r=>({
-          date: String(r[0]||'').trim(),
-          weekday: String(r[1]||'').trim(),
-          tst: num(r[2]), deepPct: num(r[3]), lightPct: num(r[4]), remPct: num(r[5]),
-          awakeCount: num(r[6]), eff: num(r[7]), nap: num(r[8]), sol: num(r[9]),
-          bedTime: String(r[10]||'').trim(), wakeTime: String(r[11]||'').trim(),
-          hr: num(r[12]), hrv: num(r[13]), spo2: num(r[14]), rr: num(r[15]),
-          steps: num(r[16]), activityMin: num(r[17]), cal: num(r[18]), vitality: num(r[19])
-        }));
-
-        if(!meta.name){ reject(new Error('"'+file.name+'" — 고객명을 찾을 수 없습니다. 업로드 템플릿 형식을 확인해주세요.')); return; }
-        if(!days.length){ reject(new Error('"'+file.name+'" — 요일별 데이터를 찾을 수 없습니다. 업로드 템플릿 형식을 확인해주세요.')); return; }
-        resolve({ fileName: file.name, meta, days });
-      }catch(err){
-        reject(new Error('"'+file.name+'" 파일을 읽는 중 오류가 발생했습니다: ' + (err.message||err)));
-      }
-    };
-    reader.onerror = ()=>reject(new Error('"'+file.name+'" 파일을 읽을 수 없습니다.'));
-    reader.readAsArrayBuffer(file);
+    const dates = days.map(function(d){ return d.date; }).filter(Boolean).sort();
+    const prof = (typeof profileRecords!=='undefined' && profileRecords) ? profileRecords.find(function(pr){ return (pr.name||'').trim()===p.name; }) : null;
+    customers.push({
+      fileName: p.name+'.xlsx',
+      meta: {
+        name: p.name,
+        startDate: dates[0]||'',
+        endDate: dates[dates.length-1]||'',
+        stage: p.currentStage||'',
+        complaint: (prof && prof.symptoms) || ''
+      },
+      days: days
+    });
   });
-}
 
-function removeSlrFile(idx){
-  _slrCustomers.splice(idx,1);
-  if(_slrActiveIdx>=_slrCustomers.length) _slrActiveIdx = Math.max(0,_slrCustomers.length-1);
+  if(!customers.length){ alert('불러올 수 있는 고객 데이터가 없습니다.'); return; }
+  _slrCustomers = customers;
+  _slrActiveIdx = 0;
   renderSlrFileList();
   renderSlrPreview();
+  showToast('전체 탭 데이터에서 고객 '+customers.length+'명의 수면레포트를 불러왔습니다.');
 }
 
 function renderSlrFileList(){
   const box = document.getElementById('slr-file-list');
   if(!box) return;
-  box.innerHTML = _slrCustomers.map((c,i)=>
-    '<div class="slr-file-item"><span>📄 '+(c.meta.name||c.fileName)+' <span style="color:var(--text-3)">('+c.days.length+'일)</span></span>'+
-    '<button onclick="removeSlrFile('+i+')" title="삭제">✕</button></div>'
-  ).join('');
+  box.innerHTML = _slrCustomers.map(function(c){
+    return '<div class="slr-file-item"><span>👤 '+(c.meta.name||c.fileName)+' <span style="color:var(--text-3)">('+c.days.length+'일)</span></span></div>';
+  }).join('');
 }
 
 /* ── 통계 유틸 ── */
@@ -13634,19 +13584,10 @@ function _slrBuildReportHtml(c, s, labels){
     s.sol.avg!=null && s.sol.avg>20 ? '취침 30~60분 전부터 조명을 낮추고 화면 사용을 줄이는 것이 잠드는 데 걸리는 시간을 줄이는 데 도움이 됩니다. 목표: 20분 이내.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
   ));
 
-  /* 06 각성횟수 */
-  P.push(_slrMetricPage('06','잠든 뒤 밤사이 깨어난 횟수','각성횟수(Awakenings)는 수면 중 일정 시간 이상 깨어난 것으로 기록된 구간의 수입니다.',
-    '각성횟수', _slrRoundTxt(s.awake.avg,1)+'회/밤',
-    '이번 주 범위: '+_slrRoundTxt(s.awake.min,0)+'~'+_slrRoundTxt(s.awake.max,0)+'회 · 참고범위 2회 이하',
-    'slr-cv-awake',
-    '이번 주 평균은 '+_slrRoundTxt(s.awake.avg,1)+'회로 참고범위(2회 이하) 대비 '+_slrRefCompare(SLR_REF.awake,s.awake.avg)+'입니다.',
-    s.awake.avg!=null && s.awake.avg>2 ? '밤사이 깨는 횟수가 많은 날이 이어질 때는 카페인·알코올 섭취 시각을 취침 6시간 이전으로 당기고, 깼을 때 시계를 보지 않는 것이 재입면에 도움이 됩니다. 목표: 2회 이하.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
-  ));
-
-  /* 07 통합 상관관계 */
+  /* 06 통합 상관관계 (기존 07에서 이동) */
   const rTxt = (v)=> v==null ? '데이터 부족' : (v>0?'+':'')+v;
   P.push(
-    '<div class="slr-page"><div class="slr-page-num">07</div>'+
+    '<div class="slr-page"><div class="slr-page-num">06</div>'+
     '<div class="slr-page-title">세 지표는 따로 움직이지 않습니다</div>'+
     '<div class="slr-page-desc">입면잠복기·수면효율·각성횟수·활동시간은 서로 연결되어 있습니다. 상관계수(r)의 절대값이 클수록 두 값이 강하게 함께 움직인다는 뜻입니다.</div>'+
     '<div class="slr-anomaly-cards">'+
@@ -13659,6 +13600,15 @@ function _slrBuildReportHtml(c, s, labels){
       (s.worstIdx>=0 ? ('이번 주 수면효율이 가장 낮았던 날은 '+(labels[s.worstIdx]||'')+'요일로, 입면잠복기·각성횟수·활동시간을 함께 확인해볼 필요가 있습니다.') : '')+
     '</div></div>'
   );
+
+  /* 07 각성횟수 (기존 06에서 이동) */
+  P.push(_slrMetricPage('07','잠든 뒤 밤사이 깨어난 횟수','각성횟수(Awakenings)는 수면 중 일정 시간 이상 깨어난 것으로 기록된 구간의 수입니다.',
+    '각성횟수', _slrRoundTxt(s.awake.avg,1)+'회/밤',
+    '이번 주 범위: '+_slrRoundTxt(s.awake.min,0)+'~'+_slrRoundTxt(s.awake.max,0)+'회 · 참고범위 2회 이하',
+    'slr-cv-awake',
+    '이번 주 평균은 '+_slrRoundTxt(s.awake.avg,1)+'회로 참고범위(2회 이하) 대비 '+_slrRefCompare(SLR_REF.awake,s.awake.avg)+'입니다.',
+    s.awake.avg!=null && s.awake.avg>2 ? '밤사이 깨는 횟수가 많은 날이 이어질 때는 카페인·알코올 섭취 시각을 취침 6시간 이전으로 당기고, 깼을 때 시계를 보지 않는 것이 재입면에 도움이 됩니다. 목표: 2회 이하.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
+  ));
 
   /* 08 심박수 */
   P.push(_slrMetricPage('08','잠자는 동안 심장이 뛴 속도','수면 중 심박수는 수면 단계 동안 측정된 심박수의 평균입니다.',

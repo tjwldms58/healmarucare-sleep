@@ -712,11 +712,39 @@ html.hm-readonly textarea:disabled {
 .slr-chart-box canvas { width: 100%; height: auto; display: block; }
 .slr-insight-box { background: var(--teal-light); color: var(--text-1); border-radius: 9px; padding: .8rem .9rem; font-size: .82rem; line-height: 1.6; margin-bottom: .6rem; }
 .slr-suggest-box { background: var(--warn-bg); color: var(--text-1); border-radius: 9px; padding: .8rem .9rem; font-size: .82rem; line-height: 1.6; }
-.slr-def-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: .7rem; }
-.slr-def-card { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: .7rem .8rem; }
+.slr-combo-title { font-size: .82rem; font-weight: 800; color: var(--text-1); margin-bottom: .3rem; }
+.slr-combo-subtitle { font-size: .7rem; font-weight: 600; color: var(--text-3); }
+.slr-combo-legend { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .68rem; color: var(--text-2); margin-bottom: .5rem; }
+.slr-combo-legend span { display: inline-flex; align-items: center; gap: .3rem; }
+.slr-legend-chip { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; }
+.slr-legend-line { display: inline-block; width: .9rem; height: 2px; }
+.slr-legend-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: #C83535; }
+.slr-16-insights { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: .8rem 0; }
+.slr-16-insights .slr-insight-box { margin-bottom: 0; border-left: 3px solid var(--teal); }
+.slr-insight-warn { background: var(--warn-bg) !important; border-left: 3px solid var(--warn); }
+.slr-page-title-row { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+.slr-page-title-row .slr-page-title { margin-bottom: 0; }
+.slr-badge-pill { flex-shrink: 0; background: var(--err-bg); color: var(--err); font-size: .68rem; font-weight: 700; padding: .3rem .6rem; border-radius: 20px; white-space: nowrap; }
+.slr-anomaly-card .slr-def-icon, .slr-anomaly-card svg { display: block; margin: .5rem auto 0; }
+.slr-integrated-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .9rem 1rem; }
+.slr-integrated-title { font-weight: 800; font-size: .8rem; color: var(--text-2); margin-bottom: .6rem; }
+.slr-integrated-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 1rem; }
+.slr-integrated-label { font-size: .7rem; color: var(--text-3); margin-bottom: .25rem; }
+.slr-integrated-value { font-size: 1.1rem; font-weight: 800; color: var(--text-1); }
+.slr-tierbar-row { display: flex; align-items: center; gap: .4rem; margin-top: .3rem; }
+.slr-tierbar-label { font-size: .68rem; color: var(--text-3); width: 2.6rem; flex-shrink: 0; }
+.slr-tierbar-track { flex: 1; height: .5rem; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
+.slr-tierbar-fill { height: 100%; background: var(--teal); border-radius: 6px; }
+.slr-tierbar-val { font-size: .68rem; font-weight: 700; color: var(--text-2); width: 2.4rem; text-align: right; flex-shrink: 0; }
+.slr-def-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: .7rem; margin-bottom: .9rem; }
+.slr-def-card { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: .7rem .8rem; position: relative; }
+.slr-def-num { display:inline-flex; align-items:center; justify-content:center; width:1.15rem; height:1.15rem; border-radius:50%; background:var(--teal); color:#fff; font-size:.62rem; font-weight:800; margin-bottom:.3rem; }
 .slr-def-title { font-weight: 800; font-size: .85rem; color: var(--text-1); }
 .slr-def-eng { font-size: .68rem; color: var(--text-3); margin-bottom: .3rem; }
+.slr-def-icon-wrap { display:flex; align-items:center; justify-content:center; margin: .35rem 0; min-height: 40px; }
 .slr-def-desc { font-size: .76rem; color: var(--text-2); line-height: 1.5; }
+.slr-def-section { font-size: .74rem; font-weight: 700; color: var(--text-3); margin: .3rem 0 .5rem; }
+.slr-def-summary { display:flex; align-items:center; font-size: .74rem; color: var(--text-2); line-height: 1.5; background: var(--surface-2); word-break: keep-all; }
 .slr-cover { background: var(--navy); color: #fff; border-radius: 12px; padding: 2rem 1.6rem; }
 .slr-cover-eyebrow { font-size: .7rem; letter-spacing: .1em; color: var(--mint); font-weight: 700; margin-bottom: .6rem; }
 .slr-cover-title { font-size: 1.5rem; font-weight: 800; line-height: 1.4; margin-bottom: .8rem; }
@@ -740,6 +768,13 @@ html.hm-readonly textarea:disabled {
 .slr-anomaly-card { background: var(--surface); border-radius: 10px; padding: .8rem; text-align: center; }
 .slr-anomaly-metric { font-size: .74rem; color: var(--text-3); }
 .slr-anomaly-value { font-size: 1.3rem; font-weight: 800; color: var(--text-1); }
+.slr-stat-tiles { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .7rem; margin-bottom: .8rem; }
+.slr-stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .7rem .9rem; }
+.slr-stat-tile-label { font-size: .68rem; color: var(--text-3); margin-bottom: .25rem; }
+.slr-stat-tile-value { font-size: 1rem; font-weight: 800; color: var(--text-1); }
+.slr-manager-box { background: var(--teal-light); border-radius: 10px; padding: .8rem .9rem; margin-bottom: .9rem; }
+.slr-manager-label { font-size: .68rem; font-weight: 700; color: var(--teal); margin-bottom: .3rem; }
+.slr-manager-text { font-size: .82rem; color: var(--text-1); line-height: 1.6; font-style: italic; }
 .slr-routine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-bottom: .9rem; }
 .slr-routine-card { background: var(--surface); border-radius: 10px; padding: .8rem 1rem; }
 .slr-routine-num { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--warn); color: #fff; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; margin-right: .4rem; }
@@ -751,7 +786,7 @@ html.hm-readonly textarea:disabled {
 @media (max-width: 900px) {
   .slr-layout { grid-template-columns: 1fr; }
   .slr-upload-box { position: static; }
-  .slr-nightcards, .slr-anomaly-cards, .slr-routine-grid { grid-template-columns: 1fr; }
+  .slr-nightcards, .slr-anomaly-cards, .slr-routine-grid, .slr-stat-tiles, .slr-integrated-grid, .slr-16-insights, .slr-def-grid { grid-template-columns: 1fr; }
 }
 
 /* ═══════════════════════════════════════
@@ -5081,7 +5116,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.05';
+const APP_VER = '7.07';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -13396,6 +13431,12 @@ function _slrMinToHm(mins){
   const h = Math.floor(mins/60), m = Math.round(mins%60);
   return h+'시간 '+m+'분';
 }
+function _slrMinShort(mins){
+  if(mins==null||isNaN(mins)) return '-';
+  const mm = Math.max(0,Math.round(mins));
+  const h = Math.floor(mm/60), m = mm%60;
+  return h>0 ? (h+'h'+m+'m') : (m+'m');
+}
 function _slrRoundTxt(v,d){
   if(v==null||isNaN(v)) return '-';
   return d ? v.toFixed(d) : String(Math.round(v));
@@ -13418,6 +13459,12 @@ function _slrRefCompare(ref, avg){
   if(avg<ref.min) return _slrRoundTxt(ref.min-avg,0)+ref.unit+' 낮음';
   if(avg>ref.max) return _slrRoundTxt(avg-ref.max,0)+ref.unit+' 높음';
   return '범위 안';
+}
+function _slrInRange(ref, avg){
+  if(avg==null) return null;
+  if(ref.dir==='higher') return avg>=ref.min;
+  if(ref.dir==='lower') return avg<=ref.max;
+  return avg>=ref.min && avg<=ref.max;
 }
 
 /* ── 통계 계산 ── */
@@ -13474,6 +13521,10 @@ function computeSlrStats(customer){
 
   s.deepMin=deepMin; s.lightMin=lightMin; s.remMin=remMin;
   s.bedMinArr=bedMin; s.wakeMinArr=wakeMin;
+  /* 침상시간(TIB) = 기상시각 - 취침시각, 입면 후 각성(WASO) = TIB - 입면잠복기 - 총수면시간 */
+  const tibMin = days.map((d,i)=> (wakeMin[i]!=null && bedMin[i]!=null) ? (wakeMin[i]+1440-bedMin[i]) : null);
+  const wasoMin = tibMin.map((tib,i)=> (tib!=null && sol[i]!=null && tst[i]!=null) ? Math.max(0, tib-sol[i]-tst[i]) : null);
+  s.tibMinArr = tibMin; s.wasoMinArr = wasoMin;
   s.n = n;
   return s;
 }
@@ -13501,6 +13552,85 @@ function renderSlrPreview(){
 
   document.getElementById('slr-report-body').innerHTML = _slrBuildReportHtml(c, s, labels);
   requestAnimationFrame(()=>{ _slrDrawAllCharts(c, s, labels); });
+}
+
+function _slrDefIcon(kind, s, c){
+  const W=88,H=40;
+  function svg(inner){ return '<svg class="slr-def-icon" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'+inner+'</svg>'; }
+  function poly(arr,color){
+    const vals = (arr||[]).filter(v=>v!=null && !isNaN(v));
+    if(!vals.length) return '';
+    const mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+    const rng = (mx-mn)||1;
+    const n = arr.length;
+    const pts = arr.map((v,i)=>{
+      const x = 4 + i*((W-8)/Math.max(1,n-1));
+      const y = (v==null||isNaN(v)) ? H/2 : (H-6) - ((v-mn)/rng)*(H-12);
+      return x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    return '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>';
+  }
+  if(kind==='tst'){
+    const d=s.deepPct.avg||0, l=s.lightPct.avg||0, r=s.remPct.avg||0;
+    const tot = (d+l+r)||1;
+    const dw=(d/tot)*(W-8), lw=(l/tot)*(W-8), rw=(r/tot)*(W-8);
+    return svg(
+      '<rect x="4" y="15" width="'+(W-8)+'" height="10" rx="3" fill="#EEF3F6"/>'+
+      '<rect x="4" y="15" width="'+dw.toFixed(1)+'" height="10" fill="#0D2246"/>'+
+      '<rect x="'+(4+dw).toFixed(1)+'" y="15" width="'+lw.toFixed(1)+'" height="10" fill="#5CC8B8"/>'+
+      '<rect x="'+(4+dw+lw).toFixed(1)+'" y="15" width="'+rw.toFixed(1)+'" height="10" rx="3" fill="#B892D9"/>'
+    );
+  }
+  if(kind==='eff'){
+    const pct = Math.max(0,Math.min(100, s.eff.avg||0));
+    return svg(
+      '<rect x="4" y="17" width="'+(W-8)+'" height="8" rx="4" fill="#EEF3F6"/>'+
+      '<rect x="4" y="17" width="'+((pct/100)*(W-8)).toFixed(1)+'" height="8" rx="4" fill="#0E8FA3"/>'
+    );
+  }
+  if(kind==='sol'){
+    return svg(
+      '<circle cx="13" cy="20" r="9" fill="none" stroke="#3A5A78" stroke-width="1.6"/>'+
+      '<line x1="13" y1="20" x2="13" y2="14" stroke="#3A5A78" stroke-width="1.4" stroke-linecap="round"/>'+
+      '<line x1="13" y1="20" x2="17" y2="21" stroke="#3A5A78" stroke-width="1.4" stroke-linecap="round"/>'+
+      '<line x1="25" y1="20" x2="70" y2="20" stroke="#9BB4C4" stroke-width="1.2" stroke-dasharray="2,3"/>'+
+      '<text x="78" y="24" font-size="11" fill="#3A5A78" font-weight="700">Z</text>'
+    );
+  }
+  if(kind==='awake'){ return svg(poly((c.days||[]).map(d=>d.awakeCount), '#B8860B')); }
+  if(kind==='hr'){ return svg(poly((c.days||[]).map(d=>d.hr), '#C83535')); }
+  if(kind==='rr'){ return svg(poly((c.days||[]).map(d=>d.rr), '#5B8DEF')); }
+  if(kind==='spo2'){
+    const pct = Math.max(0,Math.min(100, s.spo2.avg||0));
+    const r=14, circ=2*Math.PI*r;
+    return svg(
+      '<g transform="translate(20,20)">'+
+      '<circle r="'+r+'" fill="none" stroke="#EEF3F6" stroke-width="4"/>'+
+      '<circle r="'+r+'" fill="none" stroke="#29B6F6" stroke-width="4" stroke-linecap="round" '+
+        'stroke-dasharray="'+((pct/100)*circ).toFixed(1)+' '+circ.toFixed(1)+'" transform="rotate(-90)"/>'+
+      '<text x="0" y="4" font-size="9" font-weight="700" fill="#3A5A78" text-anchor="middle">'+Math.round(pct)+'%</text>'+
+      '</g>'
+    );
+  }
+  return '';
+}
+
+function _slrMiniWeekBars(arr, labels, hiIdx, color){
+  const W=140,H=34, n=(arr&&arr.length)||7;
+  const gap=(W-8)/n, bw=gap*0.6;
+  const vals = (arr||[]).filter(v=>v!=null && !isNaN(v));
+  const mx = vals.length? Math.max.apply(null,vals) : 1;
+  const mn = 0;
+  const rng = (mx-mn)||1;
+  let bars='';
+  (arr||[]).forEach(function(v,i){
+    const h = (v==null||isNaN(v)) ? 2 : Math.max(2, ((v-mn)/rng)*(H-14));
+    const x = 4+i*gap+(gap-bw)/2;
+    const y = H-12-h;
+    bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="1.5" fill="'+(i===hiIdx?color:'#E3EEF3')+'"/>';
+  });
+  const lbls = (labels||[]).map(function(lb,i){ return '<text x="'+(4+i*gap+gap/2).toFixed(1)+'" y="'+(H-2)+'" font-size="6" text-anchor="middle" fill="#9BB4C4">'+lb+'</text>'; }).join('');
+  return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'+bars+lbls+'</svg>';
 }
 
 function _slrMetricPage(num,title,desc,heroLabel,heroVal,rangeNote,canvasId,insightHtml,suggestHtml){
@@ -13537,19 +13667,29 @@ function _slrBuildReportHtml(c, s, labels){
 
   /* 02 지표 정의 */
   const defs = [
-    ['총수면시간','Total Sleep Time','깊은수면·얕은수면·렘수면 세 구간을 합친, 실제로 잠들어 있던 시간의 총합.'],
-    ['수면효율','Sleep Efficiency','침대에 누운 시간(TIB) 대비 실제로 잠든 시간의 비율. 참고범위 85% 이상.'],
-    ['입면잠복기','Sleep Onset Latency','불을 끄고 누운 뒤 실제로 잠들기까지 걸린 시간. 참고범위 20분 이내.'],
-    ['각성횟수','Number of Awakenings','잠든 후 밤사이 깨어난 것으로 분류된 횟수. 참고범위 2회 이하.'],
-    ['수면 중 심박수','Heart Rate during Sleep','수면 중 평균 심박수. 참고범위 45~70bpm.'],
-    ['호흡수','Respiratory Rate','수면 중 분당 호흡 횟수. 참고범위 12~20회/분.'],
-    ['SpO2','혈중 산소포화도','수면 중 혈액의 산소포화도. 참고범위 95% 이상.']
+    ['01','총수면시간','Total Sleep Time','깊은수면·얕은수면·렘수면 세 구간을 합친, 실제로 잠들어 있던 시간의 총합.','tst'],
+    ['02','수면효율','Sleep Efficiency','침대에 누운 시간(TIB) 대비 실제로 잠든 시간의 비율. 참고범위 85% 이상.','eff'],
+    ['03','입면잠복기','Sleep Onset Latency','불을 끄고 누운 뒤 실제로 잠들기까지 걸린 시간. 참고범위 20분 이내.','sol'],
+    ['04','각성횟수','Number of Awakenings','잠든 후 밤사이 깨어난 것으로 분류된 횟수. 참고범위 2회 이하.','awake'],
+    ['05','수면 중 심박수','Heart Rate during Sleep','수면 중 평균 심박수. 참고범위 45~70bpm.','hr'],
+    ['06','호흡수','Respiratory Rate','수면 중 분당 호흡 횟수. 참고범위 12~20회/분.','rr'],
+    ['07','SpO2','혈중 산소포화도','수면 중 혈액의 산소포화도. 참고범위 95% 이상.','spo2']
   ];
+  function defCard(d){
+    return '<div class="slr-def-card"><div class="slr-def-num">'+d[0]+'</div><div class="slr-def-title">'+d[1]+'</div>'+
+      '<div class="slr-def-eng">'+d[2]+'</div>'+
+      '<div class="slr-def-icon-wrap">'+_slrDefIcon(d[4],s,c)+'</div>'+
+      '<div class="slr-def-desc">'+d[3]+'</div></div>';
+  }
   P.push(
     '<div class="slr-page"><div class="slr-page-num">02</div>'+
     '<div class="slr-page-title">지표를 다시 정의합니다</div>'+
-    '<div class="slr-page-desc">일반적인 웰니스 지표 대신, 불면 진단에 실제로 쓰이는 6가지 지표로 이 레포트를 구성했습니다.</div>'+
-    '<div class="slr-def-grid">'+defs.map(d=>'<div class="slr-def-card"><div class="slr-def-title">'+d[0]+'</div><div class="slr-def-eng">'+d[1]+'</div><div class="slr-def-desc">'+d[2]+'</div></div>').join('')+
+    '<div class="slr-page-desc">일반적인 웰니스 지표 대신, 불면 진단에 실제로 쓰이는 7가지 지표로 이 레포트를 구성했습니다. 각 지표는 "잠을 잘 잤는가"가 아니라 "왜 그 잠이 회복이 되지 않았는가"에 답하기 위한 것입니다.</div>'+
+    '<div class="slr-def-section">수면의 구조 — 01~04</div>'+
+    '<div class="slr-def-grid">'+defs.slice(0,4).map(defCard).join('')+'</div>'+
+    '<div class="slr-def-section">수면 중 신체 반응 — 05~07</div>'+
+    '<div class="slr-def-grid">'+defs.slice(4).map(defCard).join('')+
+      '<div class="slr-def-card slr-def-summary">01~04는 \'수면의 구조\'를, 05~07은 \'수면 중 신체 반응\'을 나타냅니다. 이 리포트는 각 지표를 개별 판정으로 나열하는 대신, 지표들이 서로 어떤 값과 어떤 값으로부터 계산되고 함께 어떻게 움직이는지를 실제 데이터로 확인해 보여줍니다.</div>'+
     '</div></div>'
   );
 
@@ -13587,19 +13727,47 @@ function _slrBuildReportHtml(c, s, labels){
 
   /* 06 통합 상관관계 (기존 07에서 이동) */
   const rTxt = (v)=> v==null ? '데이터 부족' : (v>0?'+':'')+v;
+  const tibAvg06 = slrAvg(s.tibMinArr);
   P.push(
     '<div class="slr-page"><div class="slr-page-num">06</div>'+
     '<div class="slr-page-title">세 지표는 따로 움직이지 않습니다</div>'+
-    '<div class="slr-page-desc">입면잠복기·수면효율·각성횟수·활동시간은 서로 연결되어 있습니다. 상관계수(r)의 절대값이 클수록 두 값이 강하게 함께 움직인다는 뜻입니다.</div>'+
-    '<div class="slr-anomaly-cards">'+
-      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (입면잠복기 ↔ 수면효율)</div><div class="slr-anomaly-value">'+rTxt(s.r.solEff)+'</div></div>'+
-      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 수면효율)</div><div class="slr-anomaly-value">'+rTxt(s.r.actEff)+'</div></div>'+
-      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 입면잠복기)</div><div class="slr-anomaly-value">'+rTxt(s.r.actSol)+'</div></div>'+
+    '<div class="slr-page-desc">총수면시간(03p)·수면효율(04p)·입면잠복기(05p)·각성횟수(07p)는 하나의 계산식으로 연결되어 있습니다. 침상시간(TIB) = 입면잠복기 + 총수면시간 + 입면 후 각성(WASO), 수면효율(SE) = 총수면시간 ÷ TIB × 100. 입면잠복기가 길어지거나 각성이 잦아지면 같은 TIB 안에서 총수면시간 비중이 줄어 SE도 함께 낮아집니다.</div>'+
+    '<div class="slr-stat-tiles">'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 침상시간(TIB)</div><div class="slr-stat-tile-value">'+_slrMinToHm(tibAvg06)+'</div></div>'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 수면효율(04p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt(s.eff.avg,0)+'%</div></div>'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 각성횟수(07p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt(s.awake.avg,1)+'회</div></div>'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">r (입면잠복기 ↔ 수면효율)</div><div class="slr-stat-tile-value">'+rTxt(s.r.solEff)+'</div></div>'+
     '</div>'+
-    '<div class="slr-insight-box" style="margin-top:.8rem">'+
+    '<div class="slr-combo-title">침상시간 구성·수면효율·각성횟수 — 한 그래프로 함께 보기</div>'+
+    '<div class="slr-combo-legend">'+
+      '<span><i class="slr-legend-chip" style="background:#E8B368"></i>입면잠복기(막대)</span>'+
+      '<span><i class="slr-legend-chip" style="background:#0E8FA3"></i>총수면시간(막대)</span>'+
+      '<span><i class="slr-legend-chip" style="background:#F2994A"></i>입면 후 각성(막대)</span>'+
+      '<span><i class="slr-legend-line" style="background:#0D2246"></i>수면효율 SE%(선·오른쪽 축)</span>'+
+      '<span><i class="slr-legend-dot"></i>각성횟수(점선·점 위 숫자로 표기)</span>'+
+    '</div>'+
+    '<div class="slr-chart-box"><canvas id="slr-cv-tibcombo" width="680" height="175"></canvas></div>'+
+    '<div class="slr-range-note">막대 = 침상시간(TIB) 구성(왼쪽 축, 시간) · 실선 = 수면효율 SE%(오른쪽 축) · 점선 = 각성횟수(점 위 숫자로 표기, 축 없이 겹쳐보기)</div>'+
+    '<div class="slr-combo-title" style="margin-top:.5rem">활동시간·입면잠복기·수면효율 — 세 값이 함께 움직이는지 <span class="slr-combo-subtitle">(13p·05p·04p 데이터 통합)</span></div>'+
+    '<div class="slr-combo-legend">'+
+      '<span><i class="slr-legend-chip" style="background:#8FD1BE"></i>활동시간(막대·왼쪽 축)</span>'+
+      '<span><i class="slr-legend-line" style="background:#0D2246"></i>수면효율 SE%(선·오른쪽 축)</span>'+
+      '<span><i class="slr-legend-dot" style="background:#C07820"></i>입면잠복기(점선·점 위 분으로 표기)</span>'+
+    '</div>'+
+    '<div class="slr-chart-box"><canvas id="slr-cv-actcombo" width="680" height="175"></canvas></div>'+
+    '<div class="slr-range-note">막대 = 활동시간(왼쪽 축) · 실선 = 수면효율 SE%(오른쪽 축) · 점선 = 입면잠복기(점 위 분으로 표기)</div>'+
+    '<div class="slr-anomaly-cards">'+
+      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 입면잠복기)</div><div class="slr-anomaly-value">'+rTxt(s.r.actSol)+'</div></div>'+
+      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 수면효율)</div><div class="slr-anomaly-value">'+rTxt(s.r.actEff)+'</div></div>'+
+      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (입면잠복기 ↔ 수면효율, 05p·04p)</div><div class="slr-anomaly-value">'+rTxt(s.r.solEff)+'</div></div>'+
+    '</div>'+
+    '<div class="slr-range-note">세 값이 서로 다른 데이터(활동량·수면단계 센서)에서 나왔지만, 상관계수가 함께 움직이는지를 보여줍니다.</div>'+
+    '<div class="slr-insight-box" style="margin-top:.5rem">'+
       (s.actEffSlopePer10!=null ? ('활동시간 10분당 수면효율 변화는 약 '+(s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p로 추정됩니다. ') : '')+
       (s.worstIdx>=0 ? ('이번 주 수면효율이 가장 낮았던 날은 '+(labels[s.worstIdx]||'')+'요일로, 입면잠복기·각성횟수·활동시간을 함께 확인해볼 필요가 있습니다.') : '')+
-    '</div></div>'
+    '</div>'+
+    '<div class="slr-suggest-box"><b>제안: 세 지표로 원인 위치 구분하기</b><br>입면잠복기·각성횟수가 함께 높은 날은 "잠들기 어려움"에 먼저 대응하고(05p 이완 루틴), 입면잠복기는 정상인데 각성횟수만 높은 날은 "자주 깨어남" 쪽 요인(07p 각성 유발 요인 조정)을 먼저 살펴보는 것이 더 효율적입니다.</div>'+
+    '</div>'
   );
 
   /* 07 각성횟수 (기존 06에서 이동) */
@@ -13714,6 +13882,29 @@ function _slrBuildReportHtml(c, s, labels){
     ['eff', s.eff.avg], ['sol', s.sol.avg], ['awake', s.awake.avg],
     ['hr', s.hr.avg], ['rr', s.rr.avg], ['spo2', s.spo2.avg]
   ];
+  const structKeys = ['eff','sol','awake'], cardioKeys = ['hr','rr','spo2'];
+  const structOk = structKeys.filter(k=>_slrInRange(SLR_REF[k], s[k].avg)===true).length;
+  const structKnown = structKeys.filter(k=>_slrInRange(SLR_REF[k], s[k].avg)!=null).length;
+  const cardioOk = cardioKeys.filter(k=>_slrInRange(SLR_REF[k], s[k].avg)===true).length;
+  const cardioKnown = cardioKeys.filter(k=>_slrInRange(SLR_REF[k], s[k].avg)!=null).length;
+  function actTiers(cc){
+    const rows = cc.days.map(d=>({act:d.activityMin, eff:d.eff})).filter(r=>r.act!=null && r.eff!=null);
+    if(rows.length<3) return null;
+    rows.sort((a,b)=>a.act-b.act);
+    const third = Math.max(1,Math.ceil(rows.length/3));
+    const lo = rows.slice(0, third), hi = rows.slice(Math.max(third,rows.length-third));
+    const mid = rows.slice(third, Math.max(third,rows.length-third));
+    const avgEff = arr => arr.length? arr.reduce((a,r)=>a+r.eff,0)/arr.length : null;
+    return { lo: avgEff(lo), mid: avgEff(mid.length?mid:rows), hi: avgEff(hi) };
+  }
+  const tiers = actTiers(c);
+  function tierBar(label, val, maxV){
+    const pct = val==null ? 0 : Math.max(2, Math.min(100, (val/maxV)*100));
+    return '<div class="slr-tierbar-row"><span class="slr-tierbar-label">'+label+'</span>'+
+      '<div class="slr-tierbar-track"><div class="slr-tierbar-fill" style="width:'+pct.toFixed(0)+'%"></div></div>'+
+      '<span class="slr-tierbar-val">'+(val==null?'-':_slrRoundTxt(val,0)+'%')+'</span></div>';
+  }
+  const tierMaxV = tiers ? Math.max(100, tiers.lo||0, tiers.mid||0, tiers.hi||0) : 100;
   P.push(
     '<div class="slr-page"><div class="slr-page-num">16</div>'+
     '<div class="slr-page-title">요일 비교가 아니라, 참고범위 대비</div>'+
@@ -13724,25 +13915,51 @@ function _slrBuildReportHtml(c, s, labels){
         return '<tr><td>'+ref.label+'</td><td>'+(avg==null?'-':_slrRoundTxt(avg, rr2[0]==='awake'?1:0)+ref.unit)+'</td><td>'+_slrRefRangeTxt(ref)+'</td><td>'+_slrRefCompare(ref,avg)+'</td></tr>';
       }).join('')+
     '</tbody></table>'+
-    '<div class="slr-insight-box" style="margin-top:.8rem">활동시간↔수면효율 상관계수 r='+rTxt(s.r.actEff)+
-      (s.actEffSlopePer10!=null ? (', 활동 10분↑당 추정 변화 '+(s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p') : '')+
-      '. 위 값은 참고범위 기준 자동 계산값이며, 진단이 아닌 관찰 결과입니다.'+
-    '</div></div>'
+    '<div class="slr-16-insights">'+
+      '<div class="slr-insight-box slr-insight-warn"><b>수면 구조 — '+(structKnown?(structOk+'/'+structKnown+'개 참고범위 충족'):'데이터 부족')+'</b><br>'+
+        (structKnown ? ('수면효율·입면잠복기·각성횟수는 하나의 계산식으로 연결되어 있어, 늘어난 시간 대비 실제 회복 수면이 충분히 확보되었는지를 함께 보여줍니다. ('+structOk+'개 지표가 참고범위 안에 있습니다.)') : '이번 주 데이터가 부족해 판단할 수 없습니다.')+
+      '</div>'+
+      '<div class="slr-insight-box"><b>심폐 반응 — '+(cardioKnown?(cardioOk+'/'+cardioKnown+'개 참고범위 안'):'데이터 부족')+'</b><br>'+
+        (cardioKnown ? ('심박수·호흡수·SpO2의 주간 평균이 참고범위 안에 있는지를 보여줍니다. 하루 단위로 세 지표가 동시에 흔들렸는지는 17페이지에서 별도로 확인합니다.') : '이번 주 데이터가 부족해 판단할 수 없습니다.')+
+      '</div>'+
+    '</div>'+
+    '<div class="slr-integrated-card">'+
+      '<div class="slr-integrated-title">수면-활동 통합 지표 (7일 데이터 자동 계산)</div>'+
+      '<div class="slr-integrated-grid">'+
+        '<div class="slr-integrated-col"><div class="slr-integrated-label">활동량 ↔ 수면효율 상관계수</div><div class="slr-integrated-value">r = '+rTxt(s.r.actEff)+'</div></div>'+
+        '<div class="slr-integrated-col"><div class="slr-integrated-label">활동 10분↑ 당 추정 변화</div><div class="slr-integrated-value">SE '+(s.actEffSlopePer10!=null?((s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p'):'-')+'</div></div>'+
+        '<div class="slr-integrated-col slr-integrated-tiers"><div class="slr-integrated-label">활동 구간별 평균 수면효율</div>'+
+          (tiers ? (tierBar('저활동',tiers.lo,tierMaxV)+tierBar('중활동',tiers.mid,tierMaxV)+tierBar('고활동',tiers.hi,tierMaxV)) : '<div class="slr-range-note">데이터 부족</div>')+
+        '</div>'+
+      '</div>'+
+      '<div class="slr-range-note" style="margin-top:.5rem">위 값은 이번 주 7일 데이터로 재계산한 상관·회귀 추정치이며, 인과관계를 의미하지 않습니다.</div>'+
+    '</div>'+
+    '</div>'
   );
 
   /* 17 이상신호 스크리닝 */
   if(s.anomalyIdx>=0){
     const ad = c.days[s.anomalyIdx];
+    const hrArr = c.days.map(d=>d.hr), rrArr = c.days.map(d=>d.rr), spo2Arr = c.days.map(d=>d.spo2);
+    const actArr = c.days.map(d=>d.activityMin), vitArr = c.days.map(d=>d.vitality);
+    const actAvg = slrAvg(actArr), vitAvg = slrAvg(vitArr);
+    const adAct = ad.activityMin, adVit = ad.vitality;
     P.push(
       '<div class="slr-page"><div class="slr-page-num">17</div>'+
-      '<div class="slr-page-title">'+(ad.date||'')+'('+(labels[s.anomalyIdx]||'')+') 밤, 세 지표가 함께 움직였습니다</div>'+
+      '<div class="slr-page-title-row"><div class="slr-page-title">'+(ad.date||'')+'('+(labels[s.anomalyIdx]||'')+') 밤, 세 지표가 함께 움직였습니다</div>'+
+        '<span class="slr-badge-pill">● 관찰 · 확진 아님</span></div>'+
       '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어났습니다. 우연히 겹쳤을 가능성도 있어 관찰 플래그만 남깁니다.</div>'+
       '<div class="slr-anomaly-cards">'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">수면 중 심박수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.hr,0)+'bpm</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.hr.avg,0)+'bpm 대비 '+(ad.hr-s.hr.avg>=0?'+':'')+_slrRoundTxt(ad.hr-s.hr.avg,0)+'</div></div>'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">호흡수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.rr,0)+'회/분</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.rr.avg,0)+'회 대비 '+(ad.rr-s.rr.avg>=0?'+':'')+_slrRoundTxt(ad.rr-s.rr.avg,0)+'</div></div>'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">SpO2</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.spo2,0)+'%</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.spo2.avg,0)+'% 대비 '+(ad.spo2-s.spo2.avg>=0?'+':'')+_slrRoundTxt(ad.spo2-s.spo2.avg,0)+'</div></div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">수면 중 심박수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.hr,0)+'bpm</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.hr.avg,0)+'bpm 대비 '+(ad.hr-s.hr.avg>=0?'+':'')+_slrRoundTxt(ad.hr-s.hr.avg,0)+'</div>'+_slrMiniWeekBars(hrArr, labels, s.anomalyIdx, '#C83535')+'</div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">호흡수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.rr,0)+'회/분</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.rr.avg,0)+'회 대비 '+(ad.rr-s.rr.avg>=0?'+':'')+_slrRoundTxt(ad.rr-s.rr.avg,0)+'</div>'+_slrMiniWeekBars(rrArr, labels, s.anomalyIdx, '#5B8DEF')+'</div>'+
+        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">SpO2</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.spo2,0)+'%</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.spo2.avg,0)+'% 대비 '+(ad.spo2-s.spo2.avg>=0?'+':'')+_slrRoundTxt(ad.spo2-s.spo2.avg,0)+'</div>'+_slrMiniWeekBars(spo2Arr, labels, s.anomalyIdx, '#29B6F6')+'</div>'+
       '</div>'+
-      '<div class="slr-insight-box" style="margin-top:.8rem">하루의 일시적 변화는 스트레스, 카페인·알코올, 활동량, 경미한 컨디션 저하 등 다양한 요인으로도 나타날 수 있습니다. 같은 패턴이 반복되는지 함께 지켜볼 것을 제안하며, 다음 주에도 같은 방향으로 움직인다면 의료진과의 상담을 권합니다. (관찰 · 확진 아님)</div>'+
+      (adAct!=null||adVit!=null ? (
+        '<div class="slr-insight-box" style="margin-top:.8rem"><b>활동 영역도 함께 확인해보면</b><br>같은 날 활동시간'+(adAct!=null?('('+_slrRoundTxt(adAct,0)+'분, 평소 '+_slrRoundTxt(actAvg,0)+'분)'):'')+
+        (adVit!=null?(' · 활력점수('+_slrRoundTxt(adVit,0)+'점, 평소 '+_slrRoundTxt(vitAvg,0)+'점)'):'')+
+        '도 이번 주 중 가장 낮은 편에 속했는지 함께 살펴보면, 생리 지표뿐 아니라 활동 영역에서도 같은 날 함께 흔들리는 패턴이 반복되는지 지켜볼 근거가 됩니다.</div>'
+      ) : '')+
+      '<div class="slr-insight-box slr-insight-warn">하루의 일시적 변화는 스트레스, 카페인·알코올, 활동량, 경미한 컨디션 저하 등 다양한 요인으로도 나타날 수 있습니다. 같은 패턴이 반복되는지 함께 지켜볼 것을 제안하며, 다음 주에도 같은 방향으로 움직인다면 의료진과의 상담을 권합니다. (관찰 · 확진 아님)</div>'+
       '</div>'
     );
   } else {
@@ -13755,10 +13972,20 @@ function _slrBuildReportHtml(c, s, labels){
   }
 
   /* 18 루틴 제안 */
+  const tib7min = Math.round(420/0.85);
+  const targetBedMid = (s.wakeMin.avg!=null) ? ((((s.wakeMin.avg - tib7min) % 1440) + 1440) % 1440) : null;
+  const targetBedTxt = targetBedMid!=null ? (slrMinToTime(targetBedMid-5)+'~'+slrMinToTime(targetBedMid+5)) : '-';
   P.push(
     '<div class="slr-page"><div class="slr-page-num">18</div>'+
     '<div class="slr-page-title">이번 주가 알려준 것부터 바꿔봅니다</div>'+
     '<div class="slr-page-desc">치료의 급성기를 지나 경과관찰 중이라면, 목표는 "더 열심히"가 아니라 "더 규칙적으로"입니다.</div>'+
+    '<div class="slr-stat-tiles">'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">활동·수면 상관계수 (06p)</div><div class="slr-stat-tile-value">r = '+rTxt(s.r.actEff)+'</div></div>'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 활동시간 (13p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt((s.act.avg||0)+10,0)+'분 이상 / 일</div></div>'+
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 취침시각 (11p)</div><div class="slr-stat-tile-value">'+targetBedTxt+'</div></div>'+
+    '</div>'+
+    '<div class="slr-manager-box"><div class="slr-manager-label">담당 매니저 코멘트 (이 리포트에서 유일하게 직접 작성되는 항목)</div>'+
+      '<div class="slr-manager-text">"이번 주 데이터를 참고해, 아래 루틴 중 우선순위를 정해 함께 시작해 보시죠." — 담당자 작성 예시</div></div>'+
     '<div class="slr-routine-grid">'+
       '<div class="slr-routine-card"><span class="slr-routine-num">1</span><span class="slr-routine-title">취침시각 먼저 고정하기</span>'+
         '<div class="slr-routine-desc">근거 · 취침시각 편차 ±'+_slrRoundTxt(s.bedStd,0)+'분. 주말 포함 매일 같은 시각에 눕는 것을 목표로 합니다.</div></div>'+
@@ -13790,10 +14017,13 @@ function slrDrawChart(canvasId, opts){
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
-  const pad = {t:14,r:12,b:24,l:38};
+  const showLabels = !!opts.showLabels;
+  const pad = {t: showLabels?28:16, r:14, b:24, l:44};
   const plotW = W-pad.l-pad.r, plotH = H-pad.t-pad.b;
   const labels = opts.labels||[];
   const series = opts.series||[];
+  const fmt = opts.labelFmt || function(v){ return String(Math.round(v)); };
+  const yFmt = opts.yFmt || function(v){ return String(Math.round(v)); };
   let allVals = [];
   series.forEach(function(sr){ sr.data.forEach(function(v){ if(v!=null && !isNaN(v)) allVals.push(v); }); });
   if(opts.stacked){
@@ -13802,43 +14032,83 @@ function slrDrawChart(canvasId, opts){
       allVals.push(sum);
     });
   }
-  if(opts.refMin!=null) allVals.push(opts.refMin);
-  if(opts.refMax!=null) allVals.push(opts.refMax);
+  if(opts.band){
+    if(opts.band.min!=null) allVals.push(opts.band.min);
+    if(opts.band.max!=null) allVals.push(opts.band.max);
+  }
   if(!allVals.length) allVals=[0,1];
   let vMin = opts.yMin!=null ? opts.yMin : Math.min(0, Math.min.apply(null,allVals));
-  let vMax = opts.yMax!=null ? opts.yMax : Math.max.apply(null,allVals) * 1.18;
+  let vMax = opts.yMax!=null ? opts.yMax : Math.max.apply(null,allVals) * (showLabels?1.3:1.15);
   if(vMax===vMin) vMax = vMin+1;
   const yToPx = v => pad.t + plotH - ((v-vMin)/(vMax-vMin))*plotH;
   const n = Math.max(labels.length,1);
   const slotW = plotW / n;
 
-  if(opts.refMin!=null && opts.refMax!=null){
-    ctx.fillStyle = 'rgba(14,143,163,.08)';
-    ctx.fillRect(pad.l, yToPx(opts.refMax), plotW, Math.max(0,yToPx(opts.refMin)-yToPx(opts.refMax)));
+  /* reference band (top-anchored if only min given, bottom-anchored if only max, range if both) */
+  if(opts.band){
+    const bMin = opts.band.min!=null ? opts.band.min : vMin;
+    const bMax = opts.band.max!=null ? opts.band.max : vMax;
+    ctx.fillStyle = opts.band.color || 'rgba(14,143,163,.10)';
+    ctx.fillRect(pad.l, yToPx(bMax), plotW, Math.max(0,yToPx(bMin)-yToPx(bMax)));
   }
-  ctx.strokeStyle = '#D8ECF4'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t+plotH); ctx.lineTo(pad.l+plotW, pad.t+plotH); ctx.stroke();
 
-  const barSeries = series.filter(function(sr){ return sr.type!=='line'; });
-  if(barSeries.length){
-    const barW = Math.min(30, slotW*0.55) / (opts.stacked?1:barSeries.length);
+  /* horizontal gridlines + y tick labels (dotted, matches reference report style) */
+  const ticks = 4;
+  ctx.setLineDash([2,3]); ctx.strokeStyle = '#E3EEF3'; ctx.lineWidth = 1;
+  ctx.fillStyle = '#9BB4C4'; ctx.font = '9px sans-serif'; ctx.textAlign = 'right';
+  for(let i=0;i<=ticks;i++){
+    const v = vMin + (vMax-vMin)*i/ticks;
+    const y = yToPx(v);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+plotW, y); ctx.stroke();
+    ctx.fillText(yFmt(v), pad.l-6, y+3);
+  }
+  ctx.setLineDash([]);
+
+  /* bars: stacked composition OR soft combo background bars */
+  const barSeries = opts.stacked ? series : series.filter(function(sr){ return sr.type==='bar' || sr.type==='combo'; });
+  if(opts.stacked && barSeries.length){
+    const barW = Math.min(34, slotW*0.6);
     labels.forEach(function(lb,i){
       let stackBase = 0;
-      barSeries.forEach(function(sr,si){
+      barSeries.forEach(function(sr){
+        const v = sr.data[i];
+        if(v==null || isNaN(v)){ return; }
+        const x = pad.l + i*slotW + (slotW-barW)/2;
+        const y0 = yToPx(stackBase), y1 = yToPx(stackBase+v);
+        ctx.fillStyle = sr.color;
+        ctx.fillRect(x, y1, barW, Math.max(1, y0-y1));
+        if(opts.stackLabels && (y0-y1) > 11){
+          ctx.fillStyle = '#fff'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+          ctx.fillText((opts.segFmt||fmt)(v), x+barW/2, (y0+y1)/2+3);
+        }
+        stackBase += v;
+      });
+      if(opts.stackLabels && stackBase>0){
+        ctx.fillStyle = '#3A5A78'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+        ctx.fillText((opts.totalFmt||fmt)(stackBase), pad.l+i*slotW+slotW/2, yToPx(stackBase)-6);
+      }
+    });
+  } else if(barSeries.length){
+    const barW = Math.min(28, slotW*0.55);
+    labels.forEach(function(lb,i){
+      barSeries.forEach(function(sr){
         const v = sr.data[i];
         if(v==null || isNaN(v)) return;
-        const x = opts.stacked
-          ? pad.l + i*slotW + (slotW-barW)/2
-          : pad.l + i*slotW + (slotW - barW*barSeries.length)/2 + si*barW;
-        const y0 = opts.stacked ? yToPx(stackBase) : yToPx(0);
-        const y1 = yToPx(opts.stacked ? stackBase+v : v);
-        ctx.fillStyle = sr.color;
+        const x = pad.l + i*slotW + (slotW-barW)/2;
+        const y0 = yToPx(0), y1 = yToPx(v);
+        ctx.fillStyle = sr.barColor || sr.color;
+        ctx.globalAlpha = sr.type==='combo' ? 0.26 : 1;
         ctx.fillRect(x, Math.min(y0,y1), barW, Math.max(1,Math.abs(y1-y0)));
-        if(opts.stacked) stackBase += v;
+        ctx.globalAlpha = 1;
       });
     });
   }
-  series.filter(function(sr){ return sr.type==='line'; }).forEach(function(sr){
+
+  ctx.strokeStyle = '#C9DDE6'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t+plotH); ctx.lineTo(pad.l+plotW, pad.t+plotH); ctx.stroke();
+
+  /* line series (plain 'line' or the line half of a 'combo') */
+  series.filter(function(sr){ return sr.type==='line' || sr.type==='combo'; }).forEach(function(sr){
     ctx.strokeStyle = sr.color; ctx.lineWidth=2; ctx.beginPath();
     let started=false;
     sr.data.forEach(function(v,i){
@@ -13853,29 +14123,172 @@ function slrDrawChart(canvasId, opts){
       const x=pad.l+i*slotW+slotW/2, y=yToPx(v);
       ctx.beginPath(); ctx.arc(x,y,2.8,0,Math.PI*2); ctx.fill();
     });
+    if(showLabels){
+      ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillStyle = sr.labelColor || sr.color;
+      sr.data.forEach(function(v,i){
+        if(v==null||isNaN(v)) return;
+        const x=pad.l+i*slotW+slotW/2, y=yToPx(v);
+        ctx.fillText((sr.labelFmt||fmt)(v), x, Math.max(10,y-8));
+      });
+    }
   });
 
   ctx.fillStyle = '#7A9FB8'; ctx.font='10px sans-serif'; ctx.textAlign='center';
   labels.forEach(function(lb,i){ ctx.fillText(String(lb), pad.l+i*slotW+slotW/2, H-8); });
 }
 
+/* 이중축 콤보 차트: 왼쪽 축(막대, 단일 또는 스택) + 오른쪽 축(실선, 0~100%) + 축 없는 오버레이 점선(정규화해 겹쳐보기) */
+function _slrComboDualChart(canvasId, opts){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = {t:16, r:44, b:24, l:48};
+  const plotW = W-pad.l-pad.r, plotH = H-pad.t-pad.b;
+  const labels = opts.labels||[];
+  const n = Math.max(labels.length,1);
+  const slotW = plotW/n;
+  const bars = opts.bars||[];
+  const leftFmt = opts.leftFmt || (v=>String(Math.round(v)));
+  const rightFmt = opts.rightFmt || (v=>Math.round(v)+'%');
+
+  let leftVals=[0];
+  labels.forEach(function(lb,i){ let sum=0; bars.forEach(function(bg){ sum += (bg.data[i]||0); }); leftVals.push(sum); });
+  const leftMax = opts.leftMax!=null ? opts.leftMax : Math.max.apply(null,leftVals)*1.18;
+  const leftMin = 0;
+  const yLeft = v => pad.t + plotH - ((v-leftMin)/(leftMax-leftMin))*plotH;
+
+  const rightMin = opts.rightMin!=null ? opts.rightMin : 0;
+  const rightMax = opts.rightMax!=null ? opts.rightMax : 100;
+  const yRight = v => pad.t + plotH - ((v-rightMin)/(rightMax-rightMin))*plotH;
+
+  const ticks=4;
+  ctx.setLineDash([2,3]); ctx.strokeStyle='#E3EEF3'; ctx.lineWidth=1; ctx.font='9px sans-serif';
+  for(let i=0;i<=ticks;i++){
+    const lv = leftMin+(leftMax-leftMin)*i/ticks;
+    const y = yLeft(lv);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+plotW,y); ctx.stroke();
+    ctx.fillStyle='#9BB4C4'; ctx.textAlign='right';
+    ctx.fillText(leftFmt(lv), pad.l-6, y+3);
+    const rv = rightMin+(rightMax-rightMin)*i/ticks;
+    ctx.textAlign='left';
+    ctx.fillText(rightFmt(rv), pad.l+plotW+6, y+3);
+  }
+  ctx.setLineDash([]);
+
+  const barW = Math.min(30, slotW*0.55);
+  labels.forEach(function(lb,i){
+    let base=0;
+    bars.forEach(function(bg){
+      const v = bg.data[i];
+      if(v==null||isNaN(v)) return;
+      const x = pad.l + i*slotW + (slotW-barW)/2;
+      const y0=yLeft(base), y1=yLeft(base+v);
+      ctx.fillStyle=bg.color;
+      ctx.fillRect(x,y1,barW,Math.max(1,y0-y1));
+      base+=v;
+    });
+  });
+
+  ctx.strokeStyle='#C9DDE6'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+plotH); ctx.lineTo(pad.l+plotW,pad.t+plotH); ctx.stroke();
+
+  if(opts.line){
+    const sr = opts.line;
+    ctx.strokeStyle=sr.color; ctx.lineWidth=2; ctx.beginPath();
+    let started=false;
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x=pad.l+i*slotW+slotW/2, y=yRight(v);
+      if(!started){ ctx.moveTo(x,y); started=true; } else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    ctx.fillStyle=sr.color;
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x=pad.l+i*slotW+slotW/2, y=yRight(v);
+      ctx.beginPath(); ctx.arc(x,y,2.8,0,Math.PI*2); ctx.fill();
+    });
+    ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x=pad.l+i*slotW+slotW/2, y=yRight(v);
+      ctx.fillText((sr.fmt||rightFmt)(v), x, Math.max(10,y-16));
+    });
+  }
+
+  if(opts.overlay){
+    const sr = opts.overlay;
+    const vals = sr.data.filter(function(v){ return v!=null && !isNaN(v); });
+    const mn = vals.length?Math.min.apply(null,vals):0, mx = vals.length?Math.max.apply(null,vals):1;
+    const rng = (mx-mn)||1;
+    const bandLo = rightMin+(rightMax-rightMin)*0.08;
+    const bandHi = rightMin+(rightMax-rightMin)*0.5;
+    const mapY = v => yRight(bandLo + ((v-mn)/rng)*(bandHi-bandLo));
+    ctx.setLineDash([3,3]);
+    ctx.strokeStyle = sr.color; ctx.lineWidth=1.6; ctx.beginPath();
+    let started=false;
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x=pad.l+i*slotW+slotW/2, y=mapY(v);
+      if(!started){ ctx.moveTo(x,y); started=true; } else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = sr.color;
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x=pad.l+i*slotW+slotW/2, y=mapY(v);
+      ctx.beginPath(); ctx.arc(x,y,2.6,0,Math.PI*2); ctx.fill();
+    });
+    ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+    sr.data.forEach(function(v,i){
+      if(v==null||isNaN(v)) return;
+      const x=pad.l+i*slotW+slotW/2, y=mapY(v);
+      ctx.fillText((sr.fmt||leftFmt)(v), x, y+13);
+    });
+  }
+
+  ctx.fillStyle='#7A9FB8'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+  labels.forEach(function(lb,i){ ctx.fillText(String(lb), pad.l+i*slotW+slotW/2, H-8); });
+}
+
 function _slrDrawAllCharts(c, s, labels){
-  slrDrawChart('slr-cv-structure', { labels:labels, stacked:true, series:[
+  _slrComboDualChart('slr-cv-tibcombo', {
+    labels: labels,
+    bars: [
+      {data: c.days.map(d=>d.sol), color:'#E8B368'},
+      {data: c.days.map(d=>d.tst), color:'#0E8FA3'},
+      {data: s.wasoMinArr, color:'#F2994A'}
+    ],
+    leftFmt: _slrMinShort,
+    line: {data: c.days.map(d=>d.eff), color:'#0D2246', fmt: v=>Math.round(v)+'%'},
+    overlay: {data: c.days.map(d=>d.awakeCount), color:'#C83535', fmt: v=>Math.round(v)+'회'}
+  });
+  _slrComboDualChart('slr-cv-actcombo', {
+    labels: labels,
+    bars: [ {data: c.days.map(d=>d.activityMin), color:'#8FD1BE'} ],
+    leftFmt: v=>Math.round(v)+'분',
+    line: {data: c.days.map(d=>d.eff), color:'#0D2246', fmt: v=>Math.round(v)+'%'},
+    overlay: {data: c.days.map(d=>d.sol), color:'#C07820', fmt: v=>Math.round(v)+'분'}
+  });
+  slrDrawChart('slr-cv-structure', { labels:labels, stacked:true, stackLabels:true, segFmt:_slrMinShort, totalFmt:_slrMinShort, yFmt:_slrMinShort, series:[
     {data:s.deepMin,  color:'#0D2246'},
     {data:s.lightMin, color:'#5CC8B8'},
     {data:s.remMin,   color:'#B892D9'}
   ]});
-  slrDrawChart('slr-cv-eff',   { labels:labels, refMin:85, series:[{data:c.days.map(d=>d.eff), color:'#0E8FA3', type:'line'}] });
-  slrDrawChart('slr-cv-sol',   { labels:labels, refMax:20, yMin:0, series:[{data:c.days.map(d=>d.sol), color:'#C07820', type:'line'}] });
-  slrDrawChart('slr-cv-awake', { labels:labels, refMax:2,  yMin:0, series:[{data:c.days.map(d=>d.awakeCount), color:'#FFB300'}] });
-  slrDrawChart('slr-cv-hr',    { labels:labels, refMin:45, refMax:70, series:[{data:c.days.map(d=>d.hr), color:'#C83535', type:'line'}] });
-  slrDrawChart('slr-cv-rr',    { labels:labels, refMin:12, refMax:20, series:[{data:c.days.map(d=>d.rr), color:'#5B8DEF', type:'line'}] });
-  slrDrawChart('slr-cv-spo2',  { labels:labels, refMin:95, yMax:100, series:[{data:c.days.map(d=>d.spo2), color:'#29B6F6', type:'line'}] });
-  slrDrawChart('slr-cv-bed',   { labels:labels, series:[{data:s.bedMinArr, color:'#0D2246', type:'line'}] });
-  slrDrawChart('slr-cv-wake',  { labels:labels, series:[{data:s.wakeMinArr, color:'#FF6B35', type:'line'}] });
-  slrDrawChart('slr-cv-act',   { labels:labels, yMin:0, series:[{data:c.days.map(d=>d.activityMin), color:'#1E9E5A'}] });
-  slrDrawChart('slr-cv-cal',   { labels:labels, series:[{data:c.days.map(d=>d.cal), color:'#FF8A5C', type:'line'}] });
-  slrDrawChart('slr-cv-vit',   { labels:labels, yMin:0, yMax:100, series:[{data:c.days.map(d=>d.vitality), color:'#FFCB3D', type:'line'}] });
+  slrDrawChart('slr-cv-eff',   { labels:labels, showLabels:true, band:{min:85}, yMax: Math.max(90, ...c.days.map(d=>d.eff||0), 1)*1.05, series:[{data:c.days.map(d=>d.eff), color:'#0E8FA3', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
+  slrDrawChart('slr-cv-sol',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.sol), color:'#C07820', type:'combo'}] });
+  slrDrawChart('slr-cv-awake', { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.awakeCount), color:'#B8860B', type:'combo'}] });
+  slrDrawChart('slr-cv-hr',    { labels:labels, showLabels:true, band:{min:45,max:70}, series:[{data:c.days.map(d=>d.hr), color:'#C83535', type:'combo'}] });
+  slrDrawChart('slr-cv-rr',    { labels:labels, showLabels:true, band:{min:12,max:20}, series:[{data:c.days.map(d=>d.rr), color:'#5B8DEF', type:'combo'}] });
+  slrDrawChart('slr-cv-spo2',  { labels:labels, showLabels:true, yMax:100, band:{min:95}, series:[{data:c.days.map(d=>d.spo2), color:'#29B6F6', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
+  slrDrawChart('slr-cv-bed',   { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.bedMinArr, color:'#0D2246', type:'line', labelFmt:slrMinToTime}] });
+  slrDrawChart('slr-cv-wake',  { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.wakeMinArr, color:'#FF6B35', type:'line', labelFmt:slrMinToTime}] });
+  slrDrawChart('slr-cv-act',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.activityMin), color:'#1E9E5A', type:'combo'}] });
+  slrDrawChart('slr-cv-cal',   { labels:labels, showLabels:true, series:[{data:c.days.map(d=>d.cal), color:'#FF8A5C', type:'combo'}] });
+  slrDrawChart('slr-cv-vit',   { labels:labels, showLabels:true, yMin:0, yMax:100, series:[{data:c.days.map(d=>d.vitality), color:'#D9A62E', type:'combo'}] });
 }
 
 /* ── 인쇄 / 다운로드 ── */
@@ -13893,11 +14306,39 @@ function _slrReportCss(){
   '.slr-chart-box img{width:100%;height:auto;display:block}'+
   '.slr-insight-box{background:#D0EEF3;color:#0D2246;border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:8px}'+
   '.slr-suggest-box{background:#FEF0D3;color:#0D2246;border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.6}'+
-  '.slr-def-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px}'+
-  '.slr-def-card{background:#fff;border:1px solid #D8ECF4;border-radius:9px;padding:9px 10px}'+
+  '.slr-combo-title{font-size:12px;font-weight:800;color:#0D2246;margin-bottom:4px}'+
+  '.slr-combo-subtitle{font-size:10px;font-weight:600;color:#7A9FB8}'+
+  '.slr-combo-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:9px;color:#3A5A78;margin-bottom:7px}'+
+  '.slr-combo-legend span{display:inline-flex;align-items:center;gap:4px}'+
+  '.slr-legend-chip{display:inline-block;width:8px;height:8px;border-radius:2px}'+
+  '.slr-legend-line{display:inline-block;width:13px;height:2px}'+
+  '.slr-legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#C83535}'+
+  '.slr-16-insights{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}'+
+  '.slr-16-insights .slr-insight-box{margin-bottom:0;border-left:3px solid #0E8FA3}'+
+  '.slr-insight-warn{background:#FEF0D3 !important;border-left:3px solid #C07820}'+
+  '.slr-page-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}'+
+  '.slr-page-title-row .slr-page-title{margin-bottom:0}'+
+  '.slr-badge-pill{flex-shrink:0;background:#FDDFDF;color:#C83535;font-size:9px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap}'+
+  '.slr-anomaly-card svg{display:block;margin:7px auto 0}'+
+  '.slr-integrated-card{background:#fff;border:1px solid #D8ECF4;border-radius:10px;padding:12px 14px}'+
+  '.slr-integrated-title{font-weight:800;font-size:11px;color:#3A5A78;margin-bottom:8px}'+
+  '.slr-integrated-grid{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:14px}'+
+  '.slr-integrated-label{font-size:9px;color:#7A9FB8;margin-bottom:3px}'+
+  '.slr-integrated-value{font-size:15px;font-weight:800;color:#0D2246}'+
+  '.slr-tierbar-row{display:flex;align-items:center;gap:6px;margin-top:4px}'+
+  '.slr-tierbar-label{font-size:9px;color:#7A9FB8;width:38px;flex-shrink:0}'+
+  '.slr-tierbar-track{flex:1;height:7px;background:#EEF3F6;border-radius:6px;overflow:hidden}'+
+  '.slr-tierbar-fill{height:100%;background:#0E8FA3;border-radius:6px}'+
+  '.slr-tierbar-val{font-size:9px;font-weight:700;color:#3A5A78;width:32px;text-align:right;flex-shrink:0}'+
+  '.slr-def-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}'+
+  '.slr-def-card{background:#fff;border:1px solid #D8ECF4;border-radius:9px;padding:9px 10px;position:relative}'+
+  '.slr-def-num{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#0E8FA3;color:#fff;font-size:9px;font-weight:800;margin-bottom:4px}'+
   '.slr-def-title{font-weight:800;font-size:12px;color:#0D2246}'+
   '.slr-def-eng{font-size:10px;color:#7A9FB8;margin-bottom:4px}'+
+  '.slr-def-icon-wrap{display:flex;align-items:center;justify-content:center;margin:5px 0;min-height:40px}'+
   '.slr-def-desc{font-size:11px;color:#3A5A78;line-height:1.5}'+
+  '.slr-def-section{font-size:10px;font-weight:700;color:#7A9FB8;margin:4px 0 7px}'+
+  '.slr-def-summary{display:flex;align-items:center;font-size:10px;color:#3A5A78;line-height:1.5;background:#F7FBFD;word-break:keep-all}'+
   '.slr-cover{background:#0D2246;color:#fff;border-radius:12px;padding:26px 20px}'+
   '.slr-cover-eyebrow{font-size:10px;letter-spacing:.1em;color:#5CC8B8;font-weight:700;margin-bottom:8px}'+
   '.slr-cover-title{font-size:20px;font-weight:800;line-height:1.4;margin-bottom:10px}'+
@@ -13921,6 +14362,13 @@ function _slrReportCss(){
   '.slr-anomaly-card{background:#fff;border-radius:10px;padding:11px;text-align:center}'+
   '.slr-anomaly-metric{font-size:10px;color:#7A9FB8}'+
   '.slr-anomaly-value{font-size:18px;font-weight:800;color:#0D2246}'+
+  '.slr-stat-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:11px}'+
+  '.slr-stat-tile{background:#fff;border:1px solid #D8ECF4;border-radius:10px;padding:10px 12px}'+
+  '.slr-stat-tile-label{font-size:9px;color:#7A9FB8;margin-bottom:4px}'+
+  '.slr-stat-tile-value{font-size:14px;font-weight:800;color:#0D2246}'+
+  '.slr-manager-box{background:#D0EEF3;border-radius:10px;padding:11px 13px;margin-bottom:12px}'+
+  '.slr-manager-label{font-size:9px;font-weight:700;color:#0E8FA3;margin-bottom:4px}'+
+  '.slr-manager-text{font-size:11px;color:#0D2246;line-height:1.6;font-style:italic}'+
   '.slr-routine-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}'+
   '.slr-routine-card{background:#fff;border-radius:10px;padding:11px 13px}'+
   '.slr-routine-num{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#C07820;color:#fff;align-items:center;justify-content:center;font-size:10px;font-weight:800;margin-right:6px}'+
@@ -13929,7 +14377,11 @@ function _slrReportCss(){
   '.slr-checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}'+
   '.slr-checklist li{font-size:11px;color:#3A5A78}'+
   '.slr-checklist li::before{content:"☐ ";color:#0E8FA3}'+
-  '@media print{ .slr-nightcards,.slr-anomaly-cards,.slr-routine-grid{ } }';
+  '@media print{'+
+    '.slr-report{gap:0}'+
+    '.slr-page{break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid;border-radius:0;min-height:277mm}'+
+    '.slr-page:last-child{break-after:auto;page-break-after:auto}'+
+  '}';
 }
 
 function _slrPreparePrintClone(){
@@ -13970,7 +14422,7 @@ function _slrPrintableDoc(title, sub){
     '.print-footer{padding:10px 18px;background:#EDF4FA;border:1px solid #C8DFF0;border-top:none;border-radius:0 0 14px 14px;font-size:10px;color:#7A9FB8;display:flex;justify-content:space-between}'+
     'button{display:none!important}'+
     _slrReportCss()+
-    '@media print{ @page{size:A4;margin:10mm} html,body{background:#EEF6FB} .print-wrap{padding:0} }'+
+    '@media print{ @page{size:A4;margin:10mm} html,body{background:#EEF6FB} .print-wrap{padding:0} .print-header,.print-footer{display:none} .print-body{padding:0;border:none} }'+
   '</style></head><body>'+
   '<div class="print-wrap">'+
     '<div class="print-header"><div><div class="print-header-title">'+title+'</div><div class="print-header-sub">'+sub+'</div></div><div class="print-header-date">'+printDate+'</div></div>'+

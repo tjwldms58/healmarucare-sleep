@@ -3898,6 +3898,7 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
         <div class="slr-report-actions">
           <button class="slr-action-btn" onclick="printSleepWeeklyReport()">🖨 인쇄 / PDF로 저장</button>
           <button class="slr-action-btn" onclick="downloadSleepWeeklyReportHtml()">⬇ HTML 다운로드</button>
+          <button class="slr-action-btn" onclick="downloadAllSleepReportsZip()">📦 전체 고객 일괄 다운로드 (ZIP)</button>
         </div>
         <div id="slr-report-body"></div>
       </div>
@@ -5080,7 +5081,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.04';
+const APP_VER = '7.05';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -13952,7 +13953,7 @@ function _slrPreparePrintClone(){
 
 function _slrPrintableDoc(title, sub){
   const clone = _slrPreparePrintClone();
-  if(!clone){ alert('레포트 데이터가 없습니다. 먼저 엑셀 파일을 업로드해주세요.'); return null; }
+  if(!clone){ alert('레포트 데이터가 없습니다. 먼저 \'전체데이터 엑셀 불러오기\'를 눌러주세요.'); return null; }
   const printDate = '보고일: ' + new Date().toLocaleDateString('ko-KR');
   return '<!doctype html><html><head><meta charset="utf-8"><title>'+title+'</title>'+
   '<link rel="preconnect" href="https://fonts.googleapis.com">'+
@@ -13979,7 +13980,7 @@ function _slrPrintableDoc(title, sub){
 }
 
 function printSleepWeeklyReport(){
-  if(!_slrCustomers.length){ alert('레포트 데이터가 없습니다. 먼저 엑셀 파일을 업로드해주세요.'); return; }
+  if(!_slrCustomers.length){ alert('레포트 데이터가 없습니다. 먼저 \'전체데이터 엑셀 불러오기\'를 눌러주세요.'); return; }
   const c = _slrCustomers[_slrActiveIdx];
   const title = (c.meta.name||'고객')+' 님 수면 리듬 진단 레포트';
   const sub = (c.meta.startDate||'')+' ~ '+(c.meta.endDate||'');
@@ -13993,7 +13994,7 @@ function printSleepWeeklyReport(){
 }
 
 function downloadSleepWeeklyReportHtml(){
-  if(!_slrCustomers.length){ alert('레포트 데이터가 없습니다. 먼저 엑셀 파일을 업로드해주세요.'); return; }
+  if(!_slrCustomers.length){ alert('레포트 데이터가 없습니다. 먼저 \'전체데이터 엑셀 불러오기\'를 눌러주세요.'); return; }
   const c = _slrCustomers[_slrActiveIdx];
   const title = (c.meta.name||'고객')+' 님 수면 리듬 진단 레포트';
   const sub = (c.meta.startDate||'')+' ~ '+(c.meta.endDate||'');
@@ -14006,6 +14007,62 @@ function downloadSleepWeeklyReportHtml(){
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(()=>URL.revokeObjectURL(url), 1000);
   showToast('수면 레포트를 HTML 파일로 다운로드했습니다.');
+}
+
+/* ── 전체 고객 수면레포트 일괄 다운로드 (ZIP) ── */
+async function downloadAllSleepReportsZip(){
+  if(!_slrCustomers.length){ alert('레포트 데이터가 없습니다. 먼저 \'전체데이터 엑셀 불러오기\'를 눌러주세요.'); return; }
+  if(typeof JSZip === 'undefined'){ alert('압축 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.'); return; }
+  const body = document.getElementById('slr-report-body');
+  if(!body){ alert('레포트 화면을 찾을 수 없습니다.'); return; }
+
+  const savedIdx = _slrActiveIdx;
+  const usedNames = new Set();
+  function sanitizeName(raw, fallback){
+    let n = String(raw||'').replace(/[\\\/:*?"<>|]/g,'').trim();
+    if(!n) n = fallback;
+    let base=n, i=2;
+    while(usedNames.has(n)){ n = base+'('+i+')'; i++; }
+    usedNames.add(n);
+    return n;
+  }
+
+  showToast('고객 '+_slrCustomers.length+'명의 레포트를 생성하는 중입니다...');
+  const zip = new JSZip();
+  try{
+    for(let idx=0; idx<_slrCustomers.length; idx++){
+      const c = _slrCustomers[idx];
+      const s = computeSlrStats(c);
+      const labels = c.days.map(function(d){ return d.weekday||d.date; });
+      body.innerHTML = _slrBuildReportHtml(c, s, labels);
+      _slrDrawAllCharts(c, s, labels);
+      const title = (c.meta.name||'고객')+' 님 수면 리듬 진단 레포트';
+      const sub = (c.meta.startDate||'')+' ~ '+(c.meta.endDate||'');
+      const html = _slrPrintableDoc(title, sub);
+      if(html){
+        const fname = sanitizeName(c.meta.name, '고객'+(idx+1))+'.html';
+        zip.file(fname, html);
+      }
+    }
+  } finally {
+    _slrActiveIdx = savedIdx;
+    renderSlrPreview();
+  }
+
+  try{
+    const zipBuf = await zip.generateAsync({type:'arraybuffer', compression:'DEFLATE', compressionOptions:{level:6}});
+    const blob = new Blob([zipBuf], {type:'application/zip'});
+    const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = '힐마루케어_수면레포트_전체_'+stamp+'.zip';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    showToast('고객 '+_slrCustomers.length+'명의 수면레포트를 ZIP 파일로 내보냈습니다.');
+  }catch(e){
+    console.error(e);
+    alert('일괄 다운로드 중 오류가 발생했습니다: ' + (e.message||e));
+  }
 }
 
 </script>

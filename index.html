@@ -4943,7 +4943,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.00';
+const APP_VER = '7.01';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -6373,12 +6373,12 @@ async function exportAllExcel(){
   function _getPK(n,a,g){ return `${n||''}||${a||''}||${g||''}`; }
   function _getP(n,a,g,ex){
     const k=_getPK(n,a,g);
-    if(!_pm.has(k)) _pm.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',sleep:[],heart:[],bp:[],weight:[],womens:[],stress:[],act:[]},ex));
+    if(!_pm.has(k)) _pm.set(k,Object.assign({name:n||'',age:a||'',gender:g||'',give:'',collect:'',cancer:'',stage:'',currentStage:'',sleep:[],heart:[],bp:[],weight:[],womens:[],stress:[],act:[]},ex));
     const p=_pm.get(k);
-    if(ex){ if(!p.give&&ex.give) p.give=ex.give; if(!p.collect&&ex.collect) p.collect=ex.collect; if(!p.cancer&&ex.cancer) p.cancer=ex.cancer; if(!p.stage&&ex.stage) p.stage=ex.stage; }
+    if(ex){ if(!p.give&&ex.give) p.give=ex.give; if(!p.collect&&ex.collect) p.collect=ex.collect; if(!p.cancer&&ex.cancer) p.cancer=ex.cancer; if(!p.stage&&ex.stage) p.stage=ex.stage; if(!p.currentStage&&ex.currentStage) p.currentStage=ex.currentStage; }
     return p;
   }
-  filt(sleepRecords).forEach(r=>{ const p=_getP(r.name,r.age,r.gender,{give:r.give,collect:r.collect,cancer:r.cancer,stage:r.stage}); p.sleep.push(r); });
+  filt(sleepRecords).forEach(r=>{ const p=_getP(r.name,r.age,r.gender,{give:r.give,collect:r.collect,cancer:r.cancer,stage:r.stage,currentStage:r.currentStage}); p.sleep.push(r); });
   filt(heartRateRecords).forEach(r=>{ _getP(r.name,r.age,r.gender,{give:r.give}).heart.push(r); });
   filt(bloodPressureRecords).forEach(r=>{ _getP(r.name,r.age,r.gender,{give:r.give}).bp.push(r); });
   filt(weightRecords).forEach(r=>{ _getP(r.name,r.age,r.gender,{give:r.give}).weight.push(r); });
@@ -6395,45 +6395,44 @@ async function exportAllExcel(){
       const dt=[s,h,b,wt,wh,sv,ac].filter(Boolean).map(r=>r.date||'').sort()[0]||'';
       const rg=[s,h,b,wt,wh,sv,ac].filter(Boolean).map(r=>r.give||'').filter(Boolean).sort()[0]||p.give||'';
       const rc=(s&&s.collect)||(h&&h.collect)||(b&&b.collect)||p.collect||'';
-      rows.push({date:dt,name:p.name,age:p.age,gender:p.gender,give:rg,collect:rc,cancer:(s&&s.cancer)||p.cancer||'',stage:(s&&s.stage)||p.stage||'',sleep:s,heart:h,bp:b,weight:wt,womens:wh,stress:sv,act:ac});
+      rows.push({date:dt,name:p.name,age:p.age,gender:p.gender,give:rg,collect:rc,cancer:(s&&s.cancer)||p.cancer||'',stage:(s&&s.stage)||p.stage||'',currentStage:(s&&s.currentStage)||p.currentStage||'',sleep:s,heart:h,bp:b,weight:wt,womens:wh,stress:sv,act:ac});
     }
   });
 
-  function _bpStatusTxt(sys,dia){
-    const s=parseFloat(sys), d=parseFloat(dia);
-    if(isNaN(s)||isNaN(d)) return '';
-    if(Math.abs(s-d)<20) return '재측정 권고 알람';
-    if(s>=140&&d>=90) return '고혈압 알람';
-    if(s<=80&&d<=50) return '저혈압 알림';
-    return '정상';
+  // 심박수 정상여부: 휴식 심박수(BPM) 60~100 기준
+  function _hrStatusTxt(rest){
+    const v = parseFloat(rest);
+    if(isNaN(v)) return '';
+    return (v>=60 && v<=100) ? '정상' : '비정상';
   }
 
   const header = [
-    '날짜','고객명','나이','성별','암종','병기','제공일자','수거일자',
-    'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','수면효율성 (%)','수면시간','낮잠 (분)',
-    '수면시 평균 심박수 (BPM)','수면 중 평균 HRV (ms)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)','잠든시간','기상시간',
-    '심박수범위','평균','휴식','평균 걷기 심박수',
+    '날짜','고객명','나이','성별','암종','병기','현재단계','제공일자','수거일자',
+    'REM (%)','REM 시간','얕은수면 (%)','얕은수면 시간','깊은수면 (%)','깊은수면 시간','각성 (분)','각성 횟수','수면효율성 (%)','수면시간','낮잠 (분)',
+    '수면시 평균 심박수 (BPM)','수면 중 평균 HRV (ms)','평균 혈중 산소포화도 (%)','평균 호흡수 (BPM)','수면준비시간 (분)','취침 시각','기상 시각',
+    '심박수범위','평균 심박수','휴식 심박수','평균 걷기 심박수','정상여부',
+    '체중(KG)','키(CM)','BMI',
     '스트레스','활력점수','7일 최종 활력점수',
-    '칼로리 실제(kcal)','칼로리 목표(kcal)','걸음수 실제','걸음수 목표','고강도활동 실제(분)','고강도활동 목표(분)'
+    '칼로리 실제','칼로리 목표','걸음수 실제','걸음수 목표','고강도운동(분) 실제','고강도운동(분) 목표'
   ];
 
   const data = rows.map(row=>{
-    const s=row.sleep, h=row.heart, sv=row.stress, ac=row.act;
+    const s=row.sleep, h=row.heart, wt=row.weight, sv=row.stress, ac=row.act;
     return [
       row.date, row.name, row.age, row.gender,
-      row.cancer||'', row.stage||'', row.give||'', row.collect||'',
+      row.cancer||'', row.stage||'', row.currentStage||'', row.give||'', row.collect||'',
       s?s.remPct||'':'', s?s.remTime||'':'', s?s.lightPct||'':'', s?s.lightTime||'':'',
-      s?s.deepPct||'':'', s?s.deepTime||'':'', s?s.awake||'':'', s?s.eff||'':'', s?s.total||'':'', s?s.nap||'':'',
+      s?s.deepPct||'':'', s?s.deepTime||'':'', s?s.awake||'':'', s?s.awakeCount||'':'', s?s.eff||'':'', s?s.total||'':'', s?s.nap||'':'',
       s?s.sleepHr||'':'', s?s.sleepHrv||'':'', s?s.sleepO2||'':'', s?s.sleepRr||'':'', s?s.sleepOnset||'':'', s?s.sleepTime||'':'', s?s.wakeTime||'':'',
-      h?h.range||'':'', h?h.avg||'':'', h?h.rest||'':'', h?h.mean||'':'',
-      sv?sv.stress||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':'',
+      h?h.range||'':'', h?h.avg||'':'', h?h.rest||'':'', h?h.mean||'':'', h?_hrStatusTxt(h.rest):'',
+      wt?wt.kg||'':'', wt?wt.height||'':'', wt?wt.bmi||'':'',
+      sv?sv.score||'':'', sv?sv.vital||'':'', sv?sv.finalVital||'':'',
       ac?ac.calActual||'':'', ac?ac.calTarget||'':'', ac?ac.stepsActual||'':'', ac?ac.stepsTarget||'':'', ac?ac.hiActual||'':'', ac?ac.hiTarget||'':''
     ];
   });
 
   const ws = XLSX.utils.aoa_to_sheet([header,...data]);
-  const colWidths = [10,10,5,5,10,8,12,12,8,8,10,10,10,10,8,12,10,8,10,10,8,8,10,10,10,16,8,8,10,8,8,8,12,12,8,8,10,10,10,10,10,10];
-  ws['!cols'] = colWidths.map(w=>({wch:w}));
+  ws['!cols'] = header.map(h2=>({wch: Math.max(10, h2.length+2)}));
   XLSX.utils.book_append_sheet(wb, ws, '샤오미데이터');
 
   const buf = XLSX.write(wb, {bookType:'xlsx', type:'array'});

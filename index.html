@@ -695,114 +695,23 @@ html.hm-readonly textarea:disabled {
   background: var(--surface-2); color: var(--text-1); font-size: .8rem; font-weight: 700; cursor: pointer;
 }
 .slr-action-btn:hover { border-color: var(--teal); color: var(--teal); }
-/* ── 수면레포트 산출물 전용 팔레트 (앱 네이비 테마와 무관하게 항상 고정) ── */
-.slr-report {
-  --slrc-bg:#F5F1E7; --slrc-card:#FFFFFF; --slrc-border:#E7E2D3;
-  --slrc-ink:#20282A; --slrc-ink2:#52605C; --slrc-ink3:#8B948E;
-  --slrc-teal:#17393E; --slrc-teal-soft:#25545A; --slrc-mint:#DCEAE6;
-  --slrc-terracotta:#C97B53; --slrc-terracotta-dk:#8B5238; --slrc-peach:#F4E3D7;
-  --slrc-rose:#A14E42; --slrc-rose-bg:#FBDCD4; --slrc-gold:#DAA44C;
-  --slrc-mauve:#8C7BA7; --slrc-light-teal:#6FA49E;
-  display: flex; flex-direction: column; gap: 1.1rem;
-  font-family: 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+/* ── 수면레포트 산출물 CSS는 _slrReportCss() 한 곳에서만 관리한다.
+      화면 미리보기에도 같은 CSS를 런타임 주입해 화면/인쇄 결과가 어긋나지 않게 한다. ── */
+.slr-deck { display: flex; flex-direction: column; gap: .7rem; }
+.slr-deck-bar { display: flex; align-items: center; justify-content: center; gap: .9rem; }
+.slr-deck-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--border);
+  background: var(--surface-2); color: var(--text-1); font-size: 1rem; font-weight: 800;
+  cursor: pointer; line-height: 1; padding: 0;
 }
-.slr-page { position:relative; background: var(--slrc-bg); border: 1px solid var(--slrc-border); border-radius: 14px; padding: 1.9rem 1.7rem 1.6rem; page-break-inside: avoid; }
-.slr-page-num { display: none; }
-.slr-page-head { display:flex; align-items:baseline; justify-content:space-between; gap:.6rem; padding-bottom:.7rem; margin-bottom:1.1rem; border-bottom:1px solid var(--slrc-border); font-size:.7rem; color:var(--slrc-ink3); }
-.slr-page-head-left { font-weight:700; }
-.slr-page-head-brand { font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.64rem; white-space:nowrap; }
-.slr-page-foot { display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin-top:1.6rem; padding-top:.8rem; border-top:1px solid var(--slrc-border); font-size:.66rem; color:var(--slrc-ink3); }
-.slr-page-foot-onDark { border-top-color: rgba(255,255,255,.16); color: rgba(255,255,255,.55); }
-.slr-page-title { font-size: 1.32rem; font-weight: 800; color: var(--slrc-ink); margin-bottom: .3rem; letter-spacing:-.01em; }
-.slr-page-desc { font-size: .82rem; color: var(--slrc-ink2); margin-bottom: .9rem; line-height: 1.6; }
-.slr-hero { display: flex; align-items: center; gap: .8rem; background:var(--slrc-card); border:1px solid var(--slrc-border); border-radius:12px; padding: .9rem 1.1rem; margin-bottom:.7rem; }
-.slr-hero-icon { flex-shrink:0; width:26px; height:26px; display:flex; align-items:center; justify-content:center; color:var(--slrc-teal); }
-.slr-hero-icon.tc { color: var(--slrc-terracotta-dk); }
-.slr-hero-text { display:flex; flex-direction:column; gap:.15rem; }
-.slr-hero-label { font-size: .74rem; color: var(--slrc-ink3); font-weight: 600; }
-.slr-hero-value { font-size: 1.9rem; font-weight: 800; color: var(--slrc-ink); line-height:1.15; }
-.slr-range-note { font-size: .76rem; color: var(--slrc-ink3); margin: .2rem 0 .9rem; }
-.slr-chart-box { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: 12px; margin-bottom: .8rem; }
-.slr-chart-box canvas { width: 100%; height: auto; display: block; }
-.slr-insight-box { background: var(--slrc-mint); color: var(--slrc-ink); border-radius: 12px; padding: .85rem 1rem; font-size: .82rem; line-height: 1.65; margin-bottom: .6rem; }
-.slr-suggest-box { background: var(--slrc-peach); color: var(--slrc-ink); border-radius: 12px; padding: .85rem 1rem; font-size: .82rem; line-height: 1.65; }
-.slr-combo-title { font-size: .82rem; font-weight: 800; color: var(--slrc-ink); margin-bottom: .3rem; }
-.slr-combo-subtitle { font-size: .7rem; font-weight: 600; color: var(--slrc-ink3); }
-.slr-combo-legend { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .68rem; color: var(--slrc-ink2); margin-bottom: .5rem; }
-.slr-combo-legend span { display: inline-flex; align-items: center; gap: .3rem; }
-.slr-legend-chip { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; }
-.slr-legend-line { display: inline-block; width: .9rem; height: 2px; }
-.slr-legend-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--slrc-rose); }
-.slr-16-insights { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: .8rem 0; }
-.slr-16-insights .slr-insight-box { background:var(--slrc-card); margin-bottom: 0; border:1px solid var(--slrc-border); border-left: 3px solid var(--slrc-teal); }
-.slr-insight-warn { background: var(--slrc-rose-bg) !important; border-left: 3px solid var(--slrc-rose); }
-.slr-page-title-row { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
-.slr-page-title-row .slr-page-title { margin-bottom: 0; }
-.slr-badge-pill { flex-shrink: 0; background: var(--slrc-rose-bg); color: var(--slrc-rose); font-size: .68rem; font-weight: 700; padding: .3rem .7rem; border-radius: 20px; white-space: nowrap; }
-.slr-anomaly-card .slr-def-icon, .slr-anomaly-card svg { display: block; margin: .5rem auto 0; }
-.slr-integrated-card { background: var(--slrc-card); border: 1px solid var(--slrc-border); border-radius: 12px; padding: .9rem 1rem; }
-.slr-integrated-title { font-weight: 800; font-size: .8rem; color: var(--slrc-ink2); margin-bottom: .6rem; }
-.slr-integrated-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 1rem; }
-.slr-integrated-label { font-size: .7rem; color: var(--slrc-ink3); margin-bottom: .25rem; }
-.slr-integrated-value { font-size: 1.1rem; font-weight: 800; color: var(--slrc-ink); }
-.slr-tierbar-row { display: flex; align-items: center; gap: .4rem; margin-top: .3rem; }
-.slr-tierbar-label { font-size: .68rem; color: var(--slrc-ink3); width: 2.6rem; flex-shrink: 0; }
-.slr-tierbar-track { flex: 1; height: .5rem; background: var(--slrc-mint); border-radius: 6px; overflow: hidden; }
-.slr-tierbar-fill { height: 100%; background: var(--slrc-teal); border-radius: 6px; }
-.slr-tierbar-val { font-size: .68rem; font-weight: 700; color: var(--slrc-ink2); width: 2.4rem; text-align: right; flex-shrink: 0; }
-.slr-def-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: .7rem; margin-bottom: .9rem; }
-.slr-def-card { background: var(--slrc-card); border: 1px solid var(--slrc-border); border-radius: 10px; padding: .7rem .8rem; position: relative; }
-.slr-def-num { display:inline-flex; align-items:center; justify-content:center; width:1.15rem; height:1.15rem; border-radius:50%; background:var(--slrc-teal-soft); color:#fff; font-size:.62rem; font-weight:800; margin-bottom:.3rem; }
-.slr-def-card.cardio .slr-def-num { background: var(--slrc-terracotta); }
-.slr-def-title { font-weight: 800; font-size: .85rem; color: var(--slrc-ink); }
-.slr-def-eng { font-size: .68rem; color: var(--slrc-ink3); margin-bottom: .3rem; }
-.slr-def-icon-wrap { display:flex; align-items:center; justify-content:center; margin: .35rem 0; min-height: 40px; }
-.slr-def-desc { font-size: .76rem; color: var(--slrc-ink2); line-height: 1.5; }
-.slr-def-section { font-size: .74rem; font-weight: 700; color: var(--slrc-ink3); margin: .3rem 0 .5rem; }
-.slr-def-summary { display:flex; align-items:center; font-size: .74rem; color: var(--slrc-ink2); line-height: 1.5; background: var(--slrc-card); word-break: keep-all; }
-.slr-cover { background: var(--slrc-teal); color: #fff; border-radius: 14px; padding: 2.1rem 1.7rem; }
-.slr-cover-eyebrow { font-size: .7rem; letter-spacing: .12em; color: var(--slrc-terracotta); font-weight: 700; margin-bottom: .7rem; }
-.slr-cover-title { font-size: 1.65rem; font-weight: 800; line-height: 1.4; margin-bottom: .9rem; }
-.slr-cover-divider { width: 46px; height: 3px; background: var(--slrc-terracotta); border-radius: 2px; margin-bottom: 1rem; }
-.slr-cover-period { font-size: .8rem; color: rgba(255,255,255,.6); margin-bottom: 1.1rem; }
-.slr-cover-chips { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.3rem; }
-.slr-chip { background: rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius: 10px; padding: .6rem .8rem; min-width: 120px; }
-.slr-chip-label { font-size: .68rem; color: rgba(255,255,255,.55); margin-bottom: .15rem; }
-.slr-chip-value { font-size: .88rem; font-weight: 700; }
-.slr-cover-indicators { display: flex; flex-wrap: wrap; gap: .4rem; }
-.slr-indicator-pill { background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.18); border-radius: 8px; padding: .35rem .85rem; font-size: .72rem; color: rgba(255,255,255,.9); }
-.slr-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
-.slr-table th, .slr-table td { border-bottom: 1px solid var(--slrc-border); padding: .6rem .6rem; text-align: left; color: var(--slrc-ink); }
-.slr-table th { color: var(--slrc-ink3); font-weight: 700; font-size: .72rem; }
-.slr-nightcards { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
-.slr-nightcard { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: .9rem 1rem; border-left: 4px solid var(--slrc-teal); color: var(--slrc-ink2); }
-.slr-nightcard.worst { border-left-color: var(--slrc-rose); }
-.slr-nightcard-head { font-weight: 800; font-size: .85rem; margin-bottom: .4rem; color: var(--slrc-ink); }
-.slr-nightcard-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
-.slr-nightcard-tag { background: var(--slrc-bg); border-radius: 6px; padding: .25rem .55rem; font-size: .72rem; color: var(--slrc-ink2); }
-.slr-anomaly-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: .7rem; }
-.slr-anomaly-card { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: .8rem; text-align: center; }
-.slr-anomaly-metric { font-size: .74rem; color: var(--slrc-ink3); }
-.slr-anomaly-value { font-size: 1.3rem; font-weight: 800; color: var(--slrc-rose); }
-.slr-stat-tiles { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .7rem; margin-bottom: .8rem; }
-.slr-stat-tile { background: var(--slrc-card); border: 1px solid var(--slrc-border); border-radius: 12px; padding: .7rem .9rem; }
-.slr-stat-tile-label { font-size: .68rem; color: var(--slrc-ink3); margin-bottom: .25rem; }
-.slr-stat-tile-value { font-size: 1rem; font-weight: 800; color: var(--slrc-ink); }
-.slr-manager-box { background: var(--slrc-mint); border-radius: 12px; padding: .8rem .9rem; margin-bottom: .9rem; }
-.slr-manager-label { font-size: .68rem; font-weight: 700; color: var(--slrc-teal-soft); margin-bottom: .3rem; }
-.slr-manager-text { font-size: .82rem; color: var(--slrc-ink); line-height: 1.6; font-style: italic; }
-.slr-routine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-bottom: .9rem; }
-.slr-routine-card { background: var(--slrc-card); border:1px solid var(--slrc-border); border-radius: 12px; padding: .8rem 1rem; }
-.slr-routine-num { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--slrc-terracotta); color: #fff; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; margin-right: .4rem; }
-.slr-routine-title { font-weight: 700; font-size: .85rem; color: var(--slrc-ink); }
-.slr-routine-desc { font-size: .77rem; color: var(--slrc-ink2); line-height: 1.5; margin-top: .35rem; }
-.slr-checklist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .4rem; }
-.slr-checklist li { font-size: .8rem; color: var(--slrc-ink2); display: flex; align-items: center; gap: .5rem; }
-.slr-checklist li::before { content: '☐'; color: var(--slrc-teal); }
+.slr-deck-btn:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+.slr-deck-btn:disabled { opacity: .3; cursor: default; }
+.slr-deck-indicator { font-size: .8rem; font-weight: 700; color: var(--text-2); min-width: 9rem; text-align: center; }
+.slr-deck-stage { overflow: hidden; }
+.slr-deck-scaler { transform-origin: top left; }
 @media (max-width: 900px) {
   .slr-layout { grid-template-columns: 1fr; }
   .slr-upload-box { position: static; }
-  .slr-nightcards, .slr-anomaly-cards, .slr-routine-grid, .slr-stat-tiles, .slr-integrated-grid, .slr-16-insights, .slr-def-grid { grid-template-columns: 1fr; }
 }
 
 /* ═══════════════════════════════════════
@@ -3951,7 +3860,18 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
           <button class="slr-action-btn" onclick="downloadSleepWeeklyReportHtml()">⬇ HTML 다운로드</button>
           <button class="slr-action-btn" onclick="downloadAllSleepReportsZip()">📦 전체 고객 일괄 다운로드 (ZIP)</button>
         </div>
-        <div id="slr-report-body"></div>
+        <div class="slr-deck">
+          <div class="slr-deck-bar">
+            <button class="slr-deck-btn" id="slr-deck-prev" onclick="_slrDeckGo(-1)" title="이전 2페이지">‹</button>
+            <span class="slr-deck-indicator" id="slr-deck-indicator">1–2 / 18</span>
+            <button class="slr-deck-btn" id="slr-deck-next" onclick="_slrDeckGo(1)" title="다음 2페이지">›</button>
+          </div>
+          <div class="slr-deck-stage" id="slr-deck-stage">
+            <div class="slr-deck-scaler" id="slr-deck-scaler">
+              <div id="slr-report-body"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -5132,7 +5052,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.08';
+const APP_VER = '7.09';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -13301,25 +13221,33 @@ let _slrCustomers = [];
 let _slrActiveIdx = 0;
 
 const SLR_REF = {
-  eff:   {label:'수면효율',       min:85,  max:null, unit:'%',    dir:'higher'},
-  sol:   {label:'입면잠복기',     min:null,max:20,   unit:'분',   dir:'lower'},
-  awake: {label:'각성횟수',       min:null,max:2,    unit:'회',   dir:'lower'},
-  hr:    {label:'수면 중 심박수', min:45,  max:70,   unit:'bpm',  dir:'range'},
-  rr:    {label:'호흡수',         min:12,  max:20,   unit:'회/분',dir:'range'},
-  spo2:  {label:'SpO2',           min:95,  max:null, unit:'%',    dir:'higher'}
+  eff:   {label:'수면효율',       eng:'Sleep Efficiency',        min:85,  max:null, unit:'%',    dir:'higher'},
+  sol:   {label:'입면잠복기',     eng:'Sleep Onset Latency',     min:null,max:20,   unit:'분',   dir:'lower'},
+  awake: {label:'각성횟수',       eng:'Awakenings',              min:null,max:2,    unit:'회',   dir:'lower'},
+  hr:    {label:'수면 중 심박수', eng:'Heart Rate during Sleep', min:45,  max:70,   unit:'bpm',  dir:'range'},
+  rr:    {label:'호흡수',         eng:'Respiratory Rate',        min:12,  max:20,   unit:'회/분',dir:'range'},
+  spo2:  {label:'SpO2',           eng:'혈중 산소포화도',          min:95,  max:null, unit:'%',    dir:'higher'}
 };
 
 /* 페이지 상단 헤드/카드용 짧은 주제 라벨 + 히어로 아이콘 색상 계열 */
 const SLR_TOPIC = {
-  '02':'개념 — 무엇을 보는가', '03':'수면시간 & 수면단계 구성', '04':'수면효율', '05':'입면잠복기',
-  '06':'각성횟수', '07':'입면잠복기・수면효율・각성 함께보기', '08':'수면 중 심박수', '09':'호흡수',
-  '10':'SpO2 (혈중 산소포화도)', '11':'취침・기상 시각 규칙성', '12':'좋았던 밤 vs 나빴던 밤',
-  '13':'활동량 (걸음수・활동시간)', '14':'소모 칼로리', '15':'활력점수 (Vitality Score)',
+  '02':'개념 — 무엇을 보는가', '03':'수면시간 &amp; 수면단계 구성', '04':'수면효율', '05':'입면잠복기',
+  '06':'각성횟수', '07':'입면잠복기 · 수면효율 · 각성 함께 보기', '08':'수면 중 심박수', '09':'호흡수',
+  '10':'SpO2 (혈중 산소포화도)', '11':'취침·기상 시각 규칙성', '12':'좋았던 밤 vs 나빴던 밤',
+  '13':'활동량 (걸음수·활동시간)', '14':'소모 칼로리', '15':'활력점수 (Vitality Score)',
   '16':'종합진단 — 참고범위 대비', '17':'이상신호 스크리닝', '18':'루틴 제안'
 };
-const SLR_BRAND = 'SLEEP RHYTHM DIAGNOSIS REPORT';
-function _slrPageHead(num){ return '<div class="slr-page-head"><span class="slr-page-head-left">'+num+' · '+(SLR_TOPIC[num]||'')+'</span><span class="slr-page-head-brand">'+SLR_BRAND+'</span></div>'; }
-function _slrPageFoot(num){ return '<div class="slr-page-foot"><span>healmarucare VIP Care</span><span>'+num+' / 18</span></div>'; }
+const SLR_BRAND = '불면 중심 수면 리듬 진단';
+const SLR_FOOT_NOTE = '웨어러블 측정 데이터 기반 · 실제 임상 진단이 아닙니다';
+function _slrPageHead(num){
+  return '<div class="slr-page-head"><span class="slr-page-head-left">'+num+' · '+(SLR_TOPIC[num]||'')+'</span>'+
+         '<span class="slr-page-head-brand">'+SLR_BRAND+'</span></div>';
+}
+function _slrPageFoot(num, note){
+  return '<div class="slr-page-foot"><span class="slr-foot-brand">healmarucare VIP Care</span>'+
+         '<span class="slr-foot-note">'+(note||SLR_FOOT_NOTE)+'</span>'+
+         '<span class="slr-foot-num">'+num+' / 18</span></div>';
+}
 function _slrHeroIcon(kind, tc){
   const cls = 'slr-hero-icon'+(tc?' tc':'');
   const M = {
@@ -13472,7 +13400,7 @@ function slrMinToTime(mins){
 function _slrMinToHm(mins){
   if(mins==null||isNaN(mins)) return '-';
   const h = Math.floor(mins/60), m = Math.round(mins%60);
-  return h+'시간 '+m+'분';
+  return h+'시간 '+(m<10?'0':'')+m+'분';
 }
 function _slrMinShort(mins){
   if(mins==null||isNaN(mins)) return '-';
@@ -13593,8 +13521,23 @@ function renderSlrPreview(){
   const days = c.days;
   const labels = days.map(d=>d.weekday||d.date);
 
+  _slrInjectReportCss();
   document.getElementById('slr-report-body').innerHTML = _slrBuildReportHtml(c, s, labels);
-  requestAnimationFrame(()=>{ _slrDrawAllCharts(c, s, labels); });
+  _slrDeckIdx = 0;
+  _slrDeckRender();
+  requestAnimationFrame(()=>{ _slrDrawAllCharts(c, s, labels); _slrDeckFit(); });
+}
+
+/* 화면 미리보기에도 인쇄와 완전히 동일한 CSS를 주입한다 (단일 소스 보장) */
+function _slrInjectReportCss(){
+  let st = document.getElementById('slr-report-style');
+  if(!st){
+    st = document.createElement('style');
+    st.id = 'slr-report-style';
+    document.head.appendChild(st);
+  }
+  const css = _slrReportCss();
+  if(st.textContent !== css) st.textContent = css;
 }
 
 function _slrDefIcon(kind, s, c){
@@ -13677,263 +13620,449 @@ function _slrMiniWeekBars(arr, labels, hiIdx, color){
 }
 
 const SLR_METRIC_ICON = {
-  '04':['moon',false], '05':['clock',false], '06':['bell',false], '07':['bell',false],
+  '04':['moon',false], '05':['clock',false], '06':['bell',false],
   '08':['heart',true], '09':['wave',true], '10':['drop',true],
   '13':['walk',false], '14':['flame',true], '15':['bolt',true]
 };
-function _slrMetricPage(num,title,desc,heroLabel,heroVal,rangeNote,canvasId,insightHtml,suggestHtml){
-  const ic = SLR_METRIC_ICON[num] || ['moon',false];
-  return '<div class="slr-page">'+_slrPageHead(num)+
-    '<div class="slr-page-title">'+title+'</div>'+
-    (desc?'<div class="slr-page-desc">'+desc+'</div>':'')+
-    '<div class="slr-hero">'+_slrHeroIcon(ic[0],ic[1])+'<div class="slr-hero-text"><span class="slr-hero-label">이번 주 평균 · '+heroLabel+'</span><span class="slr-hero-value">'+heroVal+'</span></div></div>'+
-    '<div class="slr-range-note">'+(rangeNote||'')+'</div>'+
-    '<div class="slr-chart-box"><canvas id="'+canvasId+'" width="680" height="200"></canvas></div>'+
-    (insightHtml?'<div class="slr-insight-box"><b>무엇을 의미하나요?</b><br>'+insightHtml+'</div>':'')+
-    (suggestHtml?'<div class="slr-suggest-box"><b>제안</b><br>'+suggestHtml+'</div>':'')+
-    _slrPageFoot(num)+
-    '</div>';
+
+/* 지표 상세 페이지 공통 틀 (초안 04·05·06·08·09·10·13·14·15 페이지와 동일 구조) */
+function _slrMetricPage(o){
+  const ic = SLR_METRIC_ICON[o.num] || ['moon', false];
+  return '<div class="slr-page">' + _slrPageHead(o.num) +
+    '<div class="slr-page-title">' + o.title + '</div>' +
+    (o.desc ? '<div class="slr-page-desc">' + o.desc + '</div>' : '') +
+    '<div class="slr-hero">' +
+      '<div class="slr-hero-main">' + _slrHeroIcon(ic[0], ic[1]) +
+        '<div class="slr-hero-text"><span class="slr-hero-label">이번 주 평균 · ' + o.heroLabel + '</span>' +
+        '<span class="slr-hero-value">' + o.heroVal + '</span></div>' +
+        (o.heroBadge ? '<span class="slr-hero-badge">' + o.heroBadge + '</span>' : '') +
+      '</div>' +
+      (o.heroSub || '') +
+      (o.rangeNote ? '<div class="slr-hero-note">' + o.rangeNote + '</div>' : '') +
+    '</div>' +
+    '<div class="slr-chart-box">' +
+      '<div class="slr-chart-title">' + (o.chartTitle || '7일간 변화 추이') +
+        (o.chartSub ? ' <span class="slr-chart-sub">' + o.chartSub + '</span>' : '') + '</div>' +
+      (o.legend || '') +
+      '<canvas id="' + o.canvasId + '" width="680" height="' + (o.canvasH || 196) + '"></canvas>' +
+    '</div>' +
+    (o.calc ? '<div class="slr-calc-box"><b>어떻게 계산되나요?</b><div>' + o.calc + '</div></div>' : '') +
+    (o.insight ? '<div class="slr-insight-box"><b>무엇을 의미하나요?</b><div>' + o.insight + '</div></div>' : '') +
+    (o.extra || '') +
+    (o.suggest ? '<div class="slr-suggest-box"><b>제안: ' + (o.suggestTitle || '') + '</b><div>' + o.suggest + '</div></div>' : '') +
+    _slrPageFoot(o.num) +
+  '</div>';
 }
 
 function _slrBuildReportHtml(c, s, labels){
   const M = c.meta, P = [];
+  const R  = (v,d)=>_slrRoundTxt(v,d);
+  const rTxt = (v)=> v==null ? '데이터 부족' : (v>0?'+':'')+v;
+  const nm = (i)=> (labels[i]||'') + '요일';
+  const spread = (a,b,suffix)=> (a==null||b==null) ? '' : ' (변동폭 '+R(b-a,0)+suffix+')';
 
-  /* 01 표지 */
+  /* ══ 01 표지 ══ */
   P.push(
-    '<div class="slr-page slr-cover">'+
-      '<div class="slr-cover-eyebrow">SLEEP RHYTHM DIAGNOSIS · INSOMNIA FOCUS</div>'+
-      '<div class="slr-cover-title">'+(M.name||'-')+' 님의<br>수면 리듬 진단 레포트</div>'+
-      '<div class="slr-cover-divider"></div>'+
-      '<div class="slr-cover-period">모니터링 기간: '+(M.startDate||'-')+' ~ '+(M.endDate||'-')+'</div>'+
-      '<div class="slr-cover-chips">'+
-        '<div class="slr-chip"><div class="slr-chip-label">모니터링 대상</div><div class="slr-chip-value">'+(M.name||'-')+'</div></div>'+
-        '<div class="slr-chip"><div class="slr-chip-label">현재 단계</div><div class="slr-chip-value">'+(M.stage||'-')+'</div></div>'+
-        '<div class="slr-chip"><div class="slr-chip-label">주요 고민</div><div class="slr-chip-value">'+(M.complaint||'-')+'</div></div>'+
-      '</div>'+
-      '<div class="slr-cover-indicators">'+
-        ['수면효율','입면잠복기','각성횟수','수면중 심박수','호흡수','SpO2'].map(t=>'<span class="slr-indicator-pill">'+t+'</span>').join('')+
-      '</div>'+
-      '<div class="slr-page-foot slr-page-foot-onDark"><span>healmarucare VIP Care</span><span>01 / 18</span></div>'+
+    '<div class="slr-page slr-cover">' +
+      '<div class="slr-cover-top"><span>VIP케어 · 웨어러블 수면·활동 모니터링</span>' +
+        '<span>' + (M.startDate||'-') + ' – ' + (M.endDate||'-') + '</span></div>' +
+      '<div class="slr-cover-mid">' +
+        '<div class="slr-cover-eyebrow">SLEEP RHYTHM DIAGNOSIS · INSOMNIA FOCUS</div>' +
+        '<div class="slr-cover-title">지금의 잠이<br>왜 편치 않은지</div>' +
+        '<div class="slr-cover-divider"></div>' +
+        '<div class="slr-cover-lead">"몇 시간 잤는지"가 아니라 "왜 그 잠이 회복으로 이어지지 않는지".<br>' +
+          '이번 리포트는 수면 시간이 아니라, 수면의 <b>질과 리듬</b>이 흐트러진 지점을 찾는 데서 출발합니다.</div>' +
+        '<div class="slr-cover-chips">' +
+          '<div class="slr-chip"><div class="slr-chip-label">모니터링 대상자</div><div class="slr-chip-value">' + (M.name||'-') + ' 님</div></div>' +
+          '<div class="slr-chip"><div class="slr-chip-label">현재 단계</div><div class="slr-chip-value">' + (M.stage||'-') + '</div></div>' +
+          '<div class="slr-chip"><div class="slr-chip-label">주요 고민</div><div class="slr-chip-value">' + (M.complaint||'-') + '</div></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="slr-cover-spacer"></div>' +
+      '<div class="slr-cover-bottom">' +
+        '<div class="slr-cover-ind-label">이 리포트가 실제로 들여다보는 6가지 지표</div>' +
+        '<div class="slr-cover-indicators">' +
+          ['수면효율','입면잠복기','각성횟수','수면중 심박수','호흡수','SpO2'].map(t=>'<span class="slr-indicator-pill">'+t+'</span>').join('') +
+        '</div>' +
+      '</div>' +
+      '<div class="slr-page-foot slr-page-foot-onDark"><span class="slr-foot-brand">healmarucare VIP Care</span>' +
+        '<span class="slr-foot-note">' + SLR_FOOT_NOTE + '</span><span class="slr-foot-num">01 / 18</span></div>' +
     '</div>'
   );
 
-  /* 02 지표 정의 */
+  /* ══ 02 지표 정의 ══ */
   const defs = [
-    ['01','총수면시간','Total Sleep Time','깊은수면·얕은수면·렘수면 세 구간을 합친, 실제로 잠들어 있던 시간의 총합.','tst'],
-    ['02','수면효율','Sleep Efficiency','침대에 누운 시간(TIB) 대비 실제로 잠든 시간의 비율. 참고범위 85% 이상.','eff'],
-    ['03','입면잠복기','Sleep Onset Latency','불을 끄고 누운 뒤 실제로 잠들기까지 걸린 시간. 참고범위 20분 이내.','sol'],
-    ['04','각성횟수','Number of Awakenings','잠든 후 밤사이 깨어난 것으로 분류된 횟수. 참고범위 2회 이하.','awake'],
-    ['05','수면 중 심박수','Heart Rate during Sleep','수면 중 평균 심박수. 참고범위 45~70bpm.','hr'],
-    ['06','호흡수','Respiratory Rate','수면 중 분당 호흡 횟수. 참고범위 12~20회/분.','rr'],
-    ['07','SpO2','혈중 산소포화도','수면 중 혈액의 산소포화도. 참고범위 95% 이상.','spo2']
+    ['01','총수면시간','Total Sleep Time','깊은수면·얕은수면·렘수면 세 구간을 합친, 실제로 잠들어 있던 시간의 총합.','tst',
+     '양(길이)뿐 아니라 세 구간의 비율도 함께 봐야 회복 수면인지 알 수 있습니다. → 03페이지'],
+    ['02','수면효율','Sleep Efficiency','침대에 누운 시간(TIB) 대비, 그중 실제로 잠든 시간(총수면시간)의 비율.','eff',
+     '낮을수록 ‘누워는 있지만 못 자는’ 시간이 길다는 뜻입니다. → 04페이지'],
+    ['03','입면잠복기','Sleep Onset Latency','불을 끄고 누운 뒤 실제로 잠들기까지 걸린 시간.','sol',
+     '길수록 ‘잠들기까지’가 오래 걸린다는 뜻이며, 수면효율과 같은 계산식 안에서 함께 움직입니다. → 05페이지'],
+    ['04','각성횟수','Number of Awakenings','잠든 후 밤사이 깨어난 횟수와, 깨어 있던 시간(WASO).','awake',
+     '많을수록 ‘자다가 깨는’ 시간이 길어져 수면효율이 함께 낮아집니다. → 06페이지'],
+    ['05','수면 중 심박수','Heart Rate during Sleep','수면 중 평균 심박수와 주간 대비 하강폭.','hr',
+     '수면 중에는 심박수가 낮아지는 ‘디핑’이 함께 관찰됩니다. → 08페이지'],
+    ['06','호흡수','Respiratory Rate','수면 중 분당 호흡 횟수.','rr',
+     '심박수·SpO2와 함께 움직이는 경우가 많아 세 지표를 묶어 봅니다. → 09페이지'],
+    ['07','SpO2','혈중 산소포화도','수면 중 혈액의 산소포화도.','spo2',
+     '호흡수가 오르면 함께 낮아지는 경향이 뚜렷합니다(10페이지 참고). → 10페이지']
   ];
-  function defCard(d,cardio){
-    return '<div class="slr-def-card'+(cardio?' cardio':'')+'"><div class="slr-def-num">'+d[0]+'</div><div class="slr-def-title">'+d[1]+'</div>'+
-      '<div class="slr-def-eng">'+d[2]+'</div>'+
-      '<div class="slr-def-icon-wrap">'+_slrDefIcon(d[4],s,c)+'</div>'+
-      '<div class="slr-def-desc">'+d[3]+'</div></div>';
+  function defCard(d, cardio){
+    return '<div class="slr-def-card' + (cardio?' cardio':'') + '">' +
+      '<div class="slr-def-head"><span class="slr-def-num">' + d[0] + '</span><span class="slr-def-title">' + d[1] + '</span></div>' +
+      '<div class="slr-def-eng">' + d[2] + '</div>' +
+      '<div class="slr-def-desc">' + d[3] + '</div>' +
+      '<div class="slr-def-icon-wrap">' + _slrDefIcon(d[4], s, c) + '</div>' +
+      '<div class="slr-def-tip' + (cardio?' tc':'') + '">' + d[5] + '</div></div>';
   }
   P.push(
-    '<div class="slr-page">'+_slrPageHead('02')+
-    '<div class="slr-page-title">지표를 다시 정의합니다</div>'+
-    '<div class="slr-page-desc">일반적인 웰니스 지표 대신, 불면 진단에 실제로 쓰이는 7가지 지표로 이 레포트를 구성했습니다. 각 지표는 "잠을 잘 잤는가"가 아니라 "왜 그 잠이 회복이 되지 않았는가"에 답하기 위한 것입니다.</div>'+
-    '<div class="slr-def-section">수면의 구조 — 01~04</div>'+
-    '<div class="slr-def-grid">'+defs.slice(0,4).map(d=>defCard(d,false)).join('')+'</div>'+
-    '<div class="slr-def-section">수면 중 신체 반응 — 05~07</div>'+
-    '<div class="slr-def-grid">'+defs.slice(4).map(d=>defCard(d,true)).join('')+
-      '<div class="slr-def-card slr-def-summary">01~04는 \'수면의 구조\'를, 05~07은 \'수면 중 신체 반응\'을 나타냅니다. 이 리포트는 각 지표를 개별 판정으로 나열하는 대신, 지표들이 서로 어떤 값과 어떤 값으로부터 계산되고 함께 어떻게 움직이는지를 실제 데이터로 확인해 보여줍니다.</div>'+
-    '</div>'+_slrPageFoot('02')+'</div>'
+    '<div class="slr-page">' + _slrPageHead('02') +
+    '<div class="slr-page-title">지표를 다시 정의합니다</div>' +
+    '<div class="slr-page-desc">HRV(심박변동)나 ‘수면 골든타임’ 같은 일반적인 웰니스 지표 대신, 불면 진단에 실제로 쓰이는 <b>6개 지표</b>로 이번 리포트를 구성했습니다. 각 지표는 "잠을 잘 잤는가"가 아니라 "왜 그 잠이 회복이 되지 않았는가"에 답하기 위한 것입니다.</div>' +
+    '<div class="slr-def-section">수면의 구조 — 01~04</div>' +
+    '<div class="slr-def-grid">' + defs.slice(0,4).map(d=>defCard(d,false)).join('') + '</div>' +
+    '<div class="slr-def-section">수면 중 신체 반응 — 05~07</div>' +
+    '<div class="slr-def-grid">' + defs.slice(4).map(d=>defCard(d,true)).join('') +
+      '<div class="slr-def-card slr-def-summary">01~04는 ‘수면의 구조’를, 05~07은 ‘수면 중 신체 반응’을 나타냅니다. 이 리포트는 각 지표를 개별 판정으로 나열하는 대신, 지표들이 서로 어떤 값과 어떤 값으로부터 계산되고 함께 어떻게 움직이는지를 실제 데이터로 확인해 보여줍니다.</div>' +
+    '</div>' + _slrPageFoot('02') + '</div>'
   );
 
-  /* 03 수면구조 */
+  /* ══ 03 수면시간 & 수면단계 구성 ══ */
   const debtHrs = s.sleepDebtMin/60;
+  let shortIdx=-1, longIdx=-1;
+  c.days.forEach((d,i)=>{ if(d.tst==null) return;
+    if(shortIdx===-1 || d.tst < c.days[shortIdx].tst) shortIdx=i;
+    if(longIdx===-1  || d.tst > c.days[longIdx].tst)  longIdx=i;
+  });
+  function stageTxt(i){
+    if(i<0) return '';
+    const d=c.days[i];
+    return '깊은수면(' + (s.deepMin[i]!=null? _slrMinShort(s.deepMin[i]) : '-') + '·' + R(d.deepPct,0) + '%)·' +
+           '렘수면(' + (s.remMin[i]!=null? _slrMinShort(s.remMin[i]) : '-') + '·' + R(d.remPct,0) + '%)';
+  }
+  const tstStructInsight = (shortIdx>=0 && longIdx>=0)
+    ? ('총수면시간(TST) = 깊은수면 + 얕은수면 + 렘수면. 깊은수면·렘수면은 신체·정서 회복에 관여하는 구간으로, 절대적인 양뿐 아니라 전체 수면 대비 비율이 함께 중요합니다. 날짜별로 보면, ' +
+       nm(shortIdx) + '은 총수면시간(' + _slrMinShort(c.days[shortIdx].tst) + ')이 가장 짧았던 날로 ' + stageTxt(shortIdx) + ' 비중을 보였고, 반대로 ' +
+       nm(longIdx) + '은 총수면시간(' + _slrMinShort(c.days[longIdx].tst) + ')이 가장 길었던 날로 ' + stageTxt(longIdx) + '을 기록했습니다. 잠을 더 오래 잔 날일수록 깊은수면·렘수면이 함께 늘고 얕은수면 비중은 줄어드는 흐름인지 살펴볼 수 있습니다. 두 밤의 흐름 차이는 12페이지에서 도식으로 비교합니다.')
+    : '이번 주 수면단계 데이터가 부족해 구간별 비교를 표시할 수 없습니다.';
   P.push(
-    '<div class="slr-page">'+_slrPageHead('03')+
-    '<div class="slr-page-title">얼마나, 그리고 어떻게 잤는지</div>'+
-    '<div class="slr-page-desc">총수면시간을 깊은수면·얕은수면·렘수면 세 구간으로 나누어 쌓아 표시했습니다.</div>'+
-    '<div class="slr-hero">'+_slrHeroIcon('moon')+'<div class="slr-hero-text"><span class="slr-hero-label">이번 주 평균 · 총수면시간</span><span class="slr-hero-value">'+_slrMinToHm(s.tst.avg)+'</span></div></div>'+
-    '<div class="slr-range-note">이번 주 범위: '+_slrMinToHm(s.tst.min)+' ~ '+_slrMinToHm(s.tst.max)+' · 목표 하루 7시간</div>'+
-    '<div class="slr-chart-box"><canvas id="slr-cv-structure" width="680" height="220"></canvas></div>'+
-    '<div class="slr-insight-box">목표 수면시간(하루 7시간) 대비 이번 주 실제 총수면시간은 약 '+_slrRoundTxt(s.totalActualMin/60,1)+'시간으로, '+
-      (debtHrs>0 ? ('약 '+_slrRoundTxt(debtHrs,1)+'시간의 수면부채가 누적되었습니다.') : '수면부채는 발생하지 않았습니다.')+
-    '</div>'+_slrPageFoot('03')+'</div>'
+    '<div class="slr-page">' + _slrPageHead('03') +
+    '<div class="slr-page-title">얼마나, 그리고 어떻게 잤는지</div>' +
+    '<div class="slr-page-desc">총수면시간을 깊은수면·얕은수면·렘수면 세 구간으로 나누어 쌓아 표시했습니다. 막대 위 숫자는 그날의 총수면시간입니다.</div>' +
+    '<div class="slr-hero"><div class="slr-hero-main">' + _slrHeroIcon('moon') +
+      '<div class="slr-hero-text"><span class="slr-hero-label">이번 주 평균 · 총수면시간</span>' +
+      '<span class="slr-hero-value">' + _slrMinToHm(s.tst.avg) + '</span></div></div>' +
+      '<div class="slr-hero-note">이번 주 범위: ' + _slrMinToHm(s.tst.min) + ' ~ ' + _slrMinToHm(s.tst.max) +
+        ((s.tst.min!=null&&s.tst.max!=null)?(' (변동폭 ' + _slrMinToHm(s.tst.max-s.tst.min) + ')'):'') +
+        ' · 권장 6~8시간 대비로는 ' + ((s.tst.avg!=null && s.tst.avg<360) ? '짧은 밤이 많았습니다' : '대체로 확보된 편이었습니다') + '</div></div>' +
+    '<div class="slr-chart-box"><div class="slr-chart-title">7일간 수면단계 구성 <span class="slr-chart-sub">(막대 위 색상별 숫자 = 그 구간의 실제 시간)</span>' +
+      '<span class="slr-chart-legend">' +
+        '<span><i class="slr-legend-chip" style="background:#17393E"></i>깊은수면</span>' +
+        '<span><i class="slr-legend-chip" style="background:#6FA49E"></i>얕은수면</span>' +
+        '<span><i class="slr-legend-chip" style="background:#8C7BA7"></i>렘수면</span></span></div>' +
+      '<canvas id="slr-cv-structure" width="680" height="215"></canvas></div>' +
+    '<div class="slr-calc-box"><b>어떻게 계산되나요?</b><div>웨어러블은 심박변동·움직임 패턴으로 30초~1분 단위마다 수면단계(깊은수면·얕은수면·렘수면·각성)를 추정합니다. 같은 단계로 분류된 시간을 하루 단위로 합산해 막대로 쌓았습니다 — 세 구간의 합이 그날의 <b>총수면시간(TST)</b>입니다.</div></div>' +
+    '<div class="slr-insight-box"><b>무엇을 의미하나요?</b><div>' + tstStructInsight + '</div></div>' +
+    '<div class="slr-suggest-box"><b>제안: 수면부채 해소</b><div>목표 수면시간(하루 7시간, 주 ' + R(7*s.n,0) + '시간) 대비 이번 주 실제 총수면시간은 약 ' +
+      R(s.totalActualMin/60,0) + '시간(' + R(s.totalActualMin,0) + '분)으로, ' +
+      (debtHrs>0 ? ('약 ' + _slrMinToHm(s.sleepDebtMin) + '의 수면부채가 누적되었습니다. 한 번에 몰아 자기보다 하루 20~30분씩 취침시각을 점진적으로 앞당겨 부족분을 줄여가는 것을 목표로 삼을 수 있습니다.')
+                 : '수면부채는 발생하지 않았습니다. 현재의 취침·기상 리듬을 유지하는 것을 목표로 삼을 수 있습니다.') + '</div></div>' +
+    _slrPageFoot('03') + '</div>'
   );
 
-  /* 04 수면효율 */
-  P.push(_slrMetricPage('04','잠자리에 누운 시간 중 실제로 잠든 비율','수면효율(Sleep Efficiency)은 침상에 머문 시간 대비 실제 수면 시간의 비율입니다.',
-    '수면효율', _slrRoundTxt(s.eff.avg,0)+'%',
-    '이번 주 범위: '+_slrRoundTxt(s.eff.min,0)+'~'+_slrRoundTxt(s.eff.max,0)+'% · 참고범위 85% 이상',
-    'slr-cv-eff',
-    '이번 주 평균은 '+_slrRoundTxt(s.eff.avg,0)+'%로 참고범위(85% 이상) 대비 '+_slrRefCompare(SLR_REF.eff,s.eff.avg)+'입니다.',
-    s.eff.avg!=null && s.eff.avg<85 ? '수면효율이 낮은 날이 이어질 때는 잠자리에 누운 지 20분이 지나도 잠들지 않으면 잠시 일어나 있다가 졸릴 때 다시 눕는 자극조절법이 권장됩니다.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
-  ));
+  /* ══ 04 수면효율 ══ */
+  P.push(_slrMetricPage({
+    num:'04', title:'잠자리에 누운 시간 중 실제로 잠든 비율',
+    desc:'수면효율(Sleep Efficiency)은 침상에 머문 시간 대비 실제 수면 시간의 비율입니다. 임상 참고범위는 85% 이상입니다.',
+    heroLabel:'수면효율', heroVal:R(s.eff.avg,0)+'%',
+    rangeNote:'이번 주 범위: '+R(s.eff.min,0)+'~'+R(s.eff.max,0)+'%'+spread(s.eff.min,s.eff.max,'%p')+
+      ' · 권장 85% 이상 대비로는 '+((s.eff.avg!=null&&s.eff.avg<85)?'대부분 낮은 날들이었습니다':'대체로 충족한 날들이었습니다'),
+    canvasId:'slr-cv-eff',
+    calc:'수면효율(%) = 총수면시간(TST) ÷ 침상에 머문 시간(TIB) × 100 — 침대에 누워 있던 시간 중 몇 %를 실제로 잠들어 있었는지입니다. 임상 참고범위는 <b>85% 이상</b>이며, 이보다 낮을수록 누워 있는 시간에 비해 실제 수면 시간이 적었다는 뜻입니다.',
+    insight:'이번 주 평균은 '+R(s.eff.avg,0)+'%로 참고범위(85% 이상)에 '+((s.eff.avg!=null&&s.eff.avg<85)?'못 미쳤고':'들었고')+
+      ', 요일별 최저치는 '+R(s.eff.min,0)+'%까지 내려간 날이 있었습니다. 심박·호흡·SpO2가 함께 흔들린 날과 겹치는지는 17페이지에서 별도로 확인합니다. 정의와 참고범위 전체는 2페이지를, 입면잠복기·각성횟수와 같은 계산식 안에서 함께 움직이는 이유는 7페이지를 확인하세요.',
+    suggestTitle:'자극조절법',
+    suggest:'수면효율이 낮은 날이 이어질 때 일반적으로 권장되는 방법입니다 — 잠자리에 누운 지 20분이 지나도 잠들지 않으면 잠시 일어나 있다가 졸릴 때 다시 눕고, 침대는 수면 외 용도로 사용하지 않습니다. 목표: 85% 이상.'
+  }));
 
-  /* 05 입면잠복기 */
-  P.push(_slrMetricPage('05','불을 끄고 나서 잠들기까지 걸린 시간','입면잠복기(Sleep Onset Latency)는 잠자리에 누운 뒤 실제로 잠들기까지 걸린 시간입니다.',
-    '입면잠복기', _slrRoundTxt(s.sol.avg,0)+'분',
-    '이번 주 범위: '+_slrRoundTxt(s.sol.min,0)+'~'+_slrRoundTxt(s.sol.max,0)+'분 · 참고범위 20분 이내',
-    'slr-cv-sol',
-    '이번 주 평균은 '+_slrRoundTxt(s.sol.avg,0)+'분으로 참고범위(20분 이내) 대비 '+_slrRefCompare(SLR_REF.sol,s.sol.avg)+'입니다.',
-    s.sol.avg!=null && s.sol.avg>20 ? '취침 30~60분 전부터 조명을 낮추고 화면 사용을 줄이는 것이 잠드는 데 걸리는 시간을 줄이는 데 도움이 됩니다. 목표: 20분 이내.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
-  ));
+  /* ══ 05 입면잠복기 ══ */
+  P.push(_slrMetricPage({
+    num:'05', title:'불을 끄고 나서 잠들기까지 걸린 시간',
+    desc:'입면잠복기(Sleep Onset Latency)는 잠자리에 누운 뒤 실제로 잠들기까지 걸린 시간입니다. 임상 참고범위는 20분 이내입니다.',
+    heroLabel:'입면잠복기', heroVal:R(s.sol.avg,0)+'분',
+    rangeNote:'이번 주 범위: '+R(s.sol.min,0)+'~'+R(s.sol.max,0)+'분'+spread(s.sol.min,s.sol.max,'분')+
+      ' · 권장 20분 이내 대비로는 '+((s.sol.avg!=null&&s.sol.avg>20)?'그보다 긴 날이 많았습니다':'대체로 충족한 날들이었습니다'),
+    canvasId:'slr-cv-sol',
+    calc:'소등(잠자리에 누운) 시각부터 웨어러블이 수면 시작으로 인식한 시각까지의 경과 시간입니다 — 즉 ‘눕고 나서 실제로 잠들기까지 걸린 시간’입니다. 임상 참고범위는 <b>20분 이내</b>이며, 길어질수록 잠드는 데 더 오래 걸렸다는 뜻입니다.',
+    insight:'이번 주 평균은 '+R(s.sol.avg,0)+'분으로 참고범위(20분 이내)보다 '+((s.sol.avg!=null&&s.sol.avg>20)?'길었고':'짧았고')+
+      ', 요일별 최댓값은 '+R(s.sol.max,0)+'분까지 늘어난 날이 있었습니다. 입면잠복기가 길어지는 날일수록 총수면시간이 함께 줄어드는 경향이 3페이지 수면단계 그래프에서도 확인되며, 수면효율과 함께 낮아지는 계산상의 이유는 7페이지에서 정리했습니다.',
+    suggestTitle:'취침 전 이완 루틴',
+    suggest:'잠드는 데 걸리는 시간이 길게 느껴지는 날이 이어질 때 취침 30~60분 전부터 조명을 낮추고 화면 사용을 줄이는 것이 일반적으로 도움이 됩니다. 목표: 20분 이내.'
+  }));
 
-  /* 07 통합 상관관계 (기존 06에서 이동) */
-  const rTxt = (v)=> v==null ? '데이터 부족' : (v>0?'+':'')+v;
-  const tibAvg06 = slrAvg(s.tibMinArr);
+  /* ══ 07 세 지표 함께 보기 (초안과 동일하게 06보다 앞에 배치) ══ */
+  const tibAvg = slrAvg(s.tibMinArr);
   P.push(
-    '<div class="slr-page">'+_slrPageHead('07')+
-    '<div class="slr-page-title">세 지표는 따로 움직이지 않습니다</div>'+
-    '<div class="slr-page-desc">총수면시간(03p)·수면효율(04p)·입면잠복기(05p)·각성횟수(06p)는 하나의 계산식으로 연결되어 있습니다. 침상시간(TIB) = 입면잠복기 + 총수면시간 + 입면 후 각성(WASO), 수면효율(SE) = 총수면시간 ÷ TIB × 100. 입면잠복기가 길어지거나 각성이 잦아지면 같은 TIB 안에서 총수면시간 비중이 줄어 SE도 함께 낮아집니다.</div>'+
-    '<div class="slr-stat-tiles">'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 침상시간(TIB)</div><div class="slr-stat-tile-value">'+_slrMinToHm(tibAvg06)+'</div></div>'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 수면효율(04p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt(s.eff.avg,0)+'%</div></div>'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 각성횟수(06p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt(s.awake.avg,1)+'회</div></div>'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">r (입면잠복기 ↔ 수면효율)</div><div class="slr-stat-tile-value">'+rTxt(s.r.solEff)+'</div></div>'+
-    '</div>'+
-    '<div class="slr-combo-title">침상시간 구성·수면효율·각성횟수 — 한 그래프로 함께 보기</div>'+
-    '<div class="slr-combo-legend">'+
-      '<span><i class="slr-legend-chip" style="background:#DAA44C"></i>입면잠복기(막대)</span>'+
-      '<span><i class="slr-legend-chip" style="background:#25545A"></i>총수면시간(막대)</span>'+
-      '<span><i class="slr-legend-chip" style="background:#C97B53"></i>입면 후 각성(막대)</span>'+
-      '<span><i class="slr-legend-line" style="background:#17393E"></i>수면효율 SE%(선·오른쪽 축)</span>'+
-      '<span><i class="slr-legend-dot"></i>각성횟수(점선·점 위 숫자로 표기)</span>'+
-    '</div>'+
-    '<div class="slr-chart-box"><canvas id="slr-cv-tibcombo" width="680" height="175"></canvas></div>'+
-    '<div class="slr-range-note">막대 = 침상시간(TIB) 구성(왼쪽 축, 시간) · 실선 = 수면효율 SE%(오른쪽 축) · 점선 = 각성횟수(점 위 숫자로 표기, 축 없이 겹쳐보기)</div>'+
-    '<div class="slr-combo-title" style="margin-top:.5rem">활동시간·입면잠복기·수면효율 — 세 값이 함께 움직이는지 <span class="slr-combo-subtitle">(13p·05p·04p 데이터 통합)</span></div>'+
-    '<div class="slr-combo-legend">'+
-      '<span><i class="slr-legend-chip" style="background:#DCEAE6"></i>활동시간(막대·왼쪽 축)</span>'+
-      '<span><i class="slr-legend-line" style="background:#17393E"></i>수면효율 SE%(선·오른쪽 축)</span>'+
-      '<span><i class="slr-legend-dot" style="background:#DAA44C"></i>입면잠복기(점선·점 위 분으로 표기)</span>'+
-    '</div>'+
-    '<div class="slr-chart-box"><canvas id="slr-cv-actcombo" width="680" height="175"></canvas></div>'+
-    '<div class="slr-range-note">막대 = 활동시간(왼쪽 축) · 실선 = 수면효율 SE%(오른쪽 축) · 점선 = 입면잠복기(점 위 분으로 표기)</div>'+
-    '<div class="slr-anomaly-cards">'+
-      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 입면잠복기)</div><div class="slr-anomaly-value">'+rTxt(s.r.actSol)+'</div></div>'+
-      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (활동시간 ↔ 수면효율)</div><div class="slr-anomaly-value">'+rTxt(s.r.actEff)+'</div></div>'+
-      '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">r (입면잠복기 ↔ 수면효율, 05p·04p)</div><div class="slr-anomaly-value">'+rTxt(s.r.solEff)+'</div></div>'+
-    '</div>'+
-    '<div class="slr-range-note">세 값이 서로 다른 데이터(활동량·수면단계 센서)에서 나왔지만, 상관계수가 함께 움직이는지를 보여줍니다.</div>'+
-    '<div class="slr-insight-box" style="margin-top:.5rem">'+
-      (s.actEffSlopePer10!=null ? ('활동시간 10분당 수면효율 변화는 약 '+(s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p로 추정됩니다. ') : '')+
-      (s.worstIdx>=0 ? ('이번 주 수면효율이 가장 낮았던 날은 '+(labels[s.worstIdx]||'')+'요일로, 입면잠복기·각성횟수·활동시간을 함께 확인해볼 필요가 있습니다.') : '')+
-    '</div>'+
-    '<div class="slr-suggest-box"><b>제안: 세 지표로 원인 위치 구분하기</b><br>입면잠복기·각성횟수가 함께 높은 날은 "잠들기 어려움"에 먼저 대응하고(05p 이완 루틴), 입면잠복기는 정상인데 각성횟수만 높은 날은 "자주 깨어남" 쪽 요인(06p 각성 유발 요인 조정)을 먼저 살펴보는 것이 더 효율적입니다.</div>'+
-    _slrPageFoot('07')+'</div>'
+    '<div class="slr-page slr-page-dense">' + _slrPageHead('07') +
+    '<div class="slr-page-title">세 지표는 따로 움직이지 않습니다</div>' +
+    '<div class="slr-page-desc">총수면시간(03p) · 수면효율(04p) · 입면잠복기(05p) · 각성횟수(06p)는 하나의 계산식으로 연결되어 있습니다. 침상시간(TIB) = <b>입면잠복기 + 총수면시간 + 입면 후 각성(WASO)</b>, 수면효율(SE) = <b>총수면시간 ÷ TIB × 100</b>. 입면잠복기가 길어지거나 각성이 잦아지면 같은 TIB 안에서 총수면시간 비중이 줄어 SE도 함께 낮아집니다.</div>' +
+    '<div class="slr-stat-tiles slr-4">' +
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 침상시간(TIB)</div><div class="slr-stat-tile-value">' + _slrMinToHm(tibAvg) + '</div></div>' +
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 수면효율 (04p)</div><div class="slr-stat-tile-value">' + R(s.eff.avg,0) + '%</div></div>' +
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">평균 각성횟수 (06p)</div><div class="slr-stat-tile-value">' + R(s.awake.avg,1) + '회</div></div>' +
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">r (입면잠복기↔수면효율)</div><div class="slr-stat-tile-value">' + rTxt(s.r.solEff) + '</div></div>' +
+    '</div>' +
+    '<div class="slr-chart-box"><div class="slr-chart-title">침상시간 구성 · 수면효율 · 각성횟수 — 한 그래프로 함께 보기 <span class="slr-chart-sub">(신규 · 통합 그래프)</span></div>' +
+      '<div class="slr-combo-legend">' +
+        '<span><i class="slr-legend-chip" style="background:#DAA44C"></i>입면잠복기(막대)</span>' +
+        '<span><i class="slr-legend-chip" style="background:#17393E"></i>총수면시간(막대)</span>' +
+        '<span><i class="slr-legend-chip" style="background:#C97B53"></i>입면 후 각성(막대)</span>' +
+        '<span><i class="slr-legend-line" style="background:#17393E"></i>수면효율 SE%(선·오른쪽 축)</span>' +
+        '<span><i class="slr-legend-dash"></i>각성횟수(선·점 위 숫자)</span>' +
+      '</div>' +
+      '<canvas id="slr-cv-tibcombo" width="680" height="168"></canvas>' +
+      '<div class="slr-chart-note">막대 = 침상시간(TIB) 구성(왼쪽 축, 시간) · 실선 = 수면효율 SE%(오른쪽 축) · 점선 = 각성횟수(점 위 숫자로 표기, 축 없이 겹쳐보기)</div></div>' +
+    '<div class="slr-chart-box"><div class="slr-chart-title">활동시간 · 입면잠복기 · 수면효율 — 세 값이 함께 움직이는지 <span class="slr-chart-sub">(신규 · 13p·05p·04p 데이터 통합)</span></div>' +
+      '<div class="slr-combo-legend">' +
+        '<span><i class="slr-legend-chip" style="background:#DCEAE6"></i>활동시간(막대·왼쪽 축)</span>' +
+        '<span><i class="slr-legend-line" style="background:#17393E"></i>수면효율 SE%(선·오른쪽 축)</span>' +
+        '<span><i class="slr-legend-dash"></i>입면잠복기(선·점 위 분으로 표기)</span>' +
+      '</div>' +
+      '<canvas id="slr-cv-actcombo" width="680" height="168"></canvas></div>' +
+    '<div class="slr-r-row">' +
+      '<div class="slr-r-col"><div class="slr-r-label">r (활동시간↔입면잠복기)</div><div class="slr-r-value">' + rTxt(s.r.actSol) + '</div></div>' +
+      '<div class="slr-r-col"><div class="slr-r-label">r (활동시간↔수면효율)</div><div class="slr-r-value">' + rTxt(s.r.actEff) + '</div></div>' +
+      '<div class="slr-r-col"><div class="slr-r-label">r (입면잠복기↔수면효율, 07p 상단)</div><div class="slr-r-value">' + rTxt(s.r.solEff) + '</div></div>' +
+    '</div>' +
+    '<div class="slr-chart-note">세 값이 서로 다른 데이터(활동량 앱 · 수면단계 센서)에서 나왔지만, 상관계수를 통해 함께 움직이는지를 확인할 수 있습니다.</div>' +
+    '<div class="slr-insight-box"><b>무엇을 의미하나요?</b><div>' +
+      (s.worstIdx>=0 ? ('이번 주 수면효율이 가장 낮았던 날은 ' + nm(s.worstIdx) + '(' + R(c.days[s.worstIdx].eff,0) + '%)로, 같은 날 입면잠복기(' + R(c.days[s.worstIdx].sol,0) + '분)·각성횟수(' + R(c.days[s.worstIdx].awakeCount,0) + '회)를 함께 확인해볼 필요가 있습니다. ') : '') +
+      '입면잠복기와 수면효율의 상관계수는 r=' + rTxt(s.r.solEff) + ', 활동시간과 입면잠복기는 r=' + rTxt(s.r.actSol) + '로 나타났습니다. ' +
+      (s.actEffSlopePer10!=null ? ('활동시간 10분당 수면효율 변화는 약 ' + (s.actEffSlopePer10>=0?'+':'') + R(s.actEffSlopePer10,1) + '%p로 추정됩니다.') : '') +
+    '</div></div>' +
+    '<div class="slr-suggest-box"><b>제안: 세 지표로 원인 위치 구분하기</b><div>입면잠복기·각성횟수가 함께 높은 날은 <b>"잠들기 어려움"</b>에 먼저 대응하고(05p 이완 루틴), 입면잠복기는 정상인데 각성횟수만 높은 날은 <b>"자주 깨어남"</b> 쪽 요인(06p 각성 유발 요인 조정)을 먼저 살펴보는 것이 더 효율적입니다.</div></div>' +
+    _slrPageFoot('07') + '</div>'
   );
 
-  /* 06 각성횟수 (기존 07에서 이동) */
-  P.push(_slrMetricPage('06','잠든 뒤 밤사이 깨어난 횟수','각성횟수(Awakenings)는 수면 중 일정 시간 이상 깨어난 것으로 기록된 구간의 수입니다.',
-    '각성횟수', _slrRoundTxt(s.awake.avg,1)+'회/밤',
-    '이번 주 범위: '+_slrRoundTxt(s.awake.min,0)+'~'+_slrRoundTxt(s.awake.max,0)+'회 · 참고범위 2회 이하',
-    'slr-cv-awake',
-    '이번 주 평균은 '+_slrRoundTxt(s.awake.avg,1)+'회로 참고범위(2회 이하) 대비 '+_slrRefCompare(SLR_REF.awake,s.awake.avg)+'입니다.',
-    s.awake.avg!=null && s.awake.avg>2 ? '밤사이 깨는 횟수가 많은 날이 이어질 때는 카페인·알코올 섭취 시각을 취침 6시간 이전으로 당기고, 깼을 때 시계를 보지 않는 것이 재입면에 도움이 됩니다. 목표: 2회 이하.' : '현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
-  ));
+  /* ══ 06 각성횟수 ══ */
+  P.push(_slrMetricPage({
+    num:'06', title:'잠든 뒤 밤사이 깨어난 횟수',
+    desc:'각성횟수(Awakenings)는 수면 중 일정 시간 이상 깨어난 것으로 기록된 구간의 수입니다. 임상 참고범위는 2회 이하입니다.',
+    heroLabel:'각성횟수', heroVal:R(s.awake.avg,1)+'회 / 밤',
+    rangeNote:'이번 주 범위: '+R(s.awake.min,0)+'~'+R(s.awake.max,0)+'회'+spread(s.awake.min,s.awake.max,'회')+
+      ' · 권장 2회 이하 대비로는 '+((s.awake.avg!=null&&s.awake.avg>2)?'초과한 날이 더 많았습니다':'대체로 충족한 날들이었습니다'),
+    canvasId:'slr-cv-awake',
+    calc:'수면 구간 중 심박·움직임 패턴이 각성 기준을 넘겨 ‘깨어남’으로 분류된 구간의 횟수를 셉니다(짧은 뒤척임은 제외) — 잠든 뒤 밤사이 몇 번 깼는지입니다. 임상 참고범위는 <b>2회 이하</b>이며, 많을수록 자다가 깨는 시간이 길어졌다는 뜻입니다.',
+    insight:'이번 주 평균은 '+R(s.awake.avg,1)+'회로 참고범위(2회 이하)를 '+((s.awake.avg!=null&&s.awake.avg>2)?'넘었습니다':'밑돌았습니다')+
+      '. 각성횟수가 가장 많았던 날은 입면잠복기도 함께 길었던 경향이 있어(5페이지), 잠들기도 어렵고 자주 깨는 밤이 반복되는지 살펴볼 필요가 있습니다.',
+    suggestTitle:'각성 유발 요인 조정',
+    suggest:'밤사이 깨는 횟수가 많은 날이 이어질 때 카페인·알코올 섭취 시각을 취침 6시간 이전으로 당기고, 깼을 때 시계를 보지 않는 것이 재입면에 도움이 됩니다. 목표: 2회 이하.'
+  }));
 
-  /* 08 심박수 */
-  P.push(_slrMetricPage('08','잠자는 동안 심장이 뛴 속도','수면 중 심박수는 수면 단계 동안 측정된 심박수의 평균입니다.',
-    '수면 중 심박수', _slrRoundTxt(s.hr.avg,0)+'bpm',
-    '이번 주 범위: '+_slrRoundTxt(s.hr.min,0)+'~'+_slrRoundTxt(s.hr.max,0)+'bpm · 참고범위 45~70bpm',
-    'slr-cv-hr',
-    '이번 주 평균은 '+_slrRoundTxt(s.hr.avg,0)+'bpm으로 참고범위 대비 '+_slrRefCompare(SLR_REF.hr,s.hr.avg)+'입니다. 호흡수·SpO2와의 상관계수는 각각 r='+rTxt(s.r.hrRr)+', r='+rTxt(s.r.hrSpo2)+'입니다.',
-    ''
-  ));
+  /* ══ 08 수면 중 심박수 ══ */
+  const hrExtra =
+    '<div class="slr-calc-box"><b>호흡수 · SpO2와 함께 보면</b> <span class="slr-chart-sub">(신규 · 자동 계산)</span>' +
+      '<div class="slr-r-row slr-r-row-tight">' +
+        '<div class="slr-r-col"><div class="slr-r-label">r (심박수↔호흡수)</div><div class="slr-r-value">' + rTxt(s.r.hrRr) + '</div></div>' +
+        '<div class="slr-r-col"><div class="slr-r-label">r (심박수↔SpO2)</div><div class="slr-r-value">' + rTxt(s.r.hrSpo2) + '</div></div>' +
+      '</div>' +
+      '<div>이번 주 ' + s.n + '일 전체에서 심박수가 오른 날은 호흡수도 함께 오르고 SpO2는 함께 낮아지는 경향이 있었는지를 상관계수로 확인한 값입니다. 세 지표가 따로따로가 아니라 <b>하나의 신체 신호</b>처럼 함께 움직인다는 뜻으로, 요일별 실제 수치는 17페이지에서 함께 확인할 수 있습니다.</div>' +
+      '<div class="slr-fineprint">※ 측정 기간이 짧을 때는 상관관계가 실제보다 강하게 나타날 수 있어, 누적 데이터에서는 관계가 더 느슨해질 수 있습니다.</div>' +
+    '</div>';
+  P.push(_slrMetricPage({
+    num:'08', title:'잠자는 동안 심장이 뛴 속도',
+    desc:'수면 중 심박수는 수면 단계 동안 측정된 심박수의 평균입니다. 임상 참고범위는 45~70bpm입니다.',
+    heroLabel:'수면 중 심박수', heroVal:R(s.hr.avg,0)+'bpm',
+    rangeNote:'이번 주 범위: '+R(s.hr.min,0)+'~'+R(s.hr.max,0)+'bpm'+spread(s.hr.min,s.hr.max,'bpm')+
+      ' · 참고범위 45~70bpm '+(_slrInRange(SLR_REF.hr,s.hr.avg)===true?'안에서 대체로 움직였습니다':'대비 벗어난 날이 있었습니다'),
+    canvasId:'slr-cv-hr',
+    calc:'수면 시작부터 기상까지 구간에서 측정된 심박수(bpm)의 평균입니다. 임상 참고범위는 <b>45~70bpm</b>이며, 벗어날수록 수면 중에도 몸이 충분히 쉬지 못했을 가능성을 시사합니다.',
+    insight:'주간 평균은 '+R(s.hr.avg,0)+'bpm으로 참고범위(45~70bpm) '+(_slrInRange(SLR_REF.hr,s.hr.avg)===true?'안에 있습니다':'를 벗어났습니다')+
+      '. 다만 요일별 최댓값('+R(s.hr.max,0)+'bpm)은 참고범위 상단을 넘긴 날이 있어, 호흡수(9페이지)·SpO2(10페이지)와 함께 흔들리는 날이 반복되는지는 17페이지에서 별도로 관찰합니다.',
+    extra:hrExtra,
+    suggestTitle:(_slrInRange(SLR_REF.hr,s.hr.avg)===true?'현재 패턴 유지':'관찰 강화'),
+    suggest:(_slrInRange(SLR_REF.hr,s.hr.avg)===true
+      ? '수면 중 심박수는 대체로 참고범위 안에서 움직였습니다. 특별한 조정보다 현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
+      : '수면 중 심박수가 참고범위를 벗어난 날이 있어, 같은 패턴이 다음 주에도 반복되는지 함께 확인할 것을 권장합니다.')
+  }));
 
-  /* 09 호흡수 */
-  P.push(_slrMetricPage('09','잠자는 동안 1분당 호흡한 횟수','수면 중 호흡수는 수면 단계 동안 측정된 분당 호흡 횟수의 평균입니다.',
-    '호흡수', _slrRoundTxt(s.rr.avg,0)+'회/분',
-    '이번 주 범위: '+_slrRoundTxt(s.rr.min,0)+'~'+_slrRoundTxt(s.rr.max,0)+'회 · 참고범위 12~20회/분',
-    'slr-cv-rr',
-    '이번 주 평균은 '+_slrRoundTxt(s.rr.avg,0)+'회/분으로 참고범위 대비 '+_slrRefCompare(SLR_REF.rr,s.rr.avg)+'입니다. SpO2와의 상관계수는 r='+rTxt(s.r.rrSpo2)+'입니다.',
-    ''
-  ));
+  /* ══ 09 호흡수 ══ */
+  const rrExtra =
+    '<div class="slr-calc-box"><b>심박수 · SpO2와 함께 보면</b> <span class="slr-chart-sub">(신규 · 자동 계산)</span>' +
+      '<div class="slr-r-row slr-r-row-tight">' +
+        '<div class="slr-r-col"><div class="slr-r-label">r (호흡수↔심박수)</div><div class="slr-r-value">' + rTxt(s.r.hrRr) + '</div></div>' +
+        '<div class="slr-r-col"><div class="slr-r-label">r (호흡수↔SpO2)</div><div class="slr-r-value">' + rTxt(s.r.rrSpo2) + '</div></div>' +
+      '</div>' +
+      '<div>이번 주는 호흡수가 오를 때마다 SpO2가 함께 낮아지는 관계가 얼마나 일관됐는지를 보여줍니다. 심박수 역시 함께 오르는 경향을 보여, 호흡·심박·산소포화도가 한 방향으로 묶여 움직였는지 확인할 수 있습니다. 요일별 실제 수치는 17페이지에서 확인하세요.</div>' +
+      '<div class="slr-fineprint">※ 측정 기간이 짧을 때는 상관관계가 실제보다 강하게 나타날 수 있어, 누적 데이터에서는 관계가 더 느슨해질 수 있습니다.</div>' +
+    '</div>';
+  P.push(_slrMetricPage({
+    num:'09', title:'잠자는 동안 1분당 호흡한 횟수',
+    desc:'수면 중 호흡수는 수면 단계 동안 측정된 분당 호흡 횟수의 평균입니다. 임상 참고범위는 12~20회/분입니다.',
+    heroLabel:'호흡수', heroVal:R(s.rr.avg,0)+'회 / 분',
+    rangeNote:'이번 주 범위: '+R(s.rr.min,0)+'~'+R(s.rr.max,0)+'회'+spread(s.rr.min,s.rr.max,'회')+
+      ' · 참고범위 12~20회/분 '+(_slrInRange(SLR_REF.rr,s.rr.avg)===true?'안에서 움직였습니다':'대비 벗어난 날이 있었습니다'),
+    canvasId:'slr-cv-rr',
+    calc:'흉부·복부 움직임 또는 PPG 파형 변동으로 추정한 분당 호흡 횟수의 수면 중 평균입니다. 임상 참고범위는 <b>12~20회/분</b>이며, 벗어날수록 호흡이 평소보다 빠르거나 느렸다는 뜻입니다.',
+    insight:'주간 평균은 '+R(s.rr.avg,0)+'회/분으로 참고범위(12~20회/분) '+(_slrInRange(SLR_REF.rr,s.rr.avg)===true?'안에 있습니다':'를 벗어났습니다')+
+      '. 요일별 최댓값('+R(s.rr.max,0)+'회/분)은 이번 주 중 가장 높았던 날로, 심박수(8페이지)·SpO2(10페이지)와 함께 흔들리는 경향이 반복되는지는 17페이지에서 참고 소견으로 다룹니다.',
+    extra:rrExtra,
+    suggestTitle:(_slrInRange(SLR_REF.rr,s.rr.avg)===true?'현재 패턴 유지':'관찰 강화'),
+    suggest:(_slrInRange(SLR_REF.rr,s.rr.avg)===true
+      ? '호흡수는 대체로 참고범위 안에서 움직였습니다. 특별한 조정보다 현재 패턴을 유지하며 관찰을 지속하는 것을 권장합니다.'
+      : '호흡수가 참고범위를 벗어난 날이 있어, 같은 패턴이 반복되는지 다음 주에도 함께 확인할 것을 권장합니다.')
+  }));
 
-  /* 10 SpO2 */
-  P.push(_slrMetricPage('10','잠자는 동안 혈액 속 산소가 얼마나 충분했는지','SpO2는 수면 중 말초 혈액의 산소포화도 평균입니다.',
-    'SpO2', _slrRoundTxt(s.spo2.avg,0)+'%',
-    '이번 주 범위: '+_slrRoundTxt(s.spo2.min,0)+'~'+_slrRoundTxt(s.spo2.max,0)+'% · 참고범위 95% 이상',
-    'slr-cv-spo2',
-    '이번 주 평균은 '+_slrRoundTxt(s.spo2.avg,0)+'%로 참고범위(95% 이상) 대비 '+_slrRefCompare(SLR_REF.spo2,s.spo2.avg)+'입니다. 심박수·호흡수와 함께 흔들리는 날은 17번(이상신호 스크리닝)에서 확인합니다.',
-    ''
-  ));
+  /* ══ 10 SpO2 ══ */
+  const spo2Extra =
+    '<div class="slr-calc-box"><b>심박수 · 호흡수와 함께 보면 — SpO2×호흡수의 관계</b> <span class="slr-chart-sub">(신규 · 자동 계산)</span>' +
+      '<div class="slr-r-row slr-r-row-tight">' +
+        '<div class="slr-r-col"><div class="slr-r-label">r (SpO2↔호흡수)</div><div class="slr-r-value">' + rTxt(s.r.rrSpo2) + '</div></div>' +
+        '<div class="slr-r-col"><div class="slr-r-label">r (SpO2↔심박수)</div><div class="slr-r-value">' + rTxt(s.r.hrSpo2) + '</div></div>' +
+      '</div>' +
+      '<div>이번 주 데이터에서 호흡수와 SpO2가 서로 반대 방향으로 움직였는지를 보여줍니다. 심박수도 함께 오르는 경향을 보인다면 세 지표가 같은 이야기를 하고 있다는 뜻으로 — 몸이 편안했던 밤(호흡수↓)이 곧 산소포화도가 안정적이었던 밤(SpO2↑)이라는 것을, 이번 주 데이터가 스스로 보여준 셈입니다. 앱에서 보는 개별 숫자만으로는 알기 어려운, 지표를 통합해야 보이는 발견입니다.</div>' +
+      '<div class="slr-fineprint">※ 측정 기간이 짧을 때는 상관관계가 실제보다 강하게 나타날 수 있습니다. 하루 단위 이상신호는 17페이지에서, 세 지표가 매주 같은 방향으로 움직이는지는 이 페이지의 값을 기준으로 계속 지켜보는 것을 권장합니다.</div>' +
+    '</div>';
+  P.push(_slrMetricPage({
+    num:'10', title:'잠자는 동안 혈액 속 산소가 얼마나 충분했는지',
+    desc:'SpO2는 수면 중 말초 혈액의 산소포화도 평균입니다. 임상 참고범위는 95% 이상입니다.',
+    heroLabel:'SpO2', heroVal:R(s.spo2.avg,0)+'%',
+    rangeNote:'이번 주 범위: '+R(s.spo2.min,0)+'~'+R(s.spo2.max,0)+'%'+spread(s.spo2.min,s.spo2.max,'%p')+
+      ' · 참고범위 95% 이상 대비 '+((s.spo2.min!=null&&s.spo2.min<95)?'낮았던 날이 있었습니다':'모두 충족했습니다'),
+    canvasId:'slr-cv-spo2',
+    calc:'광혈류측정(PPG) 센서로 측정한 수면 중 혈중 산소포화도(%)의 평균입니다. 임상 참고범위는 <b>95% 이상</b>이며, 낮을수록 수면 중 혈액에 산소가 덜 공급되었다는 뜻입니다.',
+    insight:'주간 평균은 '+R(s.spo2.avg,0)+'%로 참고범위(95% 이상) '+(_slrInRange(SLR_REF.spo2,s.spo2.avg)===true?'안에 있습니다':'를 밑돕니다')+
+      '. 요일별 최솟값('+R(s.spo2.min,0)+'%)은 '+((s.spo2.min!=null&&s.spo2.min<95)?'참고범위 아래로 내려간 날이 있었으며':'참고범위 안에 있었으며')+
+      ', 심박수(8페이지)·호흡수(9페이지)와 함께 흔들리는지는 17페이지에서 하나의 관찰 대상으로 묶어 다룹니다.',
+    extra:spo2Extra,
+    suggestTitle:'편차 관찰 지속',
+    suggest:'SpO2 평균은 '+(_slrInRange(SLR_REF.spo2,s.spo2.avg)===true?'참고범위 안에 있으나':'참고범위를 밑돌고 있으며')+' 주간 편차가 존재합니다. 참고범위 내에서도 편차가 반복되는지 지속 관찰을 권장합니다.'
+  }));
 
-  /* 11 취침·기상 규칙성 */
+  /* ══ 11 취침·기상 시각 규칙성 ══ */
+  const tib7min = Math.round(420/0.85);
+  const targetBedMid = (s.wakeMin.avg!=null) ? ((((s.wakeMin.avg - tib7min) % 1440) + 1440) % 1440) : null;
+  const targetBedTxt = targetBedMid!=null ? (slrMinToTime(targetBedMid-5)+'~'+slrMinToTime(targetBedMid+5)) : '-';
   P.push(
-    '<div class="slr-page">'+_slrPageHead('11')+
-    '<div class="slr-page-title">몇 시에 자고, 몇 시에 일어났는지</div>'+
-    '<div class="slr-page-desc">잠든 시각과 일어난 시각이 매일 비슷할수록 생체리듬이 안정적입니다.</div>'+
-    '<div class="slr-hero">'+_slrHeroIcon('clock',false)+'<div class="slr-hero-text"><span class="slr-hero-label">평균 취침시각</span><span class="slr-hero-value">'+slrMinToTime(s.bedMin.avg)+'</span></div></div>'+
-    '<div class="slr-range-note">요일 간 편차 ±'+_slrRoundTxt(s.bedStd,0)+'분 · 참고범위 20분 이내</div>'+
-    '<div class="slr-chart-box"><canvas id="slr-cv-bed" width="680" height="160"></canvas></div>'+
-    '<div class="slr-hero" style="margin-top:.6rem">'+_slrHeroIcon('clock',true)+'<div class="slr-hero-text"><span class="slr-hero-label">평균 기상시각</span><span class="slr-hero-value">'+slrMinToTime(s.wakeMin.avg)+'</span></div></div>'+
-    '<div class="slr-range-note">요일 간 편차 ±'+_slrRoundTxt(s.wakeStd,0)+'분 · 참고범위 20분 이내</div>'+
-    '<div class="slr-chart-box"><canvas id="slr-cv-wake" width="680" height="160"></canvas></div>'+
-    _slrPageFoot('11')+'</div>'
+    '<div class="slr-page">' + _slrPageHead('11') +
+    '<div class="slr-page-title">몇 시에 자고, 몇 시에 일어났는지</div>' +
+    '<div class="slr-page-desc">잠든 시각과 일어난 시각이 매일 비슷할수록 생체리듬이 안정적입니다. 두 시각 모두 요일별 실측값을 선으로 이었습니다.</div>' +
+    '<div class="slr-chart-box"><div class="slr-hero-inline">' +
+        '<span class="slr-hero-label">평균 잠든 시각</span><span class="slr-hero-value">' + slrMinToTime(s.bedMin.avg) + '</span></div>' +
+      '<div class="slr-hero-note">이번 주 범위: ' + slrMinToTime(s.bedMin.min) + ' ~ ' + slrMinToTime(s.bedMin.max) +
+        ' · 요일 간 편차 ±' + R(s.bedStd,0) + '분</div>' +
+      '<canvas id="slr-cv-bed" width="680" height="150"></canvas></div>' +
+    '<div class="slr-chart-box"><div class="slr-hero-inline">' +
+        '<span class="slr-hero-label">평균 기상 시각</span><span class="slr-hero-value">' + slrMinToTime(s.wakeMin.avg) + '</span></div>' +
+      '<div class="slr-hero-note">이번 주 범위: ' + slrMinToTime(s.wakeMin.min) + ' ~ ' + slrMinToTime(s.wakeMin.max) +
+        ' · 요일 간 편차 ±' + R(s.wakeStd,0) + '분</div>' +
+      '<canvas id="slr-cv-wake" width="680" height="150"></canvas></div>' +
+    '<div class="slr-calc-box"><b>어떻게 계산되나요?</b><div>매일의 취침·기상 시각을 자정 기준 분 단위로 환산한 뒤, ' + s.n + '일 값의 <b>표준편차</b>를 구합니다 — 이 값이 작을수록 매일 비슷한 시각에 자고 일어난다는 뜻입니다. 참고범위는 20분 이내입니다.</div></div>' +
+    '<div class="slr-insight-box"><b>무엇을 의미하나요?</b><div>취침시각은 편차가 ' + ((s.bedStd!=null&&s.bedStd>20)?'크고':'작고') + '(±' + R(s.bedStd,0) + '분, 참고범위 20분 이내) 기상시각은 ' +
+      ((s.wakeStd!=null&&s.wakeStd>20)?'편차가 큽니다':'비교적 일정합니다') + '(±' + R(s.wakeStd,0) + '분). 이는 <b>"몇 시에 일어나는지"</b>보다 <b>"몇 시에 잠자리에 드는지"</b>가 먼저 흔들리고 있다는 뜻으로 읽을 수 있습니다 — 18페이지 루틴 제안의 1번 근거입니다.</div></div>' +
+    '<div class="slr-suggest-box"><b>제안: 목표 취침시각 역산</b><div>평균 기상시각(' + slrMinToTime(s.wakeMin.avg) + ')을 고정점으로 목표 수면시간 7시간, 목표 수면효율 85%를 반영해 역산하면 권장 취침시각은 약 ' + targetBedTxt +
+      '입니다. 현재 평균 취침시각(' + slrMinToTime(s.bedMin.avg) + ')과 차이가 있다면, 하루 15~20분씩 점진적으로 앞당기는 방식을 권장합니다.</div></div>' +
+    _slrPageFoot('11') + '</div>'
   );
 
-  /* 12 좋은밤 vs 나쁜밤 */
-  function nightTags(idx){
-    if(idx<0) return [];
-    const d = c.days[idx], tags=[];
-    tags.push((d.sol!=null && s.sol.avg!=null && d.sol<=s.sol.avg) ? '빠르게 잠듦' : '잠들기까지 오래 걸림');
-    tags.push((d.deepPct!=null && s.deepPct.avg!=null && d.deepPct>=s.deepPct.avg) ? '깊은 잠 구간 유지' : '얕은 잠·잦은 각성');
-    tags.push((d.remPct!=null && s.remPct.avg!=null && d.remPct>=s.remPct.avg) ? '렘수면 규칙적으로 반복' : '짧은 렘·깊은잠 부족');
-    tags.push((d.awakeCount!=null && s.awake.avg!=null && d.awakeCount<=s.awake.avg) ? '완만하게 깨어남' : '이른 각성·자주 깸');
-    return tags;
+  /* ══ 12 좋았던 밤 vs 나빴던 밤 ══ */
+  const NIGHT_TILES = [
+    ['moon',  '잠듦',        '빠르게 잠듦',            '뒤척임',            '잠들기까지 오래 걸림'],
+    ['deep',  '깊은 잠 구간', '가장 길게 유지',         '얕은 잠 · 잦은 각성', '자주 깨어남'],
+    ['rem',   '렘수면 반복',  '규칙적으로 반복',        '짧은 렘 · 깊은잠 부족', '회복 수면 부족'],
+    ['wake',  '얕은 잠 · 기상','완만하게 깨어남',       '이른 각성',          '이른 시각 다시 깸']
+  ];
+  function nightTiles(idx, good){
+    if(idx<0) return '';
+    const d = c.days[idx];
+    const ok = [
+      (d.sol!=null && s.sol.avg!=null && d.sol<=s.sol.avg),
+      (d.deepPct!=null && s.deepPct.avg!=null && d.deepPct>=s.deepPct.avg),
+      (d.remPct!=null && s.remPct.avg!=null && d.remPct>=s.remPct.avg),
+      (d.awakeCount!=null && s.awake.avg!=null && d.awakeCount<=s.awake.avg)
+    ];
+    return NIGHT_TILES.map(function(t,i){
+      const isOk = ok[i];
+      return '<div class="slr-night-tile' + (good?' good':' bad') + '">' +
+        '<div class="slr-night-tile-icon">' + _slrNightIcon(t[0], good) + '</div>' +
+        '<div class="slr-night-tile-title">' + (isOk ? t[1] : t[3]) + '</div>' +
+        '<div class="slr-night-tile-sub">' + (isOk ? t[2] : t[4]) + '</div></div>';
+    }).join('');
   }
   const bd = s.bestIdx>=0 ? c.days[s.bestIdx] : null, wd = s.worstIdx>=0 ? c.days[s.worstIdx] : null;
   P.push(
-    '<div class="slr-page">'+_slrPageHead('12')+
-    '<div class="slr-page-title">가장 좋았던 밤과 가장 힘들었던 밤</div>'+
-    '<div class="slr-page-desc">이번 주 수면효율이 가장 높았던 밤과 가장 낮았던 밤을 나란히 놓고 비교합니다.</div>'+
-    '<div class="slr-nightcards">'+
-      '<div class="slr-nightcard best"><div class="slr-nightcard-head">🟢 좋았던 밤 · '+(bd?(bd.date+' ('+(labels[s.bestIdx]||'')+')'):'-')+' · 수면효율 '+(bd?_slrRoundTxt(bd.eff,0)+'%':'-')+'</div>'+
-        '취침 '+(bd?bd.bedTime||'-':'-')+' → 기상 '+(bd?bd.wakeTime||'-':'-')+
-        '<div class="slr-nightcard-tags">'+nightTags(s.bestIdx).map(t=>'<span class="slr-nightcard-tag">'+t+'</span>').join('')+'</div>'+
-      '</div>'+
-      '<div class="slr-nightcard worst"><div class="slr-nightcard-head">🔴 힘들었던 밤 · '+(wd?(wd.date+' ('+(labels[s.worstIdx]||'')+')'):'-')+' · 수면효율 '+(wd?_slrRoundTxt(wd.eff,0)+'%':'-')+'</div>'+
-        '취침 '+(wd?wd.bedTime||'-':'-')+' → 기상 '+(wd?wd.wakeTime||'-':'-')+
-        '<div class="slr-nightcard-tags">'+nightTags(s.worstIdx).map(t=>'<span class="slr-nightcard-tag">'+t+'</span>').join('')+'</div>'+
-      '</div>'+
-    '</div>'+_slrPageFoot('12')+'</div>'
+    '<div class="slr-page">' + _slrPageHead('12') +
+    '<div class="slr-page-title">가장 좋았던 밤과 가장 힘들었던 밤</div>' +
+    '<div class="slr-page-desc">이번 주 수면효율이 가장 높았던 밤과 가장 낮았던 밤을 나란히 놓고, 수면이 어떤 순서로 흘러갔는지 살펴봅니다.</div>' +
+    '<div class="slr-page-note">* 정밀 측정 그래프가 아닌, 흐름을 이해하기 위한 도식입니다 — 분 단위 실측값이 아닙니다.</div>' +
+    '<div class="slr-nightcard">' +
+      '<div class="slr-nightcard-head"><span><i class="slr-dot good"></i>좋았던 밤 · ' + (bd?(bd.date+'('+(labels[s.bestIdx]||'')+')'):'-') + ' · 수면효율 ' + (bd?R(bd.eff,0)+'%':'-') + '</span>' +
+        '<span class="slr-nightcard-time">취침 ' + (bd?(bd.bedTime||'-'):'-') + ' → 기상 ' + (bd?(bd.wakeTime||'-'):'-') + '</span></div>' +
+      '<div class="slr-night-tiles">' + nightTiles(s.bestIdx, true) + '</div></div>' +
+    '<div class="slr-nightcard">' +
+      '<div class="slr-nightcard-head"><span><i class="slr-dot bad"></i>나빴던 밤 · ' + (wd?(wd.date+'('+(labels[s.worstIdx]||'')+')'):'-') + ' · 수면효율 ' + (wd?R(wd.eff,0)+'%':'-') + '</span>' +
+        '<span class="slr-nightcard-time">취침 ' + (wd?(wd.bedTime||'-'):'-') + ' → 기상 ' + (wd?(wd.wakeTime||'-'):'-') + '</span></div>' +
+      '<div class="slr-night-tiles">' + nightTiles(s.worstIdx, false) + '</div></div>' +
+    '<div class="slr-calc-box"><b>어떻게 구분하나요?</b><div>웨어러블은 심박·움직임 패턴으로 수면단계(깊은 잠·얕은 잠·렘수면·각성)를 30초~1분 단위로 추정합니다. 이 페이지는 그 추정치를 그대로 그래프로 그리는 대신, 이어지는 구간을 묶어 "잠듦 → 깊은 잠 → 렘수면 → 얕은 잠·기상" 같은 <b>흐름의 순서</b>로 단순화했습니다. 두 밤 모두 같은 방식으로 계산했기 때문에 서로 비교가 가능합니다.</div></div>' +
+    '<div class="slr-insight-box"><b>무엇을 의미하나요?</b><div>나빴던 밤은 각성이 반복되며 깊은 잠 구간이 짧았고, 좋았던 밤은 깊은 잠이 먼저 확보된 뒤 렘수면이 규칙적으로 이어졌습니다. 취침시각(11페이지)과 수면 흐름의 관계는 <b>계속 관찰이 필요한 항목</b>입니다.</div></div>' +
+    _slrPageFoot('12', '웨어러블 측정 데이터 기반 · 도식(스키매틱) 표현') + '</div>'
   );
 
-  /* 13 활동량 */
-  P.push(_slrMetricPage('13','낮 동안 몸을 얼마나 움직였는지','활동시간은 하루 중 걷기 등 의도적인 신체활동으로 기록된 시간의 합입니다.',
-    '활동시간', _slrRoundTxt(s.act.avg,0)+'분/일',
-    '평균 걸음수(참고용): 약 '+_slrRoundTxt(s.steps.avg,0)+'보/일 · 이번 주 범위: '+_slrRoundTxt(s.act.min,0)+'~'+_slrRoundTxt(s.act.max,0)+'분',
-    'slr-cv-act',
-    '이번 주 합계 활동시간은 약 '+_slrRoundTxt((s.act.avg||0)*s.n,0)+'분입니다. 권장 기준(주 150분)'+(((s.act.avg||0)*s.n)>=150?'을 충족했습니다.':'에 아직 못 미쳤습니다.'),
-    '양을 늘리기보다, 매일 비슷한 시간대에 짧게라도 걷는 방식으로 요일별 편차를 줄이는 것을 목표로 삼아볼 수 있습니다.'
-  ));
+  /* ══ 13 활동량 ══ */
+  P.push(_slrMetricPage({
+    num:'13', title:'낮 동안 몸을 얼마나 움직였는지',
+    desc:'활동시간은 하루 중 걷기 등 의도적인 신체활동으로 기록된 시간의 합입니다. 걸음수는 같은 기간 측정된 하루 총 걸음수입니다.',
+    heroLabel:'활동시간', heroVal:R(s.act.avg,0)+'분 / 일',
+    heroSub:'<div class="slr-hero-sub"><div class="slr-hero-sub-label">이번 주 평균 걸음수 (참고용 추정치)</div>' +
+      '<div class="slr-hero-sub-value">약 ' + (s.steps.avg!=null ? Number(Math.round(s.steps.avg)).toLocaleString('ko-KR') : '-') + '보 / 일</div></div>',
+    rangeNote:'이번 주 범위: '+R(s.act.min,0)+'~'+R(s.act.max,0)+'분'+spread(s.act.min,s.act.max,'분'),
+    canvasId:'slr-cv-act',
+    calc:'가속도계로 감지한 걸음·움직임 패턴 중 ‘의도적 활동’으로 분류된 구간의 시간을 하루 단위로 합산합니다. 참고범위: 국제 운동종양학 권고(ACSM 등)는 암 치료 후 회복기에 <b>주 150분 이상의 중강도 유산소 활동</b>을 권장합니다(하루 평균 약 21분).',
+    insight:'이번 주 합계 활동시간은 약 '+R((s.act.avg||0)*s.n,0)+'분으로 주간 권장 기준(150분)을 '+
+      (((s.act.avg||0)*s.n)>=150?'이미 넘겼습니다':'아직 채우지 못했습니다')+
+      '. 다만 요일별 편차가 커서(최저 '+R(s.act.min,0)+'분~최고 '+R(s.act.max,0)+'분) 활동이 특정 요일에 몰려 있는 경향이 있습니다.',
+    suggestTitle:'총량보다 꾸준함',
+    suggest:'주간 총 활동량이 충분한 수준이라면 양을 더 늘리기보다, 매일 비슷한 시간대에 짧게라도 걷는 방식으로 요일별 편차를 줄이는 것을 목표로 삼아볼 수 있습니다. 활동과 수면효율의 관계는 7페이지에서 함께 살펴봅니다.'
+  }));
 
-  /* 14 칼로리 */
-  P.push(_slrMetricPage('14','하루 동안 소모한 총 에너지','총 소모 칼로리는 기초대사량과 활동으로 인한 추가 소모량을 합한 하루 총합입니다. (참고용 지표)',
-    '총 소모 칼로리', _slrRoundTxt(s.cal.avg,0)+'kcal/일',
-    '이번 주 범위: '+_slrRoundTxt(s.cal.min,0)+'~'+_slrRoundTxt(s.cal.max,0)+'kcal',
-    'slr-cv-cal',
-    '칼로리 소모량은 활동시간이 많았던 날 함께 높아지는 경향을 보입니다. 절대값보다 활동량과 같은 방향으로 움직이는지가 이 지표를 읽는 유용한 방법입니다.',
-    ''
-  ));
+  /* ══ 14 소모 칼로리 ══ */
+  P.push(_slrMetricPage({
+    num:'14', title:'하루 동안 소모한 총 에너지',
+    desc:'총 소모 칼로리는 기초대사량과 활동으로 인한 추가 소모량을 합한 하루 총합입니다.',
+    heroLabel:'총 소모 칼로리', heroVal:R(s.cal.avg,0)+'kcal / 일', heroBadge:'참고용',
+    rangeNote:'이번 주 범위: '+R(s.cal.min,0)+'~'+R(s.cal.max,0)+'kcal'+spread(s.cal.min,s.cal.max,'kcal'),
+    canvasId:'slr-cv-cal',
+    calc:'웨어러블이 추정한 기초대사량(BMR)에 활동으로 인한 추가 소모 칼로리를 더한 하루 총합입니다. 칼로리 소모량은 개인의 체중·근육량·기초대사량에 따라 크게 달라지므로, <b>이 지표에는 공통 참고범위를 적용하지 않습니다.</b>',
+    insight:'칼로리 소모량은 활동시간(13페이지)이 많았던 날 함께 높아지는 경향을 보입니다. 절대값보다 활동량과 같은 방향으로 움직이는지가 이 지표를 읽는 더 유용한 방법입니다.',
+    suggestTitle:'추세 중심으로 관찰',
+    suggest:'특정 목표 칼로리를 설정하기보다 활동량과 함께 증감하는 추세를 관찰하는 것을 권장합니다. 구체적인 목표 설정이 필요하다면 영양사·주치의와의 상담을 권합니다.'
+  }));
 
-  /* 15 활력점수 */
+  /* ══ 15 활력점수 ══ */
+  function days2vit(cc,a,b){ return cc.days.slice(a,b).map(d=>d.vitality); }
   const half = Math.ceil(s.n/2);
   const firstHalfAvg = slrAvg(days2vit(c,0,half)), secondHalfAvg = slrAvg(days2vit(c,half,s.n));
-  function days2vit(cc,a,b){ return cc.days.slice(a,b).map(d=>d.vitality); }
-  P.push(_slrMetricPage('15','웨어러블이 종합한 그날의 컨디션 지수','활력점수는 0에서 시작해 활동량이 늘면 100 쪽으로 가까워지고, 활동량이 줄면 다시 낮아지는 누적형 지수로 읽어야 하는 참고용 값입니다.',
-    '활력점수', _slrRoundTxt(s.vit.avg,0)+'점/100',
-    '이번 주 범위: '+_slrRoundTxt(s.vit.min,0)+'~'+_slrRoundTxt(s.vit.max,0)+'점',
-    'slr-cv-vit',
-    (firstHalfAvg!=null && secondHalfAvg!=null) ? ('주 전반부 평균 '+_slrRoundTxt(firstHalfAvg,0)+'점 대비 후반부 평균 '+_slrRoundTxt(secondHalfAvg,0)+'점으로, '+(secondHalfAvg>=firstHalfAvg?'주 후반으로 갈수록 회복되는 흐름입니다.':'주 후반으로 갈수록 낮아지는 흐름입니다.')) : '',
-    '활력점수를 직접 높이려 하기보다, 근본 원인인 수면의 질을 개선하는 접근이 더 효과적입니다.'
-  ));
+  P.push(_slrMetricPage({
+    num:'15', title:'웨어러블이 종합한 그날의 컨디션 지수',
+    desc:'활력점수는 그날 하루의 컨디션을 스냅샷으로 찍는 값이 아니라, <b>0에서 시작해 활동량이 늘면 100 쪽으로 가까워지고 활동량이 줄면 다시 낮아지는 누적형 지수</b>로 읽어야 하는 값입니다. 특정 하루의 점수 자체에 집중하기보다, 그 점수가 한 주 동안 어느 방향으로 움직였는지를 하나의 흐름으로 보는 것이 이 지수의 원래 취지에 맞습니다.',
+    heroLabel:'활력점수', heroVal:R(s.vit.avg,0)+'점 / 100', heroBadge:'참고용',
+    rangeNote:'이번 주 범위: '+R(s.vit.min,0)+'~'+R(s.vit.max,0)+'점'+spread(s.vit.min,s.vit.max,'점'),
+    canvasId:'slr-cv-vit', canvasH:180,
+    chartTitle:'7일간 누적 흐름 — 0에서 시작해 활동량 증감에 따라 100에 가까워지는 흐름',
+    chartSub:'(하루 단위 등락보다 추세로 읽어보세요)',
+    calc:'제조사별 고유 알고리즘으로 수면의 질·심박 회복·활동량 등을 종합해 산출하는 점수로, 이 리포트는 이를 <b>매일 0점에서 다시 시작하는 값이 아니라 활동량 증감에 따라 100에 가깝거나 멀어지는 누적형 지수</b>라는 개념으로 해석합니다. 임상적으로 표준화된 절대 기준이 없는 기기 자체 산출 지수이며, 정확한 내부 산식은 제조사가 공개하지 않아 하루치 등락보다 여러 날에 걸친 방향성으로 읽을 때 더 의미가 있습니다. 이 리포트에서는 참고용으로만 제공합니다.',
+    insight:(firstHalfAvg!=null && secondHalfAvg!=null)
+      ? ('전날 밤 수면효율이 낮았던 다음 날은 활동량도 함께 위축되며 점수가 다시 0 쪽으로 내려가고, 수면효율이 회복된 날은 활동량이 늘며 점수가 100 쪽으로 다시 오르는 흐름인지 살펴봅니다(이번 주 ' +
+         R(s.vit.min,0) + '~' + R(s.vit.max,0) + '점 사이를 오갔습니다). 주 전반부 평균 ' + R(firstHalfAvg,0) + '점 대비 후반부 평균 ' + R(secondHalfAvg,0) + '점으로, ' +
+         (secondHalfAvg>=firstHalfAvg ? '주 후반으로 갈수록 회복되는 흐름입니다.' : '주 후반으로 갈수록 낮아지는 흐름입니다.') +
+         ' ' + R(s.vit.avg,0) + '점이라는 평균 자체보다, 점수가 주중 어느 방향으로 오르내렸는지와 그 원인(그 전날 수면효율, 4페이지)을 함께 보는 것이 이 지수를 올바르게 읽는 방법입니다.')
+      : '이번 주 활력점수 데이터가 부족해 흐름을 판단하기 어렵습니다.',
+    suggestTitle:'수면 개선이 우선',
+    suggest:'활력점수를 직접 높이려 하기보다, 근본 원인인 수면의 질을 개선하는 접근이 더 효과적입니다. 04~10페이지의 개선 제안을 먼저 참고하세요.'
+  }));
 
-  /* 16 종합진단표 */
-  const refRows = [
-    ['eff', s.eff.avg], ['sol', s.sol.avg], ['awake', s.awake.avg],
-    ['hr', s.hr.avg], ['rr', s.rr.avg], ['spo2', s.spo2.avg]
-  ];
+  /* ══ 16 종합진단 — 참고범위 대비 ══ */
+  const refRows = [['eff',s.eff.avg],['sol',s.sol.avg],['awake',s.awake.avg],['hr',s.hr.avg],['rr',s.rr.avg],['spo2',s.spo2.avg]];
   const structKeys = ['eff','sol','awake'], cardioKeys = ['hr','rr','spo2'];
   const structOk = structKeys.filter(k=>_slrInRange(SLR_REF[k], s[k].avg)===true).length;
   const structKnown = structKeys.filter(k=>_slrInRange(SLR_REF[k], s[k].avg)!=null).length;
@@ -13950,117 +14079,192 @@ function _slrBuildReportHtml(c, s, labels){
     return { lo: avgEff(lo), mid: avgEff(mid.length?mid:rows), hi: avgEff(hi) };
   }
   const tiers = actTiers(c);
-  function tierBar(label, val, maxV){
-    const pct = val==null ? 0 : Math.max(2, Math.min(100, (val/maxV)*100));
-    return '<div class="slr-tierbar-row"><span class="slr-tierbar-label">'+label+'</span>'+
-      '<div class="slr-tierbar-track"><div class="slr-tierbar-fill" style="width:'+pct.toFixed(0)+'%"></div></div>'+
-      '<span class="slr-tierbar-val">'+(val==null?'-':_slrRoundTxt(val,0)+'%')+'</span></div>';
+  function tierCell(label, val){
+    const pct = val==null ? 0 : Math.max(8, Math.min(100, val));
+    return '<div class="slr-tier-cell"><div class="slr-tier-bar" style="opacity:' + (0.35 + pct/220).toFixed(2) + '"></div>' +
+      '<div class="slr-tier-label">' + label + ' ' + (val==null?'-':R(val,0)+'%') + '</div></div>';
   }
-  const tierMaxV = tiers ? Math.max(100, tiers.lo||0, tiers.mid||0, tiers.hi||0) : 100;
   P.push(
-    '<div class="slr-page">'+_slrPageHead('16')+
-    '<div class="slr-page-title">요일 비교가 아니라, 참고범위 대비</div>'+
-    '<div class="slr-page-desc">"어제보다 나은가"가 아니라 "임상 참고범위와 비교해 어느 방향으로, 얼마나 떨어져 있는가"를 기준으로 정리합니다.</div>'+
-    '<table class="slr-table"><thead><tr><th>지표</th><th>이번 주 평균</th><th>임상 참고범위</th><th>참고범위 대비</th></tr></thead><tbody>'+
-      refRows.map(function(rr2){
-        const ref = SLR_REF[rr2[0]], avg = rr2[1];
-        return '<tr><td>'+ref.label+'</td><td>'+(avg==null?'-':_slrRoundTxt(avg, rr2[0]==='awake'?1:0)+ref.unit)+'</td><td>'+_slrRefRangeTxt(ref)+'</td><td>'+_slrRefCompare(ref,avg)+'</td></tr>';
-      }).join('')+
-    '</tbody></table>'+
-    '<div class="slr-16-insights">'+
-      '<div class="slr-insight-box slr-insight-warn"><b>수면 구조 — '+(structKnown?(structOk+'/'+structKnown+'개 참고범위 충족'):'데이터 부족')+'</b><br>'+
-        (structKnown ? ('수면효율·입면잠복기·각성횟수는 하나의 계산식으로 연결되어 있어, 늘어난 시간 대비 실제 회복 수면이 충분히 확보되었는지를 함께 보여줍니다. ('+structOk+'개 지표가 참고범위 안에 있습니다.)') : '이번 주 데이터가 부족해 판단할 수 없습니다.')+
-      '</div>'+
-      '<div class="slr-insight-box"><b>심폐 반응 — '+(cardioKnown?(cardioOk+'/'+cardioKnown+'개 참고범위 안'):'데이터 부족')+'</b><br>'+
-        (cardioKnown ? ('심박수·호흡수·SpO2의 주간 평균이 참고범위 안에 있는지를 보여줍니다. 하루 단위로 세 지표가 동시에 흔들렸는지는 17페이지에서 별도로 확인합니다.') : '이번 주 데이터가 부족해 판단할 수 없습니다.')+
-      '</div>'+
-    '</div>'+
-    '<div class="slr-integrated-card">'+
-      '<div class="slr-integrated-title">수면-활동 통합 지표 (7일 데이터 자동 계산)</div>'+
-      '<div class="slr-integrated-grid">'+
-        '<div class="slr-integrated-col"><div class="slr-integrated-label">활동량 ↔ 수면효율 상관계수</div><div class="slr-integrated-value">r = '+rTxt(s.r.actEff)+'</div></div>'+
-        '<div class="slr-integrated-col"><div class="slr-integrated-label">활동 10분↑ 당 추정 변화</div><div class="slr-integrated-value">SE '+(s.actEffSlopePer10!=null?((s.actEffSlopePer10>=0?'+':'')+_slrRoundTxt(s.actEffSlopePer10,1)+'%p'):'-')+'</div></div>'+
-        '<div class="slr-integrated-col slr-integrated-tiers"><div class="slr-integrated-label">활동 구간별 평균 수면효율</div>'+
-          (tiers ? (tierBar('저활동',tiers.lo,tierMaxV)+tierBar('중활동',tiers.mid,tierMaxV)+tierBar('고활동',tiers.hi,tierMaxV)) : '<div class="slr-range-note">데이터 부족</div>')+
-        '</div>'+
-      '</div>'+
-      '<div class="slr-range-note" style="margin-top:.5rem">위 값은 이번 주 7일 데이터로 재계산한 상관·회귀 추정치이며, 인과관계를 의미하지 않습니다.</div>'+
-    '</div>'+
-    _slrPageFoot('16')+'</div>'
+    '<div class="slr-page slr-page-dense">' + _slrPageHead('16') +
+    '<div class="slr-page-title">요일 비교가 아니라, 참고범위 대비</div>' +
+    '<div class="slr-page-desc">"어제보다 나은가"가 아니라 "임상 참고범위와 비교해 어느 방향으로, 얼마나 떨어져 있는가"를 기준으로 정리합니다.</div>' +
+    '<div class="slr-table-card"><table class="slr-table"><thead><tr><th>지표</th><th>이번 주 평균</th><th>임상 참고범위</th><th>참고범위 대비</th></tr></thead><tbody>' +
+      refRows.map(function(rw){
+        const ref = SLR_REF[rw[0]], avg = rw[1];
+        return '<tr><td><b>' + ref.label + '</b><span class="slr-table-eng">' + (ref.eng||'') + '</span></td>' +
+          '<td><b>' + (avg==null?'-':R(avg, rw[0]==='awake'?1:0)+ref.unit) + '</b></td>' +
+          '<td>' + _slrRefRangeTxt(ref) + '</td><td>' + _slrRefCompare(ref,avg) + '</td></tr>';
+      }).join('') +
+    '</tbody></table></div>' +
+    '<div class="slr-16-insights">' +
+      '<div class="slr-verdict struct"><b>수면 구조 — ' + (structKnown?((structKnown-structOk)+'/'+structKnown+'개 지표가 참고범위 밖입니다'):'데이터 부족') + '</b>' +
+        '<div>' + (structKnown ? '수면효율·입면잠복기·각성횟수는 하나의 계산식으로 연결되어 있어, 7페이지에서 정리했듯 늘어난 시간 대비 실제 회복 수면이 충분히 확보되고 있는지를 함께 읽을 수 있습니다. (' + structOk + '개 지표가 참고범위 안에 있습니다.)' : '이번 주 데이터가 부족해 판단할 수 없습니다.') + '</div></div>' +
+      '<div class="slr-verdict cardio"><b>심폐 반응 — ' + (cardioKnown?(cardioOk+'/'+cardioKnown+'개 참고범위 안'):'데이터 부족') + '</b>' +
+        '<div>' + (cardioKnown ? '심박수·호흡수·SpO2의 주간 평균이 참고범위 안에 있는지를 보여줍니다. 다만 <b>하루</b>는 세 지표가 동시에 흔들렸는지 — 17페이지에서 별도로 짚습니다.' : '이번 주 데이터가 부족해 판단할 수 없습니다.') + '</div></div>' +
+    '</div>' +
+    '<div class="slr-integrated-card">' +
+      '<div class="slr-integrated-title">수면-활동 통합 지표 <span class="slr-chart-sub">(신규 · ' + s.n + '일 데이터 자동 계산)</span></div>' +
+      '<div class="slr-integrated-grid">' +
+        '<div><div class="slr-integrated-label">활동량 ↔ 수면효율 상관계수</div><div class="slr-integrated-value">r = ' + rTxt(s.r.actEff) + '</div>' +
+          '<div class="slr-integrated-sub">' + (s.r.actEff!=null ? (Math.abs(s.r.actEff)>=0.7?'매우 강한':(Math.abs(s.r.actEff)>=0.4?'중간 정도의':'약한')) + ' ' + ((s.r.actEff||0)>=0?'양':'음') + '의 상관 (07p)' : '데이터 부족') + '</div></div>' +
+        '<div><div class="slr-integrated-label">활동 10분↑ 당 추정 변화</div><div class="slr-integrated-value">SE ' + (s.actEffSlopePer10!=null?((s.actEffSlopePer10>=0?'+':'')+R(s.actEffSlopePer10,1)+'%p'):'-') + '</div>' +
+          '<div class="slr-integrated-sub">총수면시간 추정 (회귀 추정)</div></div>' +
+        '<div><div class="slr-integrated-label">활동 구간별 평균 수면효율</div>' +
+          '<div class="slr-tier-row">' + (tiers ? (tierCell('저활동',tiers.lo)+tierCell('중활동',tiers.mid)+tierCell('고활동',tiers.hi)) : '<span class="slr-chart-note">데이터 부족</span>') + '</div></div>' +
+      '</div>' +
+      '<div class="slr-fineprint">상관·회귀 추정치는 이번 주 ' + s.n + '일 데이터로 계산한 것으로 인과관계를 의미하지 않습니다. 원 데이터: 13페이지(활동량)·07페이지(활동시간·수면효율 통합 그래프).</div>' +
+    '</div>' +
+    '<div class="slr-16-bottom">' +
+      '<div><div class="slr-16-bottom-label">수면 구조 지표</div><div class="slr-16-bottom-value">' + (structKnown?((structKnown-structOk)+'개 참고범위 미만'):'-') + '</div></div>' +
+      '<div><div class="slr-16-bottom-label">심폐 반응 지표</div><div class="slr-16-bottom-value">' + (cardioKnown?(cardioOk+'개 모두 범위 안'):'-') + (s.anomalyIdx>=0?(' ('+(labels[s.anomalyIdx]||'')+'요일 1일 제외)'):'') + '</div></div>' +
+      '<div class="slr-16-bottom-note">위 값은 참고범위 기준 자동 계산값이며, 진단이 아닌 관찰 결과입니다. 대상자 맞춤 해석·제안 코멘트는 18페이지에 있습니다.</div>' +
+    '</div>' +
+    _slrPageFoot('16', '웨어러블 측정 데이터 기반 · 참고범위는 임상 문헌 기준 예시값') + '</div>'
   );
 
-  /* 17 이상신호 스크리닝 */
+  /* ══ 17 이상신호 스크리닝 ══ */
   if(s.anomalyIdx>=0){
     const ad = c.days[s.anomalyIdx];
     const hrArr = c.days.map(d=>d.hr), rrArr = c.days.map(d=>d.rr), spo2Arr = c.days.map(d=>d.spo2);
     const actArr = c.days.map(d=>d.activityMin), vitArr = c.days.map(d=>d.vitality);
     const actAvg = slrAvg(actArr), vitAvg = slrAvg(vitArr);
     const adAct = ad.activityMin, adVit = ad.vitality;
+    function anomalyCard(title, val, unit, base, baseUnit, diff, arr){
+      return '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">' + title + '</div>' +
+        '<div class="slr-anomaly-row"><span class="slr-anomaly-value">' + val + '</span><span class="slr-anomaly-unit">' + unit + ' (' + (labels[s.anomalyIdx]||'') + ')</span>' +
+        '<span class="slr-anomaly-diff">평소 ' + base + baseUnit + ' · ' + diff + '</span></div>' +
+        _slrMiniWeekBars(arr, labels, s.anomalyIdx, '#A14E42') + '</div>';
+    }
     P.push(
-      '<div class="slr-page">'+_slrPageHead('17')+
-      '<div class="slr-page-title-row"><div class="slr-page-title">'+(ad.date||'')+'('+(labels[s.anomalyIdx]||'')+') 밤, 세 지표가 함께 움직였습니다</div>'+
-        '<span class="slr-badge-pill">● 관찰 · 확진 아님</span></div>'+
-      '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어났습니다. 우연히 겹쳤을 가능성도 있어 관찰 플래그만 남깁니다.</div>'+
-      '<div class="slr-anomaly-cards">'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">수면 중 심박수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.hr,0)+'bpm</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.hr.avg,0)+'bpm 대비 '+(ad.hr-s.hr.avg>=0?'+':'')+_slrRoundTxt(ad.hr-s.hr.avg,0)+'</div>'+_slrMiniWeekBars(hrArr, labels, s.anomalyIdx, '#A14E42')+'</div>'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">호흡수</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.rr,0)+'회/분</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.rr.avg,0)+'회 대비 '+(ad.rr-s.rr.avg>=0?'+':'')+_slrRoundTxt(ad.rr-s.rr.avg,0)+'</div>'+_slrMiniWeekBars(rrArr, labels, s.anomalyIdx, '#A14E42')+'</div>'+
-        '<div class="slr-anomaly-card"><div class="slr-anomaly-metric">SpO2</div><div class="slr-anomaly-value">'+_slrRoundTxt(ad.spo2,0)+'%</div><div class="slr-range-note">평소 '+_slrRoundTxt(s.spo2.avg,0)+'% 대비 '+(ad.spo2-s.spo2.avg>=0?'+':'')+_slrRoundTxt(ad.spo2-s.spo2.avg,0)+'</div>'+_slrMiniWeekBars(spo2Arr, labels, s.anomalyIdx, '#A14E42')+'</div>'+
-      '</div>'+
-      (adAct!=null||adVit!=null ? (
-        '<div class="slr-insight-box" style="margin-top:.8rem"><b>활동 영역도 함께 확인해보면</b><br>같은 날 활동시간'+(adAct!=null?('('+_slrRoundTxt(adAct,0)+'분, 평소 '+_slrRoundTxt(actAvg,0)+'분)'):'')+
-        (adVit!=null?(' · 활력점수('+_slrRoundTxt(adVit,0)+'점, 평소 '+_slrRoundTxt(vitAvg,0)+'점)'):'')+
-        '도 이번 주 중 가장 낮은 편에 속했는지 함께 살펴보면, 생리 지표뿐 아니라 활동 영역에서도 같은 날 함께 흔들리는 패턴이 반복되는지 지켜볼 근거가 됩니다.</div>'
-      ) : '')+
-      '<div class="slr-insight-box slr-insight-warn">하루의 일시적 변화는 스트레스, 카페인·알코올, 활동량, 경미한 컨디션 저하 등 다양한 요인으로도 나타날 수 있습니다. 같은 패턴이 반복되는지 함께 지켜볼 것을 제안하며, 다음 주에도 같은 방향으로 움직인다면 의료진과의 상담을 권합니다. (관찰 · 확진 아님)</div>'+
-      _slrPageFoot('17')+'</div>'
+      '<div class="slr-page">' + _slrPageHead('17') +
+      '<div class="slr-page-title-row"><div class="slr-page-title">' + (ad.date||'') + '(' + (labels[s.anomalyIdx]||'') + ') 밤, 세 지표가 함께 움직였습니다</div>' +
+        '<span class="slr-badge-pill">● 관찰 · 확진 아님</span></div>' +
+      '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어났습니다. 우연히 겹쳤을 가능성도 있어 아래와 같이 플래그만 남깁니다.</div>' +
+      '<div class="slr-anomaly-cards">' +
+        anomalyCard('수면 중 심박수', R(ad.hr,0), 'bpm', R(s.hr.avg,0), '', (ad.hr-s.hr.avg>=0?'+':'')+R(ad.hr-s.hr.avg,0), hrArr) +
+        anomalyCard('호흡수', R(ad.rr,0), '회/분', R(s.rr.avg,0), '', (ad.rr-s.rr.avg>=0?'+':'')+R(ad.rr-s.rr.avg,0), rrArr) +
+        anomalyCard('SpO2', R(ad.spo2,0), '%', R(s.spo2.avg,0), '', (ad.spo2-s.spo2.avg>=0?'+':'')+R(ad.spo2-s.spo2.avg,0)+'%p', spo2Arr) +
+      '</div>' +
+      ((adAct!=null||adVit!=null) ?
+        ('<div class="slr-calc-box"><b>활동 영역도 함께 확인해보면</b> <span class="slr-chart-sub">(신규 · 통합 스크리닝)</span>' +
+        '<div>같은 날 활동시간' + (adAct!=null?('('+R(adAct,0)+'분, 평소 '+R(actAvg,0)+'분)'):'') +
+        (adVit!=null?(' · 활력점수('+R(adVit,0)+'점, 평소 '+R(vitAvg,0)+'점)'):'') +
+        ' 역시 이번 주 중 가장 낮았는지 함께 살펴봅니다 — 13페이지(활동량)·15페이지(활력점수) 참고. 생리 지표뿐 아니라 활동 영역에서도 함께 낮아진 날이라면, 여러 영역이 동시에 흔들리는 패턴이 반복되는지 지켜볼 근거가 됩니다.</div></div>') : '') +
+      '<div class="slr-cover-spacer"></div>' +
+      '<div class="slr-warn-box"><b>왜 ‘확진’이 아니라 ‘관찰’인가</b><div>하루의 일시적 변화는 스트레스, 카페인·알코올, 활동량, 경미한 컨디션 저하 등 다양한 요인으로도 나타날 수 있습니다. 이 리포트는 이 변화를 진단하지 않으며, <b>같은 패턴이 반복되는지 함께 지켜볼 것</b>을 제안합니다. 만약 다음 주에도 세 지표가 같은 방향으로 함께 움직인다면, 의료진과의 상담을 권합니다.</div></div>' +
+      _slrPageFoot('17') + '</div>'
     );
   } else {
     P.push(
-      '<div class="slr-page">'+_slrPageHead('17')+
-      '<div class="slr-page-title">이상신호 스크리닝</div>'+
-      '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어난 날은 발견되지 않았습니다.</div>'+
-      _slrPageFoot('17')+'</div>'
+      '<div class="slr-page">' + _slrPageHead('17') +
+      '<div class="slr-page-title-row"><div class="slr-page-title">세 지표가 동시에 흔들린 밤은 없었습니다</div>' +
+        '<span class="slr-badge-pill ok">● 관찰 · 특이 소견 없음</span></div>' +
+      '<div class="slr-page-desc">심박수·호흡수·SpO2가 같은 날 밤 동시에 평소 범위를 벗어난 날은 이번 주 데이터에서 발견되지 않았습니다.</div>' +
+      '<div class="slr-cover-spacer"></div>' +
+      '<div class="slr-warn-box"><b>계속 지켜볼 항목</b><div>이번 주에는 세 지표가 동시에 흔들린 밤이 없었지만, 이 스크리닝은 한 주 단위로 다시 계산됩니다. 다음 주에도 같은 방식으로 확인해, 특정 요일에 반복되는 패턴이 나타나는지 함께 지켜볼 것을 제안합니다.</div></div>' +
+      _slrPageFoot('17') + '</div>'
     );
   }
 
-  /* 18 루틴 제안 */
-  const tib7min = Math.round(420/0.85);
-  const targetBedMid = (s.wakeMin.avg!=null) ? ((((s.wakeMin.avg - tib7min) % 1440) + 1440) % 1440) : null;
-  const targetBedTxt = targetBedMid!=null ? (slrMinToTime(targetBedMid-5)+'~'+slrMinToTime(targetBedMid+5)) : '-';
+  /* ══ 18 루틴 제안 ══ */
   P.push(
-    '<div class="slr-page">'+_slrPageHead('18')+
-    '<div class="slr-page-title">이번 주가 알려준 것부터 바꿔봅니다</div>'+
-    '<div class="slr-page-desc">치료의 급성기를 지나 경과관찰 중이라면, 목표는 "더 열심히"가 아니라 "더 규칙적으로"입니다.</div>'+
-    '<div class="slr-stat-tiles">'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">활동·수면 상관계수 (07p)</div><div class="slr-stat-tile-value">r = '+rTxt(s.r.actEff)+'</div></div>'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 활동시간 (13p)</div><div class="slr-stat-tile-value">'+_slrRoundTxt((s.act.avg||0)+10,0)+'분 이상 / 일</div></div>'+
-      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 취침시각 (11p)</div><div class="slr-stat-tile-value">'+targetBedTxt+'</div></div>'+
-    '</div>'+
-    '<div class="slr-manager-box"><div class="slr-manager-label">담당 매니저 코멘트 (이 리포트에서 유일하게 직접 작성되는 항목)</div>'+
-      '<div class="slr-manager-text">"이번 주 데이터를 참고해, 아래 루틴 중 우선순위를 정해 함께 시작해 보시죠." — 담당자 작성 예시</div></div>'+
-    '<div class="slr-routine-grid">'+
-      '<div class="slr-routine-card"><span class="slr-routine-num">1</span><span class="slr-routine-title">취침시각 먼저 고정하기</span>'+
-        '<div class="slr-routine-desc">근거 · 취침시각 편차 ±'+_slrRoundTxt(s.bedStd,0)+'분. 주말 포함 매일 같은 시각에 눕는 것을 목표로 합니다.</div></div>'+
-      '<div class="slr-routine-card"><span class="slr-routine-num">2</span><span class="slr-routine-title">낮 활동량 조금 늘리기</span>'+
-        '<div class="slr-routine-desc">근거 · r='+rTxt(s.r.actEff)+'. 하루 '+_slrRoundTxt((s.act.avg||0)+10,0)+'분 이상, 오전~이른 오후 시간대를 우선 권장합니다.</div></div>'+
-      '<div class="slr-routine-card"><span class="slr-routine-num">3</span><span class="slr-routine-title">저녁 루틴 다듬기</span>'+
-        '<div class="slr-routine-desc">근거 · 입면잠복기·각성횟수. 취침 2~3시간 전 카페인·알코올을 줄이고, 취침 1시간 전 화면·밝은 조명을 낮춥니다.</div></div>'+
-      '<div class="slr-routine-card"><span class="slr-routine-num">4</span><span class="slr-routine-title">흔들린 밤은 기록해두기</span>'+
-        '<div class="slr-routine-desc">근거 · 이상신호 스크리닝 결과. 심박수·호흡수·SpO2가 함께 흔들린 날은 그날의 스트레스·통증·카페인 등을 간단히 메모해 둡니다.</div></div>'+
-    '</div>'+
-    '<ul class="slr-checklist">'+
-      '<li>매일 같은 시각 기상 (주말 포함, ±30분 이내)</li>'+
-      '<li>낮 활동(걷기 등) 30분 이상 확보</li>'+
-      '<li>취침 2~3시간 전 카페인·알코올 자제</li>'+
-      '<li>취침 1시간 전 화면·밝은 조명 줄이기</li>'+
-      '<li>컨디션이 흔들린 날은 한 줄로 메모하기</li>'+
-    '</ul>'+
-    '<div class="slr-range-note" style="margin-top:.8rem">본 루틴 제안은 생활 가이드이며 의학적 진단이나 처방을 대신하지 않습니다. 증상이 지속되거나 악화되는 경우 의료진과 상담해 주세요.</div>'+
-    _slrPageFoot('18')+'</div>'
+    '<div class="slr-page">' + _slrPageHead('18') +
+    '<div class="slr-page-title">이번 주가 알려준 것부터 바꿔봅니다</div>' +
+    '<div class="slr-page-desc">치료의 급성기를 지나 경과관찰 중인 지금, 목표는 "더 열심히"가 아니라 <b>"더 규칙적으로"</b>입니다. 이번 리포트에서 관찰된 4가지 지점을 기준으로 루틴을 제안합니다.</div>' +
+    '<div class="slr-stat-tiles">' +
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">활동·수면 상관계수 (07p)</div><div class="slr-stat-tile-value">r = ' + rTxt(s.r.actEff) + '</div></div>' +
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 활동시간 (13p)</div><div class="slr-stat-tile-value">' + R((s.act.avg||0)+10,0) + '분 이상 / 일</div></div>' +
+      '<div class="slr-stat-tile"><div class="slr-stat-tile-label">목표 취침시각 (11p)</div><div class="slr-stat-tile-value">' + targetBedTxt + '</div></div>' +
+    '</div>' +
+    '<div class="slr-manager-box"><div class="slr-manager-label">담당 매니저 코멘트 <span class="slr-manager-sub">(이 리포트에서 유일하게 직접 작성되는 항목)</span></div>' +
+      '<div class="slr-manager-text">"이번 주는 수면 구조 지표들이 참고범위에는 아직 못 미쳤고, 특히 ' +
+      (s.worstIdx>=0 ? ((c.days[s.worstIdx].date||'') + '(' + (labels[s.worstIdx]||'') + ')') : '흔들린 날') +
+      '처럼 컨디션이 흔들린 날의 패턴을 함께 지켜보면 좋겠습니다. 아래 루틴 중 1·3번부터 먼저 시작해 보시죠." — 담당자 작성 예시</div></div>' +
+    '<div class="slr-routine-grid">' +
+      '<div class="slr-routine-card"><div class="slr-routine-head"><span class="slr-routine-num">1</span><span class="slr-routine-title">취침시각 먼저 고정하기</span></div>' +
+        '<div class="slr-routine-basis">근거 · 취침시각 편차 ±' + R(s.bedStd,0) + '분, 목표 취침시각 역산 (11p)</div>' +
+        '<div class="slr-routine-desc">주말 포함 매일 같은 시각에 눕기를 목표로 합니다. 취침시각을 바로 맞추기 어렵다면 <b>기상시각부터</b> 고정하는 것이 더 쉬운 출발점입니다.</div></div>' +
+      '<div class="slr-routine-card"><div class="slr-routine-head"><span class="slr-routine-num">2</span><span class="slr-routine-title">낮 활동량 조금 늘리기</span></div>' +
+        '<div class="slr-routine-basis">근거 · r=' + rTxt(s.r.actEff) + ', 활동 10분↑당 SE ' + (s.actEffSlopePer10!=null?((s.actEffSlopePer10>=0?'+':'')+R(s.actEffSlopePer10,1)+'%p'):'-') + ' (13p·07p)</div>' +
+        '<div class="slr-routine-desc">이번 주 데이터 기준 활동 ' + R((s.act.avg||0)+10,0) + '분 이상인 날 평균 수면효율이 더 높았습니다. 목표: 하루 ' + R((s.act.avg||0)+10,0) + '분 이상, <b>오전~이른 오후</b> 시간대 우선 권장.</div></div>' +
+      '<div class="slr-routine-card"><div class="slr-routine-head"><span class="slr-routine-num">3</span><span class="slr-routine-title">저녁 루틴 다듬기</span></div>' +
+        '<div class="slr-routine-basis">근거 · 입면잠복기·각성횟수 (05p·06p·07p)</div>' +
+        '<div class="slr-routine-desc">취침 2~3시간 전 카페인·알코올을 줄이고, 취침 1시간 전 화면·밝은 조명을 낮춰 봅니다. 짧은 호흡·스트레칭으로 잠들기 전 긴장을 낮춥니다.</div></div>' +
+      '<div class="slr-routine-card"><div class="slr-routine-head"><span class="slr-routine-num">4</span><span class="slr-routine-title">흔들린 밤은 기록해두기</span></div>' +
+        '<div class="slr-routine-basis">근거 · 이상신호 스크리닝 결과 (17p)</div>' +
+        '<div class="slr-routine-desc">심박수·호흡수·SpO2가 함께 흔들린 날은 그날의 스트레스·통증·카페인 등을 간단히 메모해 둡니다. <b>반복 여부</b>가 상담의 근거가 됩니다.</div></div>' +
+    '</div>' +
+    '<div class="slr-checklist-label">이번 주 체크리스트</div>' +
+    '<ul class="slr-checklist">' +
+      '<li>매일 같은 시각 기상 (주말 포함, ±30분 이내)</li>' +
+      '<li>낮 활동(걷기 등) 30분 이상 확보</li>' +
+      '<li>취침 2~3시간 전 카페인·알코올 자제</li>' +
+      '<li>취침 1시간 전 화면·밝은 조명 줄이기</li>' +
+      '<li>컨디션이 흔들린 날은 한 줄로 메모하기</li>' +
+    '</ul>' +
+    '<div class="slr-disclaimer">본 루틴 제안은 생활 가이드이며 의학적 진단이나 처방을 대신하지 않습니다. 증상이 지속되거나 악화되는 경우 의료진과 상담해 주세요.</div>' +
+    _slrPageFoot('18') + '</div>'
   );
 
-  return '<div class="slr-report">'+P.join('')+'</div>';
+  return '<div class="slr-report">' + P.join('') + '</div>';
 }
+
+/* 12페이지 밤 흐름 타일 아이콘 */
+function _slrNightIcon(kind, good){
+  const col = good ? '#17393E' : '#8B5238';
+  const M = {
+    moon:'<path d="M15 3a7 7 0 1 0 6 10.5A8.5 8.5 0 0 1 12 3c1 0 2 .17 3 0z" fill="'+col+'"/>',
+    deep:'<circle cx="12" cy="12" r="7" fill="'+col+'"/>',
+    rem:'<path d="M3 12.5c1.8 0 1.8-5 3.6-5s1.8 5 3.6 5 1.8-5 3.6-5 1.8 5 3.6 5" fill="none" stroke="'+col+'" stroke-width="1.8" stroke-linecap="round"/>',
+    wake:'<path d="M12 8.5a3.5 3.5 0 0 1 3.5 3.5h-7A3.5 3.5 0 0 1 12 8.5Z" fill="'+col+'"/><path d="M4 15.5h16M12 3.5v2M5 6l1.4 1.4M19 6l-1.4 1.4" fill="none" stroke="'+col+'" stroke-width="1.6" stroke-linecap="round"/>'
+  };
+  return '<svg width="24" height="24" viewBox="0 0 24 24">'+(M[kind]||'')+'</svg>';
+}
+
+/* ── 2페이지씩 넘겨보는 미리보기(덱) 뷰어 ── */
+var _slrDeckIdx = 0;
+function _slrDeckPages(){
+  const body = document.getElementById('slr-report-body');
+  return body ? Array.prototype.slice.call(body.querySelectorAll('.slr-page')) : [];
+}
+function _slrDeckRender(){
+  const pages = _slrDeckPages();
+  if(!pages.length) return;
+  const total = pages.length;
+  const maxStart = Math.max(0, total-2);
+  if(_slrDeckIdx > maxStart) _slrDeckIdx = maxStart;
+  if(_slrDeckIdx < 0) _slrDeckIdx = 0;
+  pages.forEach(function(p,i){ p.classList.toggle('slr-shown', i===_slrDeckIdx || i===_slrDeckIdx+1); });
+  const ind = document.getElementById('slr-deck-indicator');
+  if(ind){
+    const a = _slrDeckIdx+1, b = Math.min(total, _slrDeckIdx+2);
+    ind.textContent = (a===b ? a : a+'–'+b) + ' / ' + total + ' 페이지';
+  }
+  const prev = document.getElementById('slr-deck-prev'), next = document.getElementById('slr-deck-next');
+  if(prev) prev.disabled = (_slrDeckIdx<=0);
+  if(next) next.disabled = (_slrDeckIdx>=maxStart);
+  _slrDeckFit();
+}
+function _slrDeckFit(){
+  const stage = document.getElementById('slr-deck-stage');
+  const scaler = document.getElementById('slr-deck-scaler');
+  if(!stage || !scaler) return;
+  const avail = stage.clientWidth;
+  if(!avail) return;
+  const MM = 96/25.4;                 /* 1mm = 3.7795px */
+  const spreadW = (210*2 + 8) * MM;   /* A4 2장 + 사이 간격 8mm */
+  const scale = Math.min(1, avail/spreadW);
+  scaler.style.transform = 'scale('+scale+')';
+  scaler.style.width = spreadW+'px';
+  stage.style.height = Math.ceil(297*MM*scale + 4)+'px';
+}
+function _slrDeckGo(delta){
+  _slrDeckIdx += (delta*2);
+  _slrDeckRender();
+  const stage = document.getElementById('slr-deck-stage');
+  if(stage) stage.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+window.addEventListener('resize', function(){ _slrDeckFit(); });
 
 /* ── 캔버스 차트 렌더러 ── */
 function slrDrawChart(canvasId, opts){
@@ -14306,6 +14510,24 @@ function _slrComboDualChart(canvasId, opts){
   labels.forEach(function(lb,i){ ctx.fillText(String(lb), pad.l+i*slotW+slotW/2, H-8); });
 }
 
+/* 초안과 같은 축 범위: 데이터 범위에 참고범위를 포함해 여백을 둔 구간을 쓴다 */
+function _slrAxis(vals, ref, opt){
+  opt = opt || {};
+  const v = vals.filter(x=>x!=null && !isNaN(x));
+  if(!v.length) return {};
+  let lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
+  if(ref){
+    if(ref.min!=null){ lo=Math.min(lo,ref.min); hi=Math.max(hi,ref.min); }
+    if(ref.max!=null){ lo=Math.min(lo,ref.max); hi=Math.max(hi,ref.max); }
+  }
+  const span = Math.max(1, hi-lo);
+  let yMin = (opt.zero ? 0 : lo - span*0.38);
+  let yMax = hi + span*0.30;
+  if(opt.hardMin!=null) yMin = Math.max(yMin, opt.hardMin);
+  if(opt.hardMax!=null) yMax = Math.min(yMax, opt.hardMax);
+  return { yMin: yMin, yMax: yMax };
+}
+
 function _slrDrawAllCharts(c, s, labels){
   _slrComboDualChart('slr-cv-tibcombo', {
     labels: labels,
@@ -14330,120 +14552,214 @@ function _slrDrawAllCharts(c, s, labels){
     {data:s.lightMin, color:'#6FA49E'},
     {data:s.remMin,   color:'#8C7BA7'}
   ]});
-  slrDrawChart('slr-cv-eff',   { labels:labels, showLabels:true, band:{min:85}, yMax: Math.max(90, ...c.days.map(d=>d.eff||0), 1)*1.05, series:[{data:c.days.map(d=>d.eff), color:'#17393E', barColor:'#DCEAE6', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
-  slrDrawChart('slr-cv-sol',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.sol), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] });
-  slrDrawChart('slr-cv-awake', { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.awakeCount), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] });
-  slrDrawChart('slr-cv-hr',    { labels:labels, showLabels:true, band:{min:45,max:70}, series:[{data:c.days.map(d=>d.hr), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
-  slrDrawChart('slr-cv-rr',    { labels:labels, showLabels:true, band:{min:12,max:20}, series:[{data:c.days.map(d=>d.rr), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
-  slrDrawChart('slr-cv-spo2',  { labels:labels, showLabels:true, yMax:100, band:{min:95}, series:[{data:c.days.map(d=>d.spo2), color:'#8B5238', barColor:'#F4E3D7', type:'combo', labelFmt:v=>Math.round(v)+'%'}] });
-  slrDrawChart('slr-cv-bed',   { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.bedMinArr, color:'#17393E', type:'line', labelFmt:slrMinToTime}] });
-  slrDrawChart('slr-cv-wake',  { labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.wakeMinArr, color:'#C97B53', type:'line', labelFmt:slrMinToTime}] });
-  slrDrawChart('slr-cv-act',   { labels:labels, showLabels:true, yMin:0, series:[{data:c.days.map(d=>d.activityMin), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] });
-  slrDrawChart('slr-cv-cal',   { labels:labels, showLabels:true, series:[{data:c.days.map(d=>d.cal), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
-  slrDrawChart('slr-cv-vit',   { labels:labels, showLabels:true, yMin:0, yMax:100, series:[{data:c.days.map(d=>d.vitality), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] });
+  slrDrawChart('slr-cv-eff',   Object.assign({ labels:labels, showLabels:true, band:{min:85}, yFmt:v=>Math.round(v)+'%', series:[{data:c.days.map(d=>d.eff), color:'#17393E', barColor:'#DCEAE6', type:'combo', labelFmt:v=>Math.round(v)+'%'}] }, _slrAxis(c.days.map(d=>d.eff), SLR_REF.eff, {hardMax:100})));
+  slrDrawChart('slr-cv-sol',   Object.assign({ labels:labels, showLabels:true, band:{max:20}, yFmt:v=>Math.round(v)+'분', series:[{data:c.days.map(d=>d.sol), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] }, _slrAxis(c.days.map(d=>d.sol), SLR_REF.sol, {zero:true})));
+  slrDrawChart('slr-cv-awake', Object.assign({ labels:labels, showLabels:true, band:{max:2}, yFmt:v=>Math.round(v)+'회', series:[{data:c.days.map(d=>d.awakeCount), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] }, _slrAxis(c.days.map(d=>d.awakeCount), SLR_REF.awake, {zero:true})));
+  slrDrawChart('slr-cv-hr',    Object.assign({ labels:labels, showLabels:true, band:{min:45,max:70}, series:[{data:c.days.map(d=>d.hr), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] }, _slrAxis(c.days.map(d=>d.hr), SLR_REF.hr, {hardMin:0})));
+  slrDrawChart('slr-cv-rr',    Object.assign({ labels:labels, showLabels:true, band:{min:12,max:20}, series:[{data:c.days.map(d=>d.rr), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] }, _slrAxis(c.days.map(d=>d.rr), SLR_REF.rr, {hardMin:0})));
+  slrDrawChart('slr-cv-spo2',  Object.assign({ labels:labels, showLabels:true, band:{min:95}, yFmt:v=>Math.round(v)+'%', series:[{data:c.days.map(d=>d.spo2), color:'#8B5238', barColor:'#F4E3D7', type:'combo', labelFmt:v=>Math.round(v)+'%'}] }, _slrAxis(c.days.map(d=>d.spo2), SLR_REF.spo2, {hardMax:100})));
+  slrDrawChart('slr-cv-bed',   Object.assign({ labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.bedMinArr, color:'#17393E', type:'line', labelFmt:slrMinToTime}] }, _slrAxis(s.bedMinArr, null, {})));
+  slrDrawChart('slr-cv-wake',  Object.assign({ labels:labels, showLabels:true, yFmt:slrMinToTime, series:[{data:s.wakeMinArr, color:'#C97B53', type:'line', labelFmt:slrMinToTime}] }, _slrAxis(s.wakeMinArr, null, {})));
+  slrDrawChart('slr-cv-act',   Object.assign({ labels:labels, showLabels:true, yFmt:v=>Math.round(v)+'분', series:[{data:c.days.map(d=>d.activityMin), color:'#17393E', barColor:'#DCEAE6', type:'combo'}] }, _slrAxis(c.days.map(d=>d.activityMin), null, {zero:true})));
+  slrDrawChart('slr-cv-cal',   Object.assign({ labels:labels, showLabels:true, series:[{data:c.days.map(d=>d.cal), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] }, _slrAxis(c.days.map(d=>d.cal), null, {hardMin:0})));
+  slrDrawChart('slr-cv-vit',   Object.assign({ labels:labels, showLabels:true, series:[{data:c.days.map(d=>d.vitality), color:'#8B5238', barColor:'#F4E3D7', type:'combo'}] }, _slrAxis(c.days.map(d=>d.vitality), null, {hardMin:0, hardMax:100})));
 }
 
 /* ── 인쇄 / 다운로드 ── */
+/* ── 수면레포트 CSS (단일 소스) ──
+   화면 미리보기·인쇄·HTML 다운로드·ZIP 내보내기가 모두 이 함수 하나만 사용한다.
+   페이지는 예외 없이 A4(210mm × 297mm) 고정. 단위는 mm/px 절대값만 사용해
+   앱의 rem/테마 변수에 영향을 받지 않도록 한다. */
 function _slrReportCss(){
-  return '.slr-report{display:flex;flex-direction:column;gap:16px;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}'+
-  '.slr-page{position:relative;background:#F5F1E7;border:1px solid #E7E2D3;border-radius:14px;padding:30px 27px 26px}'+
-  '.slr-page-num{display:none}'+
-  '.slr-page-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:11px;margin-bottom:17px;border-bottom:1px solid #E7E2D3;font-size:11px;color:#8B948E}'+
-  '.slr-page-head-left{font-weight:700}'+
-  '.slr-page-head-brand{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:10px;white-space:nowrap}'+
-  '.slr-page-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:24px;padding-top:12px;border-top:1px solid #E7E2D3;font-size:10px;color:#8B948E}'+
-  '.slr-page-foot-onDark{border-top-color:rgba(255,255,255,.16);color:rgba(255,255,255,.55)}'+
-  '.slr-page-title{font-size:21px;font-weight:800;color:#20282A;margin-bottom:5px;letter-spacing:-.01em}'+
-  '.slr-page-desc{font-size:12px;color:#52605C;margin-bottom:14px;line-height:1.6}'+
-  '.slr-hero{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:14px 17px;margin-bottom:11px}'+
-  '.slr-hero-icon{flex-shrink:0;width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:#17393E}'+
-  '.slr-hero-icon.tc{color:#8B5238}'+
-  '.slr-hero-text{display:flex;flex-direction:column;gap:2px}'+
-  '.slr-hero-label{font-size:12px;color:#8B948E;font-weight:600}'+
-  '.slr-hero-value{font-size:30px;font-weight:800;color:#20282A;line-height:1.15}'+
-  '.slr-range-note{font-size:11px;color:#8B948E;margin:4px 0 12px}'+
-  '.slr-chart-box{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:12px;margin-bottom:10px}'+
-  '.slr-chart-box img{width:100%;height:auto;display:block}'+
-  '.slr-insight-box{background:#DCEAE6;color:#20282A;border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.65;margin-bottom:8px}'+
-  '.slr-suggest-box{background:#F4E3D7;color:#20282A;border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.65}'+
-  '.slr-combo-title{font-size:12px;font-weight:800;color:#20282A;margin-bottom:4px}'+
-  '.slr-combo-subtitle{font-size:10px;font-weight:600;color:#8B948E}'+
-  '.slr-combo-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:9px;color:#52605C;margin-bottom:7px}'+
-  '.slr-combo-legend span{display:inline-flex;align-items:center;gap:4px}'+
-  '.slr-legend-chip{display:inline-block;width:8px;height:8px;border-radius:2px}'+
-  '.slr-legend-line{display:inline-block;width:13px;height:2px}'+
-  '.slr-legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#A14E42}'+
-  '.slr-16-insights{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}'+
-  '.slr-16-insights .slr-insight-box{background:#fff;border:1px solid #E7E2D3;margin-bottom:0;border-left:3px solid #17393E}'+
-  '.slr-insight-warn{background:#FBDCD4 !important;border-left:3px solid #A14E42}'+
-  '.slr-page-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}'+
-  '.slr-page-title-row .slr-page-title{margin-bottom:0}'+
-  '.slr-badge-pill{flex-shrink:0;background:#FBDCD4;color:#A14E42;font-size:9px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}'+
-  '.slr-anomaly-card svg{display:block;margin:7px auto 0}'+
-  '.slr-integrated-card{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:12px 14px}'+
-  '.slr-integrated-title{font-weight:800;font-size:11px;color:#52605C;margin-bottom:8px}'+
-  '.slr-integrated-grid{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:14px}'+
-  '.slr-integrated-label{font-size:9px;color:#8B948E;margin-bottom:3px}'+
-  '.slr-integrated-value{font-size:15px;font-weight:800;color:#20282A}'+
-  '.slr-tierbar-row{display:flex;align-items:center;gap:6px;margin-top:4px}'+
-  '.slr-tierbar-label{font-size:9px;color:#8B948E;width:38px;flex-shrink:0}'+
-  '.slr-tierbar-track{flex:1;height:7px;background:#DCEAE6;border-radius:6px;overflow:hidden}'+
-  '.slr-tierbar-fill{height:100%;background:#17393E;border-radius:6px}'+
-  '.slr-tierbar-val{font-size:9px;font-weight:700;color:#52605C;width:32px;text-align:right;flex-shrink:0}'+
-  '.slr-def-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}'+
-  '.slr-def-card{background:#fff;border:1px solid #E7E2D3;border-radius:10px;padding:9px 10px;position:relative}'+
-  '.slr-def-num{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#25545A;color:#fff;font-size:9px;font-weight:800;margin-bottom:4px}'+
-  '.slr-def-card.cardio .slr-def-num{background:#C97B53}'+
-  '.slr-def-title{font-weight:800;font-size:12px;color:#20282A}'+
-  '.slr-def-eng{font-size:10px;color:#8B948E;margin-bottom:4px}'+
-  '.slr-def-icon-wrap{display:flex;align-items:center;justify-content:center;margin:5px 0;min-height:40px}'+
-  '.slr-def-desc{font-size:11px;color:#52605C;line-height:1.5}'+
-  '.slr-def-section{font-size:10px;font-weight:700;color:#8B948E;margin:4px 0 7px}'+
-  '.slr-def-summary{display:flex;align-items:center;font-size:10px;color:#52605C;line-height:1.5;background:#fff;word-break:keep-all}'+
-  '.slr-cover{background:#17393E;color:#fff;border-radius:14px;padding:34px 28px}'+
-  '.slr-cover-eyebrow{font-size:10px;letter-spacing:.12em;color:#C97B53;font-weight:700;margin-bottom:9px}'+
-  '.slr-cover-title{font-size:26px;font-weight:800;line-height:1.4;margin-bottom:11px}'+
-  '.slr-cover-divider{width:46px;height:3px;background:#C97B53;border-radius:2px;margin-bottom:13px}'+
-  '.slr-cover-period{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:14px}'+
-  '.slr-cover-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}'+
-  '.slr-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px;min-width:110px}'+
-  '.slr-chip-label{font-size:9px;color:rgba(255,255,255,.55);margin-bottom:2px}'+
-  '.slr-chip-value{font-size:12px;font-weight:700}'+
-  '.slr-cover-indicators{display:flex;flex-wrap:wrap;gap:6px}'+
-  '.slr-indicator-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:5px 12px;font-size:10px;color:rgba(255,255,255,.9)}'+
-  '.slr-table{width:100%;border-collapse:collapse;font-size:11px}'+
-  '.slr-table th,.slr-table td{border-bottom:1px solid #E7E2D3;padding:8px 9px;text-align:left;color:#20282A}'+
-  '.slr-table th{color:#8B948E;font-weight:700;font-size:10px}'+
-  '.slr-nightcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}'+
-  '.slr-nightcard{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:12px 14px;border-left:4px solid #17393E;font-size:11px;color:#52605C}'+
-  '.slr-nightcard.worst{border-left-color:#A14E42}'+
-  '.slr-nightcard-head{font-weight:800;font-size:12px;margin-bottom:6px;color:#20282A}'+
-  '.slr-nightcard-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}'+
-  '.slr-nightcard-tag{background:#F5F1E7;border-radius:6px;padding:3px 8px;font-size:10px;color:#52605C}'+
-  '.slr-anomaly-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}'+
-  '.slr-anomaly-card{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:11px;text-align:center}'+
-  '.slr-anomaly-metric{font-size:10px;color:#8B948E}'+
-  '.slr-anomaly-value{font-size:18px;font-weight:800;color:#A14E42}'+
-  '.slr-stat-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:11px}'+
-  '.slr-stat-tile{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:10px 12px}'+
-  '.slr-stat-tile-label{font-size:9px;color:#8B948E;margin-bottom:4px}'+
-  '.slr-stat-tile-value{font-size:14px;font-weight:800;color:#20282A}'+
-  '.slr-manager-box{background:#DCEAE6;border-radius:12px;padding:11px 13px;margin-bottom:12px}'+
-  '.slr-manager-label{font-size:9px;font-weight:700;color:#25545A;margin-bottom:4px}'+
-  '.slr-manager-text{font-size:11px;color:#20282A;line-height:1.6;font-style:italic}'+
-  '.slr-routine-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}'+
-  '.slr-routine-card{background:#fff;border:1px solid #E7E2D3;border-radius:12px;padding:11px 13px}'+
-  '.slr-routine-num{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#C97B53;color:#fff;align-items:center;justify-content:center;font-size:10px;font-weight:800;margin-right:6px}'+
-  '.slr-routine-title{font-weight:700;font-size:12px;color:#20282A}'+
-  '.slr-routine-desc{font-size:11px;color:#52605C;line-height:1.5;margin-top:5px}'+
-  '.slr-checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}'+
-  '.slr-checklist li{font-size:11px;color:#52605C}'+
-  '.slr-checklist li::before{content:"☐ ";color:#17393E}'+
-  '@media print{'+
-    '.slr-report{gap:0}'+
-    '.slr-page{break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid;border-radius:0;min-height:277mm}'+
-    '.slr-page:last-child{break-after:auto;page-break-after:auto}'+
-  '}';
+  return [
+  '.slr-report{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#20282A;-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+  '.slr-report *{box-sizing:border-box}',
+  /* ── A4 고정 페이지 ── */
+  '.slr-page{width:210mm;height:297mm;min-height:297mm;max-height:297mm;flex:0 0 auto;background:#F5F1E7;padding:14mm 15mm 9mm;display:flex;flex-direction:column;overflow:hidden;position:relative}',
+  '.slr-page-num{display:none}',
+  /* 헤더 */
+  '.slr-page-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:7px;margin-bottom:11px;border-bottom:1px solid #DCD5C4;font-size:10.5px;color:#8B948E;flex:0 0 auto}',
+  '.slr-page-head-left{font-weight:600;letter-spacing:.01em}',
+  '.slr-page-head-brand{font-weight:600;white-space:nowrap}',
+  /* 푸터 */
+  '.slr-page-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:8px;border-top:1px solid #DCD5C4;font-size:9.5px;color:#9AA29C;flex:0 0 auto}',
+  '.slr-foot-brand{font-weight:600;flex:0 0 auto}',
+  '.slr-foot-note{flex:1 1 auto;text-align:center}',
+  '.slr-foot-num{flex:0 0 auto}',
+  '.slr-page-foot-onDark{border-top-color:rgba(255,255,255,.14);color:rgba(255,255,255,.45)}',
+  /* 제목 */
+  '.slr-page-title{font-size:26px;font-weight:700;color:#20282A;margin-bottom:6px;letter-spacing:-.02em;line-height:1.3}',
+  '.slr-page-desc{font-size:12.5px;color:#4B5754;margin-bottom:12px;line-height:1.65}',
+  '.slr-page-note{font-size:11px;color:#9AA29C;margin:-6px 0 10px}',
+  '.slr-page-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}',
+  '.slr-page-title-row .slr-page-title{margin-bottom:6px}',
+  '.slr-badge-pill{flex:0 0 auto;background:#FBDCD4;color:#A14E42;font-size:11px;font-weight:700;padding:6px 13px;border-radius:20px;white-space:nowrap;margin-top:4px}',
+  '.slr-badge-pill.ok{background:#DCEAE6;color:#25545A}',
+  /* 히어로 카드 */
+  '.slr-hero{background:#fff;border:1px solid #EDE7DA;border-radius:12px;padding:14px 18px 15px;margin-bottom:11px;flex:0 0 auto}',
+  '.slr-hero-main{display:flex;align-items:center;gap:12px}',
+  '.slr-hero-icon{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:#17393E}',
+  '.slr-hero-icon.tc{color:#8B5238}',
+  '.slr-hero-text{display:flex;flex-direction:column;gap:1px;min-width:0}',
+  '.slr-hero-label{font-size:11px;color:#8B948E;font-weight:500;white-space:nowrap}',
+  '.slr-hero-value{font-size:33px;font-weight:600;color:#20282A;line-height:1.2;letter-spacing:-.01em}',
+  '.slr-hero-badge{margin-left:auto;align-self:flex-start;font-size:11px;font-weight:700;color:#52605C}',
+  '.slr-hero-note{font-size:11.5px;color:#7C857F;margin-top:9px;padding-left:38px;line-height:1.55}',
+  '.slr-hero-sub{background:#DCEAE6;border-radius:9px;padding:8px 12px;margin:10px 0 0 38px}',
+  '.slr-hero-sub-label{font-size:10px;color:#52605C}',
+  '.slr-hero-sub-value{font-size:16px;font-weight:600;color:#20282A;margin-top:1px}',
+  '.slr-hero-inline{display:flex;align-items:baseline;gap:10px}',
+  '.slr-hero-inline .slr-hero-value{font-size:27px}',
+  /* 차트 박스 */
+  '.slr-chart-box{background:#fff;border:1px solid #EDE7DA;border-radius:12px;padding:12px 14px 10px;margin-bottom:10px;flex:0 0 auto}',
+  '.slr-chart-title{font-size:12px;font-weight:700;color:#20282A;margin-bottom:6px;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px}',
+  '.slr-chart-sub{font-size:10px;font-weight:400;color:#9AA29C}',
+  '.slr-chart-legend{margin-left:auto;display:flex;gap:12px;font-size:10px;font-weight:400;color:#52605C}',
+  '.slr-chart-legend span{display:inline-flex;align-items:center;gap:4px}',
+  '.slr-chart-box canvas{width:100%;height:auto;display:block}',
+  '.slr-chart-note{font-size:10px;color:#9AA29C;line-height:1.5;margin-top:6px}',
+  '.slr-combo-legend{display:flex;flex-wrap:wrap;gap:3px 14px;font-size:10px;color:#52605C;margin-bottom:6px}',
+  '.slr-combo-legend span{display:inline-flex;align-items:center;gap:4px}',
+  '.slr-legend-chip{display:inline-block;width:9px;height:9px;border-radius:2px}',
+  '.slr-legend-line{display:inline-block;width:14px;height:2px}',
+  '.slr-legend-dash{display:inline-block;width:14px;height:0;border-top:2px dashed #DAA44C}',
+  '.slr-legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#A14E42}',
+  /* 설명 박스 3종 */
+  '.slr-calc-box{background:#fff;border:1px solid #EDE7DA;border-radius:12px;padding:11px 14px;margin-bottom:10px;font-size:11px;color:#52605C;line-height:1.6;flex:0 0 auto}',
+  '.slr-calc-box>b{display:block;font-size:11.5px;color:#20282A;margin-bottom:4px}',
+  '.slr-insight-box{background:#DCEAE6;border-radius:12px;padding:13px 16px;margin-bottom:10px;font-size:12.5px;color:#20282A;line-height:1.72;flex:0 0 auto}',
+  '.slr-insight-box>b{display:block;font-size:13px;margin-bottom:4px}',
+  '.slr-suggest-box{background:#F4E3D7;border-radius:12px;padding:13px 16px;font-size:12.5px;color:#20282A;line-height:1.72;flex:0 0 auto}',
+  '.slr-suggest-box>b{display:block;font-size:13px;color:#8B5238;margin-bottom:4px}',
+  '.slr-warn-box{background:#FBDCD4;border-radius:12px;padding:13px 16px;font-size:12px;color:#20282A;line-height:1.7;flex:0 0 auto}',
+  '.slr-warn-box>b{display:block;font-size:12.5px;color:#A14E42;margin-bottom:4px}',
+  '.slr-fineprint{font-size:9.5px;color:#A6ADA6;line-height:1.5;margin-top:6px}',
+  '.slr-disclaimer{border-top:1px dashed #DCD5C4;padding-top:10px;margin-top:12px;font-size:10.5px;color:#9AA29C;line-height:1.6;text-align:center}',
+  /* 상관계수 행 */
+  '.slr-r-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:6px}',
+  '.slr-r-row-tight{grid-template-columns:repeat(2,1fr);margin:6px 0 8px}',
+  '.slr-r-label{font-size:10px;color:#9AA29C;margin-bottom:1px}',
+  '.slr-r-value{font-size:19px;font-weight:600;color:#20282A;line-height:1.2}',
+  /* 통계 타일 */
+  '.slr-stat-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:11px;flex:0 0 auto}',
+  '.slr-stat-tiles.slr-4{grid-template-columns:repeat(4,1fr)}',
+  '.slr-stat-tile{background:#fff;border:1px solid #EDE7DA;border-radius:10px;padding:10px 13px}',
+  '.slr-stat-tile-label{font-size:10px;color:#9AA29C;margin-bottom:3px}',
+  '.slr-stat-tile-value{font-size:17px;font-weight:600;color:#20282A;line-height:1.25}',
+  /* 02 정의 카드 */
+  '.slr-def-section{font-size:11px;font-weight:600;color:#8B948E;margin:4px 0 7px}',
+  '.slr-def-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}',
+  '.slr-def-card{background:#fff;border:1px solid #EDE7DA;border-radius:11px;padding:11px 12px;display:flex;flex-direction:column}',
+  '.slr-def-head{display:flex;align-items:center;gap:6px;margin-bottom:1px}',
+  '.slr-def-num{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;background:#25545A;color:#fff;font-size:10px;font-weight:700;flex:0 0 auto}',
+  '.slr-def-card.cardio .slr-def-num{background:#C97B53}',
+  '.slr-def-title{font-weight:700;font-size:13px;color:#20282A}',
+  '.slr-def-eng{font-size:10px;color:#9AA29C;margin-bottom:6px}',
+  '.slr-def-desc{font-size:11px;color:#52605C;line-height:1.55}',
+  '.slr-def-icon-wrap{display:flex;align-items:center;justify-content:center;margin:9px 0;min-height:36px}',
+  '.slr-def-tip{margin-top:auto;background:#DCEAE6;border-radius:8px;padding:8px 9px;font-size:10.5px;color:#20282A;line-height:1.5}',
+  '.slr-def-tip.tc{background:#F4E3D7}',
+  '.slr-def-summary{font-size:11px;color:#52605C;line-height:1.6;justify-content:center;word-break:keep-all}',
+  /* 표지 */
+  '.slr-cover{background:#1F3A3D;color:#fff;padding:14mm 15mm 9mm}',
+  '.slr-cover-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.18);font-size:10.5px;color:rgba(255,255,255,.72);flex:0 0 auto}',
+  '.slr-cover-mid{margin-top:62mm;flex:0 0 auto}',
+  '.slr-cover-eyebrow{font-size:11.5px;letter-spacing:.14em;color:#D9A273;font-weight:700;margin-bottom:14px}',
+  '.slr-cover-title{font-size:46px;font-weight:600;line-height:1.32;letter-spacing:-.02em;margin-bottom:18px}',
+  '.slr-cover-divider{width:46px;height:3px;background:#C97B53;border-radius:2px;margin-bottom:20px}',
+  '.slr-cover-lead{font-size:13.5px;line-height:1.85;color:rgba(255,255,255,.88);margin-bottom:24px;max-width:118mm}',
+  '.slr-cover-lead b{color:#fff;font-weight:700}',
+  '.slr-cover-chips{display:flex;flex-wrap:wrap;gap:9px}',
+  '.slr-chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-radius:9px;padding:9px 13px;min-width:90px}',
+  '.slr-chip-label{font-size:9.5px;color:rgba(255,255,255,.5);margin-bottom:2px}',
+  '.slr-chip-value{font-size:13px;font-weight:700;white-space:nowrap}',
+  '.slr-cover-spacer{flex:1 1 auto;min-height:6px}',
+  '.slr-cover-bottom{flex:0 0 auto;margin-bottom:10px}',
+  '.slr-cover-ind-label{font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:9px}',
+  '.slr-cover-indicators{display:flex;flex-wrap:wrap;gap:8px}',
+  '.slr-indicator-pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:9px 20px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.94)}',
+  /* 16 표 */
+  '.slr-table-card{background:#fff;border:1px solid #EDE7DA;border-radius:12px;padding:6px 16px 8px;margin-bottom:11px;flex:0 0 auto}',
+  '.slr-table{width:100%;border-collapse:collapse;font-size:12px}',
+  '.slr-table th,.slr-table td{border-bottom:1px solid #F0EBDF;padding:10px 4px;text-align:left;color:#20282A;vertical-align:middle}',
+  '.slr-table tbody tr:last-child td{border-bottom:none}',
+  '.slr-table th{color:#9AA29C;font-weight:500;font-size:10.5px;padding-bottom:7px}',
+  '.slr-table-eng{display:block;font-size:9.5px;color:#9AA29C;font-weight:400;margin-top:1px}',
+  '.slr-16-insights{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}',
+  '.slr-verdict{background:#fff;border:1px solid #EDE7DA;border-radius:11px;padding:11px 14px;font-size:11px;color:#52605C;line-height:1.62}',
+  '.slr-verdict>b{display:block;font-size:11.5px;color:#20282A;margin-bottom:4px}',
+  '.slr-verdict.struct{border-left:3px solid #17393E}',
+  '.slr-verdict.cardio{border-left:3px solid #C97B53}',
+  '.slr-integrated-card{background:#fff;border:1px solid #EDE7DA;border-radius:12px;padding:11px 14px;margin-bottom:11px;flex:0 0 auto}',
+  '.slr-integrated-title{font-weight:700;font-size:11.5px;color:#20282A;margin-bottom:8px}',
+  '.slr-integrated-grid{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:16px}',
+  '.slr-integrated-label{font-size:10px;color:#9AA29C;margin-bottom:2px}',
+  '.slr-integrated-value{font-size:21px;font-weight:600;color:#20282A;line-height:1.2}',
+  '.slr-integrated-sub{font-size:9.5px;color:#9AA29C;margin-top:2px}',
+  '.slr-tier-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:5px}',
+  '.slr-tier-bar{height:15px;border-radius:3px;background:#17393E}',
+  '.slr-tier-label{font-size:9.5px;color:#52605C;margin-top:3px;text-align:center}',
+  '.slr-16-bottom{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:16px;align-items:start;padding-top:4px}',
+  '.slr-16-bottom-label{font-size:10px;color:#9AA29C;margin-bottom:3px}',
+  '.slr-16-bottom-value{font-size:17px;font-weight:600;color:#20282A;line-height:1.3}',
+  '.slr-16-bottom-note{font-size:10px;color:#9AA29C;line-height:1.55}',
+  /* 12 밤 비교 */
+  '.slr-nightcard{background:#fff;border:1px solid #EDE7DA;border-radius:12px;padding:12px 14px 14px;margin-bottom:11px;flex:0 0 auto}',
+  '.slr-nightcard-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:12px;font-weight:700;color:#20282A;margin-bottom:10px}',
+  '.slr-nightcard-time{font-size:11px;font-weight:400;color:#8B948E;white-space:nowrap}',
+  '.slr-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}',
+  '.slr-dot.good{background:#17393E}',
+  '.slr-dot.bad{background:#A14E42}',
+  '.slr-night-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}',
+  '.slr-night-tile{border-radius:10px;padding:12px 8px;text-align:center}',
+  '.slr-night-tile.good{background:#DCEAE6}',
+  '.slr-night-tile.bad{background:#F4E3D7}',
+  '.slr-night-tile-icon{display:flex;justify-content:center;margin-bottom:6px}',
+  '.slr-night-tile-title{font-size:11.5px;font-weight:700;color:#20282A}',
+  '.slr-night-tile-sub{font-size:10px;color:#7C857F;margin-top:2px}',
+  /* 17 이상신호 */
+  '.slr-anomaly-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;flex:0 0 auto}',
+  '.slr-anomaly-card{background:#fff;border:1px solid #EDE7DA;border-radius:12px;padding:12px 14px 10px}',
+  '.slr-anomaly-metric{font-size:11.5px;font-weight:700;color:#20282A;margin-bottom:6px}',
+  '.slr-anomaly-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}',
+  '.slr-anomaly-value{font-size:25px;font-weight:600;color:#A14E42;line-height:1.2}',
+  '.slr-anomaly-unit{font-size:11px;color:#52605C}',
+  '.slr-anomaly-diff{margin-left:auto;font-size:10.5px;font-weight:700;color:#8B5238;white-space:nowrap}',
+  /* 18 루틴 */
+  '.slr-manager-box{background:#DCEAE6;border-left:3px solid #C97B53;border-radius:10px;padding:11px 14px;margin-bottom:12px;flex:0 0 auto}',
+  '.slr-manager-label{font-size:10.5px;font-weight:700;color:#8B5238;margin-bottom:4px}',
+  '.slr-manager-sub{font-weight:400;color:#7C857F}',
+  '.slr-manager-text{font-size:11.5px;color:#20282A;line-height:1.7;font-style:italic}',
+  '.slr-routine-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px;flex:0 0 auto}',
+  '.slr-routine-card{background:#fff;border:1px solid #EDE7DA;border-radius:11px;padding:11px 14px 12px}',
+  '.slr-routine-head{display:flex;align-items:center;gap:7px}',
+  '.slr-routine-num{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#DCEAE6;color:#25545A;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex:0 0 auto}',
+  '.slr-routine-title{font-weight:700;font-size:12.5px;color:#20282A}',
+  '.slr-routine-basis{font-size:10px;color:#9AA29C;margin:4px 0 5px}',
+  '.slr-routine-desc{font-size:11px;color:#52605C;line-height:1.6}',
+  '.slr-checklist-label{font-size:11px;font-weight:700;color:#20282A;margin-bottom:6px}',
+  '.slr-checklist{list-style:none;padding:0;margin:0;background:#fff;border:1px solid #EDE7DA;border-radius:11px;overflow:hidden;flex:0 0 auto}',
+  '.slr-checklist li{font-size:11.5px;color:#20282A;display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid #F3EFE4}',
+  '.slr-checklist li:last-child{border-bottom:none}',
+  '.slr-checklist li::before{content:"";flex:0 0 auto;width:12px;height:12px;border:1.5px solid #B9C2BC;border-radius:3px}',
+  /* 밀도 높은 페이지(07·16) 미세 조정 */
+  '.slr-page-dense .slr-page-title{font-size:23px}',
+  '.slr-page-dense .slr-page-desc{font-size:11.5px;margin-bottom:10px;line-height:1.6}',
+  '.slr-page-dense .slr-insight-box,.slr-page-dense .slr-suggest-box{font-size:11.5px;padding:11px 14px;line-height:1.65}',
+  '.slr-page-dense .slr-chart-box{margin-bottom:8px}',
+  /* ── 화면: 2페이지씩 넘겨보기 ── */
+  '.slr-deck-scaler .slr-report{display:flex;flex-direction:row;align-items:flex-start;justify-content:center;gap:8mm}',
+  '.slr-deck-scaler .slr-page{display:none;box-shadow:0 2px 14px rgba(0,0,0,.13);border-radius:2px}',
+  '.slr-deck-scaler .slr-page.slr-shown{display:flex}',
+  /* ── 인쇄 ── */
+  '@media print{',
+    '@page{size:A4;margin:0}',
+    'html,body{margin:0;padding:0;background:#fff}',
+    '.slr-report{display:block}',
+    '.slr-page{display:flex!important;break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid;box-shadow:none;border-radius:0;margin:0}',
+    '.slr-page:last-child{break-after:auto;page-break-after:auto}',
+  '}'
+  ].join('');
 }
 
 function _slrPreparePrintClone(){
@@ -14457,40 +14773,32 @@ function _slrPreparePrintClone(){
       const dataUrl = cv.toDataURL('image/png');
       const img = document.createElement('img');
       img.src = dataUrl;
-      img.style.cssText = 'width:'+cv.offsetWidth+'px;height:auto;display:block;max-width:100%';
+      img.style.cssText = 'width:100%;height:auto;display:block';
       if(cloneCanvases[i]) cloneCanvases[i].replaceWith(img);
     }catch(e){}
   });
+  clone.querySelectorAll('.slr-page').forEach(function(p){ p.classList.remove('slr-shown'); });
   clone.querySelectorAll('button').forEach(function(b){ b.style.display='none'; });
   return clone;
 }
 
+/* 인쇄/다운로드 문서: 레포트 외의 장식(머리글·바닥글 바)을 일절 넣지 않고
+   A4 페이지만 그대로 내보낸다 — 화면 미리보기와 완전히 동일한 결과. */
 function _slrPrintableDoc(title, sub){
   const clone = _slrPreparePrintClone();
   if(!clone){ alert('레포트 데이터가 없습니다. 먼저 \'전체데이터 엑셀 불러오기\'를 눌러주세요.'); return null; }
-  const printDate = '보고일: ' + new Date().toLocaleDateString('ko-KR');
-  return '<!doctype html><html><head><meta charset="utf-8"><title>'+title+'</title>'+
+  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>'+title+'</title>'+
   '<link rel="preconnect" href="https://fonts.googleapis.com">'+
   '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">'+
   '<style>'+
     '*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}'+
-    'html,body{font-family:\'Noto Sans KR\',\'Apple SD Gothic Neo\',\'Malgun Gothic\',sans-serif;background:#EEF6FB;color:#0D2246;font-size:15px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
-    '.print-wrap{max-width:820px;margin:0 auto;padding:20px 16px 40px}'+
-    '.print-header{background:#17324D;border-radius:14px 14px 0 0;padding:16px 20px 12px;display:flex;align-items:flex-start;justify-content:space-between}'+
-    '.print-header-title{color:#fff;font-size:16px;font-weight:800;margin:0 0 2px}'+
-    '.print-header-sub{color:rgba(255,255,255,.65);font-size:11px;margin:0}'+
-    '.print-header-date{color:rgba(255,255,255,.5);font-size:10px;text-align:right;white-space:nowrap}'+
-    '.print-body{background:#F4FAFD;border:1px solid #C8DFF0;border-top:none;padding:18px 16px 20px}'+
-    '.print-footer{padding:10px 18px;background:#EDF4FA;border:1px solid #C8DFF0;border-top:none;border-radius:0 0 14px 14px;font-size:10px;color:#7A9FB8;display:flex;justify-content:space-between}'+
+    'html,body{background:#6B6F6B;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.slr-report{display:flex;flex-direction:column;align-items:center;gap:8mm;padding:8mm 0}'+
+    '.slr-report>.slr-page{box-shadow:0 2px 14px rgba(0,0,0,.25)}'+
     'button{display:none!important}'+
     _slrReportCss()+
-    '@media print{ @page{size:A4;margin:10mm} html,body{background:#EEF6FB} .print-wrap{padding:0} .print-header,.print-footer{display:none} .print-body{padding:0;border:none} }'+
-  '</style></head><body>'+
-  '<div class="print-wrap">'+
-    '<div class="print-header"><div><div class="print-header-title">'+title+'</div><div class="print-header-sub">'+sub+'</div></div><div class="print-header-date">'+printDate+'</div></div>'+
-    '<div class="print-body">'+clone.innerHTML+'</div>'+
-    '<div class="print-footer"><span>힐마루케어 · 시니어케어 통합 건강관리 시스템</span><span>'+printDate+'</span></div>'+
-  '</div></body></html>';
+    '@media print{.slr-report{gap:0;padding:0}.slr-report>.slr-page{box-shadow:none}}'+
+  '</style></head><body>'+clone.innerHTML+'</body></html>';
 }
 
 function printSleepWeeklyReport(){

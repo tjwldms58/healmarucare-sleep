@@ -5473,7 +5473,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.11';
+const APP_VER = '7.13';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5967,10 +5967,97 @@ function hideLocalSaveFailBanner(){
   const banner = document.getElementById('local-save-fail-banner');
   if(banner) banner.classList.remove('show');
 }
-// 공통 로컬 저장 헬퍼 — 성공 시 true, 실패 시 배너를 띄우고 false 반환
-function _hmLocalSave(key, data, label){
+/* ═══════════════════════════════════════
+   로컬 캐시 저장소 — localStorage(사이트당 약 5MB, github.io 전체가 공유) → IndexedDB 로 이전
+   2026-09-21: 수면기록이 늘어나 'hilmaru_records' 저장 시 QuotaExceededError 발생.
+   데이터 캐시(hilmaru_*)는 IndexedDB(수백 MB 이상)에 저장하고, 메모리에 문자열 사본을 두어
+   initStorage()의 동기식 읽기(_hmCacheGet)를 그대로 유지한다. IndexedDB 를 못 쓰는 환경이면
+   예전과 똑같이 localStorage 로 동작(폴백). 진짜 저장소는 여전히 Google Sheets(syncToSheet).
+═══════════════════════════════════════ */
+const _HM_CACHE_DB_NAME  = 'hilmaru_sleep_cache_db';
+const _HM_CACHE_STORE    = 'kv';
+const _HM_CACHE_KEYS     = ['hilmaru_records','hilmaru_hr','hilmaru_bp','hilmaru_o2','hilmaru_weight','hilmaru_wh',
+                            'hilmaru_sv','hilmaru_act','hilmaru_dv','hilmaru_survey','hilmaru_profile',
+                            'hilmaru_participants','hilmaru_groups'];
+let _hmCacheMem   = {};      // key -> JSON 문자열 (IndexedDB 내용의 메모리 사본)
+let _hmCacheIdbOk = false;   // IndexedDB 사용 가능 여부 (false 면 localStorage 폴백)
+let _hmCacheDBP   = null;
+function _openCacheDB(){
+  if(_hmCacheDBP) return _hmCacheDBP;
+  _hmCacheDBP = new Promise((resolve, reject)=>{
+    if(!window.indexedDB){ reject(new Error('IndexedDB 미지원')); return; }
+    const req = indexedDB.open(_HM_CACHE_DB_NAME, 1);
+    req.onupgradeneeded = function(e){
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(_HM_CACHE_STORE)) db.createObjectStore(_HM_CACHE_STORE);
+    };
+    req.onsuccess = function(e){ resolve(e.target.result); };
+    req.onerror   = function(e){ reject(e.target.error); };
+    req.onblocked = function(){ reject(new Error('IndexedDB blocked')); };
+  });
+  return _hmCacheDBP;
+}
+function _hmCacheIdbPut(key, str){
+  return _openCacheDB().then(db=>new Promise((resolve,reject)=>{
+    const tx = db.transaction(_HM_CACHE_STORE, 'readwrite');
+    tx.objectStore(_HM_CACHE_STORE).put(str, key);
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = (e)=>reject(e.target.error);
+    tx.onabort = (e)=>reject((e.target && e.target.error) || new Error('IndexedDB abort'));
+  }));
+}
+function _hmCacheIdbGetAll(){
+  return _openCacheDB().then(db=>new Promise((resolve,reject)=>{
+    const out = {};
+    const tx = db.transaction(_HM_CACHE_STORE, 'readonly');
+    const req = tx.objectStore(_HM_CACHE_STORE).openCursor();
+    req.onsuccess = ()=>{ const c = req.result; if(c){ out[c.key] = c.value; c.continue(); } else resolve(out); };
+    req.onerror = (e)=>reject(e.target.error);
+  }));
+}
+// 시작 시 1회: IndexedDB 캐시 → 메모리. IndexedDB에 없고 localStorage에만 있는 키는 옮기고(마이그레이션)
+// localStorage 쪽은 지워서 5MB 공간을 비운다. 실패하면 localStorage 폴백 모드로 동작.
+async function _hmCacheInit(){
   try{
-    localStorage.setItem(key, JSON.stringify(data));
+    const all = await _hmCacheIdbGetAll();
+    _hmCacheIdbOk = true;
+    for(const key of _HM_CACHE_KEYS){
+      if(typeof all[key] === 'string'){ _hmCacheMem[key] = all[key]; continue; }
+      let legacy = null;
+      try{ legacy = localStorage.getItem(key); }catch(e){}
+      if(legacy !== null){
+        _hmCacheMem[key] = legacy;
+        try{ await _hmCacheIdbPut(key, legacy); localStorage.removeItem(key); }
+        catch(e){ console.warn('[로컬 캐시 이전 실패]', key, e); }
+      }
+    }
+    // 이미 IndexedDB 로 옮겨진 키가 localStorage 에 남아 있으면 공간 확보를 위해 제거
+    for(const key of _HM_CACHE_KEYS){ if(key in _hmCacheMem){ try{ localStorage.removeItem(key); }catch(e){} } }
+  }catch(e){
+    _hmCacheIdbOk = false;
+    console.warn('[로컬 캐시] IndexedDB 사용 불가 → localStorage 폴백:', e && e.message);
+  }
+}
+// 동기식 읽기 (localStorage.getItem 과 같은 형태: 문자열 또는 null)
+function _hmCacheGet(key){
+  if(_hmCacheIdbOk && _HM_CACHE_KEYS.includes(key)) return (key in _hmCacheMem) ? _hmCacheMem[key] : null;
+  try{ return localStorage.getItem(key); }catch(e){ return null; }
+}
+// 공통 로컬 저장 헬퍼 — 성공 시 true, 실패 시 배너를 띄우고 false 반환
+// (데이터 캐시 키는 IndexedDB 에 비동기 저장; 그 실패도 배너로 알림)
+function _hmLocalSave(key, data, label){
+  let str;
+  try{ str = JSON.stringify(data); }
+  catch(e){ console.error('[로컬 저장 실패]', key, e); showLocalSaveFailBanner(label); return false; }
+  if(_hmCacheIdbOk && _HM_CACHE_KEYS.includes(key)){
+    _hmCacheMem[key] = str;
+    _hmCacheIdbPut(key, str)
+      .then(()=>hideLocalSaveFailBanner())
+      .catch(e=>{ console.error('[로컬 저장 실패]', key, e); showLocalSaveFailBanner(label); });
+    return true;
+  }
+  try{
+    localStorage.setItem(key, str);
     hideLocalSaveFailBanner();
     return true;
   }catch(e){
@@ -6101,22 +6188,23 @@ async function _hydrateSleepImages(list){
 }
 
 async function initStorage(){
-  // 먼저 localStorage 캐시로 빠르게 렌더
-  try{ const s=localStorage.getItem('hilmaru_records'); if(s) sleepRecords=JSON.parse(s); }catch(e){}
+  // 먼저 로컬 캐시(IndexedDB, 폴백 localStorage)로 빠르게 렌더
+  await _hmCacheInit();
+  try{ const s=_hmCacheGet('hilmaru_records'); if(s) sleepRecords=JSON.parse(s); }catch(e){}
   await _hydrateSleepImages(sleepRecords);
-  try{ const h=localStorage.getItem('hilmaru_hr'); if(h) heartRateRecords=JSON.parse(h); }catch(e){}
-  try{ const b=localStorage.getItem('hilmaru_bp'); if(b) bloodPressureRecords=JSON.parse(b); }catch(e){}
-  try{ const o=localStorage.getItem('hilmaru_o2'); if(o) oxygenRecords=JSON.parse(o); }catch(e){}
-  try{ const w=localStorage.getItem('hilmaru_weight'); if(w) weightRecords=JSON.parse(w); }catch(e){}
-  try{ const wh=localStorage.getItem('hilmaru_wh'); if(wh) womensHealthRecords=JSON.parse(wh); }catch(e){}
-  try{ const sv=localStorage.getItem('hilmaru_sv'); if(sv) stressRecords=JSON.parse(sv); }catch(e){}
-  try{ const ac=localStorage.getItem('hilmaru_act'); if(ac) activityRecords=JSON.parse(ac); }catch(e){}
-  try{ const dv=localStorage.getItem('hilmaru_dv'); if(dv) deviceRecords=JSON.parse(dv); }catch(e){}
-  try{ const sy=localStorage.getItem('hilmaru_survey'); if(sy) surveyRecords=JSON.parse(sy); }catch(e){}
-  try{ const pf=localStorage.getItem('hilmaru_profile'); if(pf) profileRecords=JSON.parse(pf); }catch(e){}
-  try{ const p=localStorage.getItem('hilmaru_participants'); if(p) participants=JSON.parse(p); }catch(e){}
+  try{ const h=_hmCacheGet('hilmaru_hr'); if(h) heartRateRecords=JSON.parse(h); }catch(e){}
+  try{ const b=_hmCacheGet('hilmaru_bp'); if(b) bloodPressureRecords=JSON.parse(b); }catch(e){}
+  try{ const o=_hmCacheGet('hilmaru_o2'); if(o) oxygenRecords=JSON.parse(o); }catch(e){}
+  try{ const w=_hmCacheGet('hilmaru_weight'); if(w) weightRecords=JSON.parse(w); }catch(e){}
+  try{ const wh=_hmCacheGet('hilmaru_wh'); if(wh) womensHealthRecords=JSON.parse(wh); }catch(e){}
+  try{ const sv=_hmCacheGet('hilmaru_sv'); if(sv) stressRecords=JSON.parse(sv); }catch(e){}
+  try{ const ac=_hmCacheGet('hilmaru_act'); if(ac) activityRecords=JSON.parse(ac); }catch(e){}
+  try{ const dv=_hmCacheGet('hilmaru_dv'); if(dv) deviceRecords=JSON.parse(dv); }catch(e){}
+  try{ const sy=_hmCacheGet('hilmaru_survey'); if(sy) surveyRecords=JSON.parse(sy); }catch(e){}
+  try{ const pf=_hmCacheGet('hilmaru_profile'); if(pf) profileRecords=JSON.parse(pf); }catch(e){}
+  try{ const p=_hmCacheGet('hilmaru_participants'); if(p) participants=JSON.parse(p); }catch(e){}
   try{
-    const g=localStorage.getItem('hilmaru_groups');
+    const g=_hmCacheGet('hilmaru_groups');
     if(g){ const parsed=JSON.parse(g); if(parsed&&parsed.length>0) groups=parsed; }
   }catch(e){}
   // 구글 시트에서 최신 데이터 불러오기 (재시도 3회, 지수 백오프)
@@ -11112,7 +11200,7 @@ function importJSON(input){
         const ex = new Set(heartRateRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.heartRateRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         heartRateRecords = [...toAdd, ...heartRateRecords];
-        try{ localStorage.setItem('hilmaru_hr', JSON.stringify(heartRateRecords)); }catch(e){}
+        _hmLocalSave('hilmaru_hr', heartRateRecords, '심박수');
         renderHeartRates();
       }
       // 혈압 기록 병합
@@ -11120,7 +11208,7 @@ function importJSON(input){
         const ex = new Set(bloodPressureRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.bloodPressureRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         bloodPressureRecords = [...toAdd, ...bloodPressureRecords];
-        try{ localStorage.setItem('hilmaru_bp', JSON.stringify(bloodPressureRecords)); }catch(e){}
+        _hmLocalSave('hilmaru_bp', bloodPressureRecords, '혈압');
         renderBloodPressures();
       }
       // 산소포화도 기록 병합
@@ -11128,14 +11216,14 @@ function importJSON(input){
         const ex = new Set(oxygenRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.oxygenRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         oxygenRecords = [...toAdd, ...oxygenRecords];
-        try{ localStorage.setItem('hilmaru_o2', JSON.stringify(oxygenRecords)); }catch(e){}
+        _hmLocalSave('hilmaru_o2', oxygenRecords, '혈중산소');
       }
       // 체중 기록 병합
       if(data.weightRecords && Array.isArray(data.weightRecords)){
         const ex = new Set(weightRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.weightRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         weightRecords = [...toAdd, ...weightRecords];
-        try{ localStorage.setItem('hilmaru_weight', JSON.stringify(weightRecords)); }catch(e){}
+        _hmLocalSave('hilmaru_weight', weightRecords, '체중');
         renderWeights();
       }
       // 여성건강 기록 병합
@@ -11143,21 +11231,21 @@ function importJSON(input){
         const ex = new Set(womensHealthRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.womensHealthRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         womensHealthRecords = [...toAdd, ...womensHealthRecords];
-        try{ localStorage.setItem('hilmaru_wh', JSON.stringify(womensHealthRecords)); }catch(e){}
+        _hmLocalSave('hilmaru_wh', womensHealthRecords, '여성건강');
       }
       // 스트레스 기록 병합
       if(data.stressRecords && Array.isArray(data.stressRecords)){
         const ex = new Set(stressRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.stressRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         stressRecords = [...toAdd, ...stressRecords];
-        try{ localStorage.setItem('hilmaru_sv', JSON.stringify(stressRecords)); }catch(e){}
+        _hmLocalSave('hilmaru_sv', stressRecords, '스트레스·활력점수');
       }
       // 활동량 기록 병합
       if(data.activityRecords && Array.isArray(data.activityRecords)){
         const ex = new Set(activityRecords.map(r=>r.date+'|'+r.name));
         const toAdd = data.activityRecords.filter(r=>!ex.has(r.date+'|'+r.name));
         activityRecords = [...toAdd, ...activityRecords];
-        try{ localStorage.setItem('hilmaru_act', JSON.stringify(activityRecords)); }catch(e){}
+        _hmLocalSave('hilmaru_act', activityRecords, '활동량');
         renderActivities();
       }
       // 참여자 복원

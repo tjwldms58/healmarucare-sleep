@@ -5477,7 +5477,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.20';
+const APP_VER = '7.21';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5488,7 +5488,7 @@ const APP_VER = '7.20';
   const _ROLE_KEY = 'hm_login_role';
   const _PW       = 'healmarucare!';
   const _USERS_KEY = 'hm_login_users_v1';
-  const _DEFAULT_USERS = ['이청용','허수빈','민경필','차규은','서지은','원선재','김철민'];
+  const _DEFAULT_USERS = ['이청용','허수빈','민경필','차규은','서지은','원선재','김철민','이상영','박성웅','삼성화재'];
 
   // 사용자 권한 데이터 정규화: 예전 형식(이름 문자열 배열)도 {name, role} 객체로 변환해 호환
   function _normalizeUsers(arr){
@@ -6422,8 +6422,11 @@ const FB_CONFIG = {
 // 앱 로그인 이름 → Firebase 계정 (팀원은 이 이메일을 볼 일이 없음; 로그인 화면은 그대로 이름+비밀번호)
 const _FB_ACCOUNTS = {
   '이청용':'staff01@healmarucare.com', '차규은':'staff02@healmarucare.com', '서지은':'staff03@healmarucare.com',
-  '허수빈':'staff04@healmarucare.com', '김철민':'staff05@healmarucare.com', '원선재':'staff06@healmarucare.com',
-  '민경필':'staff07@healmarucare.com'
+  '허수빈':'staff04@healmarucare.com', '민경필':'staff07@healmarucare.com',
+  // 2026-09-21: staff05/06 계정이 콘솔에 생성되지 않아 로그인이 안 되던 문제 → staff08/09 계정으로 새로 생성함에 맞춰 매핑 변경
+  '원선재':'staff08@healmarucare.com', '김철민':'staff09@healmarucare.com',
+  // 2026-09-21: 원래 팀원 목록(_DEFAULT_USERS)에 없던 이름 → Firebase 계정 신규 생성에 맞춰 매핑 추가
+  '이상영':'staff10@healmarucare.com', '박성웅':'staff11@healmarucare.com', '삼성화재':'staff12@healmarucare.com'
 };
 // 기록 단위 항목 (get/set 으로 전역 배열에 접근 — 배열이 재할당되는 경우가 있으므로 참조를 직접 잡지 않음)
 const _FB_DOMAINS = {

@@ -4913,6 +4913,10 @@ tr.nurse-group-start > td { border-top: 2px solid var(--teal); }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Firebase (Realtime Database 저장소 + 팀원 로그인) — 2026-09-21 저장소 이전. 로드 실패 시 구글시트 전용 모드로 동작 -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <!-- 대상자 설문(PDF) 불러오기용 — 로드 실패 시 PDF 불러오기만 비활성, Word 불러오기는 JSZip만으로 정상 동작 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 <script>
@@ -5473,7 +5477,7 @@ function _getRecordNurse(r){
   return match ? (match.nurse || '') : '';
 }
 
-const APP_VER = '7.13';
+const APP_VER = '7.20';
 
 /* ═══════════════════════════════════════
    LOGIN SYSTEM
@@ -5564,6 +5568,19 @@ const APP_VER = '7.13';
       _hide();
       if(typeof _hmApplyReadonlyUI === 'function') _hmApplyReadonlyUI();
       if(typeof _hmApplyManageTabVisibility === 'function') _hmApplyManageTabVisibility();
+      // 2026-09-21: 세션은 있지만 Firebase 로그인이 없으면(저장소 이전 후 첫 접속) 한 번 다시 로그인하게 함.
+      // 단, 이름이 Firebase 계정 표에 없는 사용자나 Firebase 접속 불가 시에는 예전처럼 그대로 진행.
+      if(typeof _fbWaitAuth === 'function' && typeof _FB_ACCOUNTS !== 'undefined' && _FB_ACCOUNTS[sessionStorage.getItem(_USER_KEY)||'']){
+        _fbWaitAuth().then(function(u){
+          if(u) return;
+          if(typeof _fbReady !== 'undefined' && !_fbReady) return;      // SDK 미로드 → 시트 전용 모드 유지
+          sessionStorage.removeItem(_KEY);
+          _show();
+          const errEl = document.getElementById('hm-login-err');
+          if(errEl){ errEl.textContent = '저장소가 새로 바뀌어 한 번만 다시 로그인해 주세요. (이름·비밀번호는 그대로입니다)'; errEl.style.display = 'block'; errEl.style.color = '#8fd3c9'; }
+          setTimeout(function(){ const el=document.getElementById('hm-login-id'); if(el) el.focus(); }, 100);
+        });
+      }
     } else {
       _show();
       setTimeout(function(){ document.getElementById('hm-login-id').focus(); }, 100);
@@ -5579,7 +5596,7 @@ const APP_VER = '7.13';
     const pw     = pwEl ? pwEl.value : '';
     const matched = _USERS.find(function(u){ return u.name === userId; });
 
-    if(matched && pw === _PW){
+    function _ok(){
       sessionStorage.setItem(_KEY, '1');
       sessionStorage.setItem(_USER_KEY, userId);
       sessionStorage.setItem(_ROLE_KEY, matched.role || 'edit');
@@ -5603,7 +5620,11 @@ const APP_VER = '7.13';
           if(updated) localStorage.setItem(_HM_LOG_KEY, JSON.stringify(logs));
         }catch(e){}
       }, 500);
-    } else {
+      // Firebase 로그인 뒤 데이터가 아직 Firebase 에서 로드되지 않았으면 한 번 새로고침해서 불러옴
+      if(typeof _fbUser === 'function' && _fbUser() && !window._fbLoaded){ setTimeout(function(){ location.reload(); }, 300); }
+    }
+    function _fail(){
+      err.textContent = '아이디 또는 비밀번호가 틀렸습니다.'; err.style.color = '';
       err.style.display = 'block';
       pwEl.value = '';
       pwEl.focus();
@@ -5613,6 +5634,21 @@ const APP_VER = '7.13';
         _devLog('로그인실패', '입력아이디: ' + (userId||'(미선택)'));
       }, 500);
     }
+
+    // 2026-09-21: Firebase 계정이 있는 이름은 Firebase Auth 로 확인 (화면은 그대로 이름+비밀번호).
+    // Firebase 에 접속할 수 없을 때(오프라인/SDK 로드 실패)만 예전 공용 비밀번호로 시트 전용 모드 진입.
+    const fbEmail = (typeof _FB_ACCOUNTS !== 'undefined') ? _FB_ACCOUNTS[userId] : null;
+    if(matched && fbEmail && typeof _fbSignIn === 'function'){
+      const btn = document.querySelector('.lbox-btn'); if(btn){ btn.disabled = true; btn.textContent = '확인 중…'; }
+      _fbSignIn(fbEmail, pw).then(function(r){
+        if(btn){ btn.disabled = false; btn.textContent = '로그인'; }
+        if(r === true){ _ok(); }
+        else if(r === 'offline' && pw === _PW){ _ok(); setTimeout(function(){ if(typeof showToast==='function') showToast('Firebase에 연결할 수 없어 구글시트 전용 모드로 열었습니다.', true); }, 800); }
+        else { _fail(); }
+      });
+      return;
+    }
+    if(matched && pw === _PW){ _ok(); } else { _fail(); }
   };
 
   // 로그아웃
@@ -5620,6 +5656,7 @@ const APP_VER = '7.13';
     if(!confirm('로그아웃 하시겠습니까?')) return;
     const user = sessionStorage.getItem(_USER_KEY) || '알수없음';
     _devLog('로그아웃', '사용자: ' + user);
+    if(typeof _fbSignOut === 'function') _fbSignOut();
     sessionStorage.removeItem(_KEY);
     sessionStorage.removeItem(_USER_KEY);
     sessionStorage.removeItem(_ROLE_KEY);
@@ -6207,7 +6244,33 @@ async function initStorage(){
     const g=_hmCacheGet('hilmaru_groups');
     if(g){ const parsed=JSON.parse(g); if(parsed&&parsed.length>0) groups=parsed; }
   }catch(e){}
-  // 구글 시트에서 최신 데이터 불러오기 (재시도 3회, 지수 백오프)
+  // ① Firebase(진짜 저장소)에서 불러오기 — 성공하면 구글시트 읽기는 건너뜀 (시트는 이중 저장 기간의 거울)
+  if(_fbInit()){
+    setGsStatus('syncing', 'Firebase 연결 중…');
+    try{
+      await _fbLoadAll();
+      await _hydrateSleepImages(sleepRecords);   // 옮겨진 기록에 이어받은 _imgKey 로 기기 내 이미지 복원
+      try{ _persistSleepRecordsLocal(sleepRecords); }catch(e){}
+      _hmLocalSave('hilmaru_hr', heartRateRecords, '심박수');
+      _hmLocalSave('hilmaru_bp', bloodPressureRecords, '혈압');
+      _hmLocalSave('hilmaru_o2', oxygenRecords, '혈중산소');
+      _hmLocalSave('hilmaru_weight', weightRecords, '체중');
+      _hmLocalSave('hilmaru_wh', womensHealthRecords, '여성건강');
+      _hmLocalSave('hilmaru_sv', stressRecords, '스트레스·활력점수');
+      _hmLocalSave('hilmaru_act', activityRecords, '활동량');
+      _hmLocalSave('hilmaru_dv', deviceRecords, '기기 제공·수거');
+      _hmLocalSave('hilmaru_survey', surveyRecords.map(r=>{ const {answerImg, ...rest}=r; return rest; }), '대상자 설문');
+      _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
+      _hmLocalSave('hilmaru_participants', participants, '참가자 정보');
+      _hmLocalSave('hilmaru_groups', groups, '그룹 정보');
+      setGsStatus('ok', 'Firebase 연결됨');
+      setTimeout(()=>setGsStatus('idle','☁ Firebase'), 3000);
+      return;
+    }catch(err){
+      console.warn('[FB] 불러오기 실패 → 구글시트로 폴백:', err && (err.message||err));
+    }
+  }
+  // ② 구글 시트에서 최신 데이터 불러오기 (재시도 3회, 지수 백오프) — Firebase 미사용/실패 시 폴백
   setGsStatus('syncing', '시트 연결 중…');
   try{
     let res, lastErr;
@@ -6295,8 +6358,13 @@ async function syncToSheet(){
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(async ()=>{
     setGsStatus('syncing', '저장 중…');
+    // ① Firebase(진짜 저장소): 바뀐 기록만 저장 — 시트 저장과 동시에 진행, 실패는 배너로 알림
+    let fbResult = null;
+    const fbPromise = _fbPushChanges()
+      .then(r=>{ fbResult=r; })
+      .catch(err=>{ fbResult={error: err && (err.message||String(err))}; console.warn('[FB] 저장 실패:', fbResult.error); });
     try{
-      // base64 이미지 제외, Drive URL(imgUrl/imgUrls)만 저장
+      // ② 구글시트(이중 저장 기간의 거울) — base64 이미지 제외, Drive URL(imgUrl/imgUrls)만 저장
       const sleepNoImg = sleepRecords.map(r => { const {img, imgW, imgH, imgs, _imgKey, ...rest} = r; return rest; });
       // 대상자 설문의 answerImg(PDF 인식 미리보기, base64)는 임시 참고용이라 시트에는 저장하지 않음
       const surveyNoImg = surveyRecords.map(r => { const {answerImg, ...rest} = r; return rest; });
@@ -6311,22 +6379,252 @@ async function syncToSheet(){
       });
       const postData = await postRes.json();
       if(postData.status === 'ok'){
+        await fbPromise;
+        if(fbResult && fbResult.error) throw new Error('Firebase 저장 실패: ' + fbResult.error + ' (구글시트에는 저장됨)');
         const now = new Date();
         const hh=String(now.getHours()).padStart(2,'0');
         const mi=String(now.getMinutes()).padStart(2,'0');
-        setGsStatus('ok', `☁ 저장됨 ${hh}:${mi}`);
+        const fbOk = fbResult && !fbResult.skipped;
+        setGsStatus('ok', fbOk ? `☁ 저장됨 ${hh}:${mi} (Firebase+시트)` : `☁ 저장됨 ${hh}:${mi} (시트만)`);
         hideSyncFailBanner();
-        setTimeout(()=>setGsStatus('idle','☁ Google Sheets'), 4000);
+        setTimeout(()=>setGsStatus('idle', fbOk ? '☁ Firebase' : '☁ Google Sheets'), 4000);
       } else {
         throw new Error('GAS 응답 오류: ' + JSON.stringify(postData));
       }
     }catch(err){
-      console.warn('구글 시트 저장 실패:', err.message);
-      setGsStatus('fail', '저장 실패 — 로컬만 저장됨');
+      await fbPromise;
+      console.warn('저장 실패:', err.message);
+      const fbOk = fbResult && !fbResult.skipped && !fbResult.error;
+      setGsStatus('fail', fbOk ? '시트 저장 실패 — Firebase에는 저장됨' : '저장 실패 — 로컬만 저장됨');
       // 실패 배너는 저장이 실제로 성공할 때까지 화면에서 사라지지 않음(모바일 포함, 6초 후 자동 숨김 안 함)
-      showSyncFailBanner(err.message);
+      showSyncFailBanner(err.message + (fbOk ? ' — Firebase 저장은 완료됨' : ''));
     }
   }, 500);
+}
+
+/* ═══════════════════════════════════════
+   FIREBASE 저장소 (2026-09-21 저장소 이전, 1차: 이중 저장)
+   - 진짜 저장소: Firebase Realtime Database  /records/{항목}/{_id} (기록 1건 = 노드 1개), /lists/{participants|groups}
+   - 구글시트(syncToSheet)는 이중 저장 기간 동안 실시간 거울·롤백 지점으로 계속 유지
+   - 저장: syncToSheet() 안에서 _fbPushChanges() → 내용이 바뀐 기록만 씀 (전체 덮어쓰기 없음)
+   - 로드: initStorage() 안에서 _fbLoadAll() → 첫 회 전체, 이후 마지막 동기화 이후 바뀐 기록만(delta) + 실시간 반영
+   - Firebase SDK 로드 실패/미로그인 시: 예전과 똑같이 구글시트 전용으로 동작 (폴백)
+═══════════════════════════════════════ */
+const FB_CONFIG = {
+  apiKey: "AIzaSyBDSRzcob6luWpZLUvIupYNqaaAk5-rxXs",
+  authDomain: "healmarucare-sleep.firebaseapp.com",
+  databaseURL: "https://healmarucare-sleep-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "healmarucare-sleep",
+  storageBucket: "healmarucare-sleep.firebasestorage.app",
+  messagingSenderId: "780473779747",
+  appId: "1:780473779747:web:d702ee7e43fba882411396"
+};
+// 앱 로그인 이름 → Firebase 계정 (팀원은 이 이메일을 볼 일이 없음; 로그인 화면은 그대로 이름+비밀번호)
+const _FB_ACCOUNTS = {
+  '이청용':'staff01@healmarucare.com', '차규은':'staff02@healmarucare.com', '서지은':'staff03@healmarucare.com',
+  '허수빈':'staff04@healmarucare.com', '김철민':'staff05@healmarucare.com', '원선재':'staff06@healmarucare.com',
+  '민경필':'staff07@healmarucare.com'
+};
+// 기록 단위 항목 (get/set 으로 전역 배열에 접근 — 배열이 재할당되는 경우가 있으므로 참조를 직접 잡지 않음)
+const _FB_DOMAINS = {
+  sleepRecords:         { get:()=>sleepRecords,         set:v=>{ sleepRecords=v; } },
+  heartRateRecords:     { get:()=>heartRateRecords,     set:v=>{ heartRateRecords=v; } },
+  bloodPressureRecords: { get:()=>bloodPressureRecords, set:v=>{ bloodPressureRecords=v; } },
+  oxygenRecords:        { get:()=>oxygenRecords,        set:v=>{ oxygenRecords=v; } },
+  weightRecords:        { get:()=>weightRecords,        set:v=>{ weightRecords=v; } },
+  womensHealthRecords:  { get:()=>womensHealthRecords,  set:v=>{ womensHealthRecords=v; } },
+  stressRecords:        { get:()=>stressRecords,        set:v=>{ stressRecords=v; } },
+  activityRecords:      { get:()=>activityRecords,      set:v=>{ activityRecords=v; } },
+  deviceRecords:        { get:()=>deviceRecords,        set:v=>{ deviceRecords=v; } },
+  surveyRecords:        { get:()=>surveyRecords,        set:v=>{ surveyRecords=v; } },
+  profileRecords:       { get:()=>profileRecords,       set:v=>{ profileRecords=v; } }
+};
+// 통째로 저장하는 목록
+const _FB_LISTS = {
+  participants: { get:()=>participants, set:v=>{ participants=v; } },
+  groups:       { get:()=>groups,       set:v=>{ if(Array.isArray(v)&&v.length) groups=v; } }
+};
+// 시트/Firebase 에 올리지 않는 필드 (기기 내 이미지·임시 미리보기)
+const _FB_STRIP = ['img','imgs','imgW','imgH','_imgKey','answerImg','__fbLocalOnly'];
+const _FB_CHUNK = 150;
+let _fbAuth=null, _fbDb=null, _fbReady=false, _fbLoaded=false, _fbListening=false;
+let _fbHash={}, _fbListHash={}, _fbSync={};   // 변경 감지용 해시 / 항목별 마지막 동기화 시각
+let _fbNoUserWarned=false, _fbRerenderTimer=null;
+
+function _fbInit(){
+  if(_fbReady) return true;
+  try{
+    if(typeof firebase==='undefined') return false;
+    if(!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+    _fbAuth = firebase.auth(); _fbDb = firebase.database(); _fbReady = true;
+    try{ _fbSync = JSON.parse(localStorage.getItem('hilmaru_fbsync')||'{}')||{}; }catch(e){ _fbSync={}; }
+  }catch(e){ console.warn('[FB] 초기화 실패 → 구글시트 전용 모드:', e && e.message); _fbReady=false; }
+  return _fbReady;
+}
+function _fbUser(){ return _fbReady ? _fbAuth.currentUser : null; }
+function _fbWaitAuth(){
+  return new Promise(resolve=>{
+    if(!_fbInit()) return resolve(null);
+    if(_fbAuth.currentUser) return resolve(_fbAuth.currentUser);
+    const timer = setTimeout(()=>{ try{off();}catch(e){} resolve(_fbAuth.currentUser||null); }, 4000);
+    const off = _fbAuth.onAuthStateChanged(u=>{ clearTimeout(timer); try{off();}catch(e){} resolve(u||null); });
+  });
+}
+// 로그인: 성공 true / 실패 false / 네트워크 오류 'offline'
+async function _fbSignIn(email, pw){
+  if(!_fbInit()) return 'offline';
+  try{ await _fbAuth.signInWithEmailAndPassword(email, pw); return true; }
+  catch(e){
+    if(e && e.code==='auth/network-request-failed') return 'offline';
+    console.warn('[FB] 로그인 실패:', e && e.code);
+    return false;
+  }
+}
+function _fbSignOut(){ try{ if(_fbInit()) _fbAuth.signOut(); }catch(e){} }
+
+/* ── 공통 유틸 (옮기기 도구와 같은 방식으로 내용 기반 번호를 계산해, 옮겨진 기록과 로컬 기록을 맞춤) ── */
+function _fbCanonical(v){
+  if(Array.isArray(v)) return '['+v.map(_fbCanonical).join(',')+']';
+  if(v && typeof v==='object') return '{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+_fbCanonical(v[k])).join(',')+'}';
+  return JSON.stringify(v===undefined?null:v);
+}
+function _fbCyrb53(str, seed=0){
+  let h1=0xdeadbeef^seed, h2=0x41c6ce57^seed;
+  for(let i=0,ch;i<str.length;i++){ ch=str.charCodeAt(i); h1=Math.imul(h1^ch,2654435761); h2=Math.imul(h2^ch,1597334677); }
+  h1=Math.imul(h1^(h1>>>16),2246822507); h1^=Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507); h2^=Math.imul(h1^(h1>>>13),3266489909);
+  return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);
+}
+function _fbClean(r){
+  const o={}; for(const k in r){ if(_FB_STRIP.includes(k)) continue; if(r[k]===undefined) continue; o[k]=r[k]; }
+  return JSON.parse(JSON.stringify(o));
+}
+function _fbHashOf(cleanRec){ const {_updatedAt, ...rest} = cleanRec; return _fbCyrb53(_fbCanonical(rest)); }
+// 옮기기 도구가 부여하는 번호: 'r'+hash(항목|시트에 있던 원본 기록). 번호가 없는 로컬 기록을 옮겨진 기록과 대조할 때 사용
+function _fbMigId(domain, r){ const {_id,_seq,_updatedAt, ...rest} = _fbClean(r); return 'r'+_fbCyrb53(domain+'|'+_fbCanonical(rest)); }
+function _fbNewId(){ return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function _fbKeepLocalImages(local, incoming){
+  if(!local) return incoming;
+  const out = Object.assign({}, incoming);
+  for(const k of ['img','imgs','imgW','imgH','_imgKey','answerImg']) if(local[k]!==undefined) out[k]=local[k];
+  return out;
+}
+function _fbSaveSyncState(){ try{ localStorage.setItem('hilmaru_fbsync', JSON.stringify(_fbSync)); }catch(e){} }
+function _fbSeedHashes(domain, arr){ _fbHash[domain]={}; arr.forEach(r=>{ if(!r || !r._id) return; if(r.__fbLocalOnly){ delete r.__fbLocalOnly; return; } _fbHash[domain][r._id]=_fbHashOf(_fbClean(r)); }); }
+
+/* ── 저장: 바뀐 기록만 Firebase 에 씀 ── */
+async function _fbPushChanges(){
+  if(!_fbInit()) return {skipped:'no-sdk'};
+  if(!_fbUser()){
+    if(!_fbNoUserWarned){ _fbNoUserWarned=true; console.warn('[FB] 로그인되지 않아 Firebase 저장을 건너뜁니다 (구글시트에만 저장).'); }
+    return {skipped:'no-user'};
+  }
+  const updates={}, pendingHash={}, pendingListHash={}; let count=0; const now=Date.now();
+  for(const [d,acc] of Object.entries(_FB_DOMAINS)){
+    const arr=acc.get(); if(!Array.isArray(arr)) continue;
+    const seqBase = -(now*1000); const seen=new Set(); pendingHash[d]={};
+    arr.forEach((r,i)=>{
+      if(!r || typeof r!=='object') return;
+      if(!r._id){ r._id=_fbNewId(); if(r._seq===undefined) r._seq=seqBase+i; }
+      seen.add(r._id);
+      const clean=_fbClean(r); const h=_fbHashOf(clean);
+      if(!_fbHash[d] || _fbHash[d][r._id]!==h){ clean._id=r._id; clean._updatedAt=now; updates['records/'+d+'/'+r._id]=clean; pendingHash[d][r._id]=h; count++; }
+    });
+    // 배열에서 사라진 기록(하드 삭제)은 지우지 않고 deleted 표시만 남김 — 규칙상 삭제 금지
+    for(const id of Object.keys(_fbHash[d]||{})) if(!seen.has(id)){ updates['records/'+d+'/'+id+'/deleted']=true; updates['records/'+d+'/'+id+'/_updatedAt']=now; pendingHash[d][id]=null; count++; }
+  }
+  for(const [name,acc] of Object.entries(_FB_LISTS)){
+    const v=acc.get(); if(!Array.isArray(v)) continue; const h=_fbCyrb53(_fbCanonical(v));
+    if(_fbListHash[name]!==h){ updates['lists/'+name]=JSON.parse(JSON.stringify(v)); pendingListHash[name]=h; count++; }
+  }
+  if(!count) return {count:0};
+  const keys=Object.keys(updates);
+  for(let i=0;i<keys.length;i+=_FB_CHUNK){ const part={}; keys.slice(i,i+_FB_CHUNK).forEach(k=>part[k]=updates[k]); await _fbDb.ref().update(part); }
+  // 성공한 뒤에만 해시 확정 (실패하면 다음 저장 때 다시 시도됨)
+  for(const d in pendingHash){ _fbHash[d]=_fbHash[d]||{}; for(const id in pendingHash[d]){ if(pendingHash[d][id]===null) delete _fbHash[d][id]; else _fbHash[d][id]=pendingHash[d][id]; } }
+  Object.assign(_fbListHash, pendingListHash);
+  return {count};
+}
+
+/* ── 로드: 첫 회 전체 → 이후 바뀐 기록만. 로컬(캐시)에만 있는 기록은 보존하고 다음 저장 때 올림 ── */
+async function _fbLoadAll(){
+  const user = await _fbWaitAuth();
+  if(!user) throw new Error('Firebase 로그인 없음');
+  for(const [d,acc] of Object.entries(_FB_DOMAINS)){
+    const local = Array.isArray(acc.get()) ? acc.get() : [];
+    const since = Number(_fbSync[d]||0);
+    const delta = since>0 && local.some(r=>r && r._id);
+    const snap = delta
+      ? await _fbDb.ref('records/'+d).orderByChild('_updatedAt').startAt(since+1).once('value')
+      : await _fbDb.ref('records/'+d).once('value');
+    const incoming = snap.val()||{};
+    let arr, byId;
+    if(delta){ arr=local.slice(); byId=new Map(arr.map((r,i)=>[r._id,i])); }
+    else {
+      // 전체 로드: Firebase 내용이 기준. 로컬에서 번호 없는 기록은 옮겨진 번호(내용 해시)로 대조해 이미지 필드를 이어받고,
+      // Firebase 에 없는 로컬 기록은 잃지 않도록 남겨 둠(다음 저장 때 올라감).
+      arr=[]; byId=new Map();
+      const localByMig=new Map(), localIdx=new Map();
+      local.forEach((r,i)=>{ if(r && typeof r==='object'){ const k=r._id||_fbMigId(d,r); localByMig.set(k, r); localIdx.set(k, i); } });
+      for(const [id,rec] of Object.entries(incoming)){
+        if(!rec || typeof rec!=='object') continue; rec._id=rec._id||id;
+        arr.push(_fbKeepLocalImages(localByMig.get(id), rec)); byId.set(id, arr.length-1); localByMig.delete(id);
+      }
+      // Firebase 에 없는 로컬 기록 보존 → 해시를 심지 않아 다음 저장 때 Firebase 로 올라감
+      for(const [id,r] of localByMig){ if(!r._id) r._id=id; if(r._seq===undefined) r._seq=localIdx.get(id)??0; r.__fbLocalOnly=true; arr.push(r); }
+    }
+    let maxTs=since;
+    if(delta) for(const [id,rec] of Object.entries(incoming)){
+      if(!rec || typeof rec!=='object') continue; rec._id=rec._id||id;
+      if(byId.has(id)) arr[byId.get(id)]=_fbKeepLocalImages(arr[byId.get(id)], rec); else { arr.push(rec); byId.set(id, arr.length-1); }
+    }
+    for(const rec of Object.values(incoming)) if(rec && typeof rec._updatedAt==='number' && rec._updatedAt>maxTs) maxTs=rec._updatedAt;
+    arr.sort((a,b)=>((a&&a._seq)??0)-((b&&b._seq)??0));
+    acc.set(arr); _fbSync[d]=maxTs; _fbSeedHashes(d, arr);
+  }
+  for(const [name,acc] of Object.entries(_FB_LISTS)){
+    const snap = await _fbDb.ref('lists/'+name).once('value'); const v=snap.val();
+    if(v!==null && v!==undefined){ const arr=Array.isArray(v)?v:Object.values(v); acc.set(arr); _fbListHash[name]=_fbCyrb53(_fbCanonical(acc.get())); }
+  }
+  _fbSaveSyncState(); _fbLoaded=true; window._fbLoaded=true;
+  _fbListen();
+}
+/* ── 실시간: 다른 기기에서 저장한 기록을 받아 화면에 반영 ── */
+function _fbListen(){
+  if(_fbListening || !_fbReady) return; _fbListening=true;
+  for(const [d,acc] of Object.entries(_FB_DOMAINS)){
+    const since = Number(_fbSync[d]||0);
+    const handler = snap=>{
+      const rec=snap.val(); if(!rec || typeof rec!=='object') return; const id=snap.key; rec._id=rec._id||id;
+      const arr=acc.get(); if(!Array.isArray(arr)) return;
+      const clean=_fbClean(rec); const h=_fbHashOf(clean);
+      if(_fbHash[d] && _fbHash[d][id]===h && typeof rec._updatedAt==='number' && rec._updatedAt<=Number(_fbSync[d]||0)) return; // 내가 방금 쓴 것
+      const i=arr.findIndex(r=>r && r._id===id);
+      if(i>=0) arr[i]=_fbKeepLocalImages(arr[i], rec); else { arr.push(rec); arr.sort((a,b)=>((a&&a._seq)??0)-((b&&b._seq)??0)); }
+      _fbHash[d]=_fbHash[d]||{}; _fbHash[d][id]=h;
+      if(typeof rec._updatedAt==='number' && rec._updatedAt>Number(_fbSync[d]||0)){ _fbSync[d]=rec._updatedAt; _fbSaveSyncState(); }
+      _fbScheduleRerender();
+    };
+    const q=_fbDb.ref('records/'+d).orderByChild('_updatedAt').startAt(since+1);
+    q.on('child_added', handler); q.on('child_changed', handler);
+  }
+}
+function _fbScheduleRerender(){
+  clearTimeout(_fbRerenderTimer);
+  _fbRerenderTimer=setTimeout(()=>{
+    // 캐시 갱신 + 화면 다시 그리기 (존재하는 함수만 호출)
+    try{ _persistSleepRecordsLocal(sleepRecords); }catch(e){}
+    _hmLocalSave('hilmaru_hr', heartRateRecords, '심박수'); _hmLocalSave('hilmaru_bp', bloodPressureRecords, '혈압');
+    _hmLocalSave('hilmaru_o2', oxygenRecords, '혈중산소'); _hmLocalSave('hilmaru_weight', weightRecords, '체중');
+    _hmLocalSave('hilmaru_wh', womensHealthRecords, '여성건강'); _hmLocalSave('hilmaru_sv', stressRecords, '스트레스·활력점수');
+    _hmLocalSave('hilmaru_act', activityRecords, '활동량'); _hmLocalSave('hilmaru_dv', deviceRecords, '기기 제공·수거');
+    _hmLocalSave('hilmaru_survey', surveyRecords.map(r=>{ const {answerImg, ...rest}=r; return rest; }), '대상자 설문');
+    _hmLocalSave('hilmaru_profile', profileRecords, '대상자 인적사항');
+    ['renderRecords','renderHeartRates','renderBloodPressures','renderOxygens','renderWeights','renderActivities','renderStressVitals',
+     'renderWomensHealth','renderSurveyRecords','renderProfileRecords','buildDeviceTable','buildParticipantTable','refreshStats','renderDataManageTable']
+      .forEach(fn=>{ try{ if(typeof window[fn]==='function') window[fn](); }catch(e){} });
+    try{ if(typeof _currentDataTab!=='undefined' && _currentDataTab==='all' && typeof renderAllRecords==='function') renderAllRecords(); }catch(e){}
+  }, 800);
 }
 
 function saveSurveyRecords(){
